@@ -3,7 +3,7 @@
 require_relative 'naming'
 require_relative 'special_cases'
 require_relative 'basic_test_generator'
-require_relative '../helpers'
+require_relative 'helpers'
 
 module InfernoSuiteGenerator
   class Generator
