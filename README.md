@@ -1,28 +1,71 @@
 # InfernoSuiteGenerator
 
-TODO: Delete this and the text below, and describe your gem
+A Ruby gem for automatically generating test suites for FHIR Implementation Guides (IGs) to be used with the Inferno testing framework.
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/inferno_suite_generator`. To experiment with that code, run `bin/console` for an interactive prompt.
+## Description
+
+InfernoSuiteGenerator is a tool that simplifies the creation of test suites for validating FHIR resources against Implementation Guides. It analyzes FHIR Implementation Guide packages and generates Ruby test classes for the Inferno testing framework.
+
+The generator creates various types of tests:
+- Read tests
+- Search tests (including multiple OR/AND searches, chain searches, special identifier searches)
+- Validation tests
+- Must Support tests
+- Reference resolution tests
+- Provenance revinclude search tests
+- Include search tests
 
 ## Installation
 
-TODO: Replace `UPDATE_WITH_YOUR_GEM_NAME_IMMEDIATELY_AFTER_RELEASE_TO_RUBYGEMS_ORG` with your gem name right after releasing it to RubyGems.org. Please do not do it earlier due to security reasons. Alternatively, replace this section with instructions to install your gem from git if you don't plan to release to RubyGems.org.
+Add this line to your application's Gemfile:
 
-Install the gem and add to the application's Gemfile by executing:
-
-```bash
-bundle add UPDATE_WITH_YOUR_GEM_NAME_IMMEDIATELY_AFTER_RELEASE_TO_RUBYGEMS_ORG
+```ruby
+gem 'inferno_suite_generator'
 ```
 
-If bundler is not being used to manage dependencies, install the gem by executing:
+And then execute:
 
 ```bash
-gem install UPDATE_WITH_YOUR_GEM_NAME_IMMEDIATELY_AFTER_RELEASE_TO_RUBYGEMS_ORG
+bundle install
+```
+
+Or install it yourself as:
+
+```bash
+gem install inferno_suite_generator
 ```
 
 ## Usage
 
-TODO: Write usage instructions here
+1. Create a configuration file (`config.json`) with your Implementation Guide settings:
+
+```json
+{
+  "id": "your_ig_id",
+  "title": "Your IG Title",
+  "suite_module_name": "YourIGSuite",
+  "module_name_prefix": "YourIG",
+  "test_id_prefix": "your_ig",
+  "paths": {
+    "ig_deps": "path/to/ig/package",
+    "main_file": "path/to/inferno/main/file"
+  }
+}
+```
+
+2. Run the generator:
+
+```ruby
+require 'inferno_suite_generator'
+
+InfernoSuiteGenerator::Generator.generate
+```
+
+This will:
+- Load the IG package
+- Extract metadata
+- Generate test files for various FHIR interactions
+- Add the generated test suite to your Inferno application
 
 ## Development
 
@@ -32,7 +75,7 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/inferno_suite_generator. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [code of conduct](https://github.com/[USERNAME]/inferno_suite_generator/blob/main/CODE_OF_CONDUCT.md).
+Bug reports and pull requests are welcome on GitHub at https://github.com/beda-software/inferno_suite_generator. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [code of conduct](https://github.com/beda-software/inferno_suite_generator/blob/main/CODE_OF_CONDUCT.md).
 
 ## License
 
@@ -40,4 +83,4 @@ The gem is available as open source under the terms of the [MIT License](https:/
 
 ## Code of Conduct
 
-Everyone interacting in the InfernoSuiteGenerator project's codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/[USERNAME]/inferno_suite_generator/blob/main/CODE_OF_CONDUCT.md).
+Everyone interacting in the InfernoSuiteGenerator project's codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/beda-software/inferno_suite_generator/blob/main/CODE_OF_CONDUCT.md).
