@@ -2,6 +2,7 @@
 
 require_relative 'ig_metadata'
 require_relative 'group_metadata_extractor'
+require_relative 'registry'
 
 module InfernoSuiteGenerator
   class Generator
@@ -13,7 +14,7 @@ module InfernoSuiteGenerator
         add_missing_supported_profiles
         remove_extra_supported_profiles
         self.metadata = IGMetadata.new
-        self.config_keeper = GeneratorConfigKeeper.new
+        self.config_keeper = Registry.get(:config_keeper)
       end
 
       def extract

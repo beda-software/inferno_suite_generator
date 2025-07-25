@@ -6,6 +6,7 @@ require_relative 'must_support_metadata_extractor'
 require_relative 'search_metadata_extractor'
 require_relative 'terminology_binding_metadata_extractor'
 require_relative 'generator_config_keeper'
+require_relative 'registry'
 
 module InfernoSuiteGenerator
   class Generator
@@ -17,7 +18,7 @@ module InfernoSuiteGenerator
         self.profile_url = profile_url
         self.ig_metadata = ig_metadata
         self.ig_resources = ig_resources
-        self.config_keeper = GeneratorConfigKeeper.new
+        self.config_keeper = Registry.get(:config_keeper)
       end
 
       def group_metadata

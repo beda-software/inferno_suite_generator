@@ -20,11 +20,13 @@ require_relative 'inferno_suite_generator/special_identifier_search_test_generat
 require_relative 'inferno_suite_generator/special_identifiers_chain_search_test_generator'
 require_relative 'inferno_suite_generator/include_search_test_generator'
 require_relative 'inferno_suite_generator/generator_config_keeper'
+require_relative 'inferno_suite_generator/registry'
 
 module InfernoSuiteGenerator
   class Generator
-    def self.generate
-      config = GeneratorConfigKeeper.new
+    def self.generate(config_path = nil)
+      Registry.register(:config_keeper, GeneratorConfigKeeper.new(config_path))
+      config = Registry.get(:config_keeper)
       new(config.ig_deps_path).generate
     end
 
@@ -60,7 +62,7 @@ module InfernoSuiteGenerator
     end
 
     def base_output_dir
-      File.join(__dir__, 'generated', ig_metadata.ig_version)
+      File.join(Registry.get(:config_keeper).result_folder, ig_metadata.ig_version)
     end
 
     def load_ig_package
@@ -130,7 +132,7 @@ module InfernoSuiteGenerator
     end
 
     def use_tests
-      config = GeneratorConfigKeeper.new
+      config = Registry.get(:config_keeper)
       main_file = config.main_file_path
       file_path = File.expand_path(main_file, Dir.pwd)
 

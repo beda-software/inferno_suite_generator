@@ -8,6 +8,7 @@ require 'zlib'
 require 'json'
 require_relative 'ig_resources'
 require_relative 'generator_config_keeper'
+require_relative 'registry'
 
 module InfernoSuiteGenerator
   class Generator
@@ -16,7 +17,7 @@ module InfernoSuiteGenerator
 
       def initialize(ig_deps_path)
         self.ig_deps_path = ig_deps_path
-        self.config = GeneratorConfigKeeper.new
+        self.config = Registry.get(:config_keeper)
       end
 
       def ig_resources

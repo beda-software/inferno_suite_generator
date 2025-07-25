@@ -3,6 +3,7 @@
 require_relative 'naming'
 require_relative 'special_cases'
 require_relative 'basic_test_generator'
+require_relative 'registry'
 
 module InfernoSuiteGenerator
   class Generator
@@ -20,7 +21,7 @@ module InfernoSuiteGenerator
       def initialize(ig_metadata, base_output_dir)
         self.ig_metadata = ig_metadata
         self.base_output_dir = base_output_dir
-        self.config_keeper = GeneratorConfigKeeper.new
+        self.config_keeper = Registry.get(:config_keeper)
       end
 
       def version_specific_message_filters

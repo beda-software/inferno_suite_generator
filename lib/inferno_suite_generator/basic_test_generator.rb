@@ -3,6 +3,7 @@
 require_relative 'naming'
 require_relative 'special_cases'
 require_relative 'generator_constants'
+require_relative 'registry'
 
 module InfernoSuiteGenerator
   class Generator
@@ -11,7 +12,7 @@ module InfernoSuiteGenerator
 
       class_attribute :template_type
       def suite_module_name
-        config = GeneratorConfigKeeper.new
+        config = Registry.get(:config_keeper)
         config.suite_module_name
       end
 

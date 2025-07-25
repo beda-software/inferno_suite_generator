@@ -5,11 +5,9 @@ require 'json'
 module InfernoSuiteGenerator
   class Generator
     class GeneratorConfigKeeper
-      CONFIG_FILE_PATH = File.join(File.dirname(__FILE__), '../../../config.json')
-
       attr_reader :config, :version
 
-      def initialize(config_file_path = CONFIG_FILE_PATH)
+      def initialize(config_file_path)
         @config_file_path = config_file_path
         load_config
       end
@@ -64,6 +62,10 @@ module InfernoSuiteGenerator
 
       def paths
         @config['paths'] || {}
+      end
+
+      def result_folder
+        paths['result_folder']
       end
 
       def ig_packages_path
