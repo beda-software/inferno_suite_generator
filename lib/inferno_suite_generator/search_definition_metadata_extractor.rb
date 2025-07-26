@@ -197,58 +197,25 @@ module InfernoSuiteGenerator
       end
 
       def multiple_or_expectation
-        # TODO: Move to the config file
-        # NOTE: Hard-coded values are used because the multipleOr attributes
-        # do not exist in the machine-readable files, but they do exist in the narrative.
-        # NOTE: https://github.com/hl7au/au-fhir-core-inferno/issues/61
-        # NOTE: https://github.com/hl7au/au-fhir-core-inferno/issues/63
-        case group_metadata[:resource]
-        when 'Procedure'
-          return 'SHALL' if param_hash['id'] == 'Procedure-status'
-          return 'SHOULD' if param_hash['id'] == 'clinical-code'
-        when 'Observation'
-          return 'SHALL' if param_hash['id'] == 'Observation-status'
-          return 'SHOULD' if param_hash['id'] == 'clinical-code'
-        when 'MedicationRequest'
-          return 'SHALL' if param_hash['id'] == 'medications-status'
-          return 'SHOULD' if param_hash['id'] == 'MedicationRequest-intent'
-        when 'Immunization'
-          return 'SHOULD' if param_hash['id'] == 'Immunization-vaccine-code'
-        when 'Condition'
-          return 'MAY' if param_hash['id'] == 'clinical-code'
-        when 'Encounter'
-          return 'MAY' if param_hash['id'] == 'Encounter-status'
-        end
+        expectations_hash = Registry.get(:config_keeper).multiple_or_expectations
+        resource_type = group_metadata[:resource]
+        param_id = param_hash['id']
 
-        return unless param_hash['_multipleOr']
+        expectation_from_config = expectations_hash.dig(resource_type, param_id)
+        expectation_from_ig =  (param_hash['_multipleOr'] && param_hash['_multipleOr']['extension'].first['valueCode'])
 
-        param_hash['_multipleOr']['extension'].first['valueCode']
+        expectation_from_config || expectation_from_ig
       end
 
       def multiple_and_expectation
-        # TODO: Move to the config file
-        # NOTE: Hard-coded values are used because the multipleAnd attributes
-        # do not exist in the machine-readable files, but they do exist in the narrative.
-        # NOTE: https://github.com/hl7au/au-fhir-core-inferno/issues/62
-        case group_metadata[:resource]
-        when 'Observation'
-          return 'SHOULD' if param_hash['id'] == 'clinical-date'
-        when 'Condition'
-          return 'SHOULD' if param_hash['id'] == 'Condition-onset-date'
-        when 'Encounter'
-          return 'SHOULD' if param_hash['id'] == 'clinical-date'
-        when 'Immunization'
-          return 'SHOULD' if param_hash['id'] == 'clinical-date'
-        when 'MedicationRequest'
-          return 'SHOULD' if param_hash['id'] == 'MedicationRequest-authoredon'
-        when 'Patient'
-          return 'MAY' if param_hash['id'] == 'individual-birthdate'
-        when 'Procedure'
-          return 'MAY' if param_hash['id'] == 'clinical-date'
-        end
-        return unless param_hash['_multipleAnd']
+        expectations_hash = Registry.get(:config_keeper).multiple_and_expectations
+        resource_type = group_metadata[:resource]
+        param_id = param_hash['id']
 
-        param_hash['_multipleAnd']['extension'].first['valueCode']
+        expectation_from_config = expectations_hash.dig(resource_type, param_id)
+        expectation_from_ig =  (param_hash['_multipleAnd'] && param_hash['_multipleAnd']['extension'].first['valueCode'])
+
+        expectation_from_config || expectation_from_ig
       end
 
       def values

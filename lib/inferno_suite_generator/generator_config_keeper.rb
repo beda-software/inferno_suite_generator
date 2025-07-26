@@ -100,6 +100,14 @@ module InfernoSuiteGenerator
         configs['NAMING'] || {}
       end
 
+      def multiple_and_expectations
+        configs['multipleAndExpectations'] || {}
+      end
+
+      def multiple_or_expectations
+        configs['multipleOrExpectations'] || {}
+      end
+
       def constant_name_for_profile(profile_url)
         naming_mappings[profile_url]
       end
