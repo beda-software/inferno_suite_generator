@@ -68,6 +68,10 @@ module InfernoSuiteGenerator
         paths['result_folder']
       end
 
+      def related_result_folder
+        paths['related_result_folder']
+      end
+
       def ig_packages_path
         paths['ig_packages']
       end

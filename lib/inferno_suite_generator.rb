@@ -135,9 +135,10 @@ module InfernoSuiteGenerator
       config = Registry.get(:config_keeper)
       main_file = config.main_file_path
       file_path = File.expand_path(main_file, Dir.pwd)
+      related_result_folder = Registry.get(:config_keeper).result_folder
 
       file_content = File.read(file_path)
-      string_to_add = "require_relative '#{base_output_dir.split('/opt/inferno/lib/').last}/au_core_test_suite'"
+      string_to_add = "require_relative '#{related_result_folder.split('/opt/inferno/lib/').last}/au_core_test_suite'"
 
       return if file_content.include? string_to_add
 
