@@ -23,13 +23,13 @@ module <%= suite_module_name %>
         default: '<%= Helpers.default_patient_ids_string %>'
   <% end %>
       def properties
-        @properties ||= SearchTestProperties.new(
+        @properties ||= InfernoSuiteGenerator::SearchTestProperties.new(
   <%= search_test_properties_string %>
         )
       end
 
       def self.metadata
-        @metadata ||= Generator::GroupMetadata.new(YAML.load_file(File.join(__dir__, 'metadata.yml')))
+        @metadata ||= InfernoSuiteGenerator::Generator::GroupMetadata.new(YAML.load_file(File.join(__dir__, 'metadata.yml')))
       end
 
       def self.provenance_metadata

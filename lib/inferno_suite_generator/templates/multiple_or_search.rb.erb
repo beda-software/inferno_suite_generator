@@ -21,11 +21,11 @@ module <%= suite_module_name %>
         default: '<%= Helpers.default_patient_ids_string %>'
       <% end %>
       def self.properties
-        @properties ||= SearchTestProperties.new(<%= search_test_properties_string %>)
+        @properties ||= InfernoSuiteGenerator::SearchTestProperties.new(<%= search_test_properties_string %>)
       end
 
       def self.metadata
-        @metadata ||= Generator::GroupMetadata.new(YAML.load_file(File.join(__dir__, 'metadata.yml'), aliases: true))
+        @metadata ||= InfernoSuiteGenerator::Generator::GroupMetadata.new(YAML.load_file(File.join(__dir__, 'metadata.yml'), aliases: true))
       end
 
       def scratch_resources
