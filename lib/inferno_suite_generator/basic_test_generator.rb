@@ -58,7 +58,7 @@ module InfernoSuiteGenerator
         when TEMPLATE_TYPES[:INCLUDE]
           "#{basic_test_id}_#{search_param_names_lodash_string}_include_#{search_identifier.downcase}_search_test"
         when TEMPLATE_TYPES[:SPECIAL_IDENTIFIER_SEARCH]
-          "#{basic_test_id}_#{search_identifier}_#{special_identifier[:display].delete('-').downcase}_search_test"
+          "#{basic_test_id}_#{search_identifier}_#{special_identifier["display"].delete('-').downcase}_search_test"
         when TEMPLATE_TYPES[:SPECIAL_IDENTIFIER_CHAIN_SEARCH]
         when TEMPLATE_TYPES[:SUITE]
         when TEMPLATE_TYPES[:GROUP]
@@ -78,7 +78,10 @@ module InfernoSuiteGenerator
         when TEMPLATE_TYPES[:INCLUDE]
           "#{basic_class_name_with_search}Include#{includes.first['target_resource']}Test"
         when TEMPLATE_TYPES[:SPECIAL_IDENTIFIER_SEARCH]
-          "#{basic_class_name_with_search}#{special_identifier[:display].delete('-')}SearchTest"
+          puts "basic_test_id: #{basic_test_id}"
+          puts "search_identifier: #{search_identifier}"
+          puts "special_identifier: #{special_identifier}"
+          "#{basic_class_name_with_search}#{special_identifier["display"].delete('-')}SearchTest"
         when TEMPLATE_TYPES[:SUITE]
           "#{ig_metadata.ig_module_name_prefix}TestSuite"
         when TEMPLATE_TYPES[:GROUP]

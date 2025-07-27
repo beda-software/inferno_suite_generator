@@ -124,6 +124,14 @@ module InfernoSuiteGenerator
         configs['SPECIAL_CASES'] || {}
       end
 
+      def resources_to_exclude
+        special_cases.dig('RESOURCES_TO_EXCLUDE', 'resources') || []
+      end
+
+      def specific_identifiers
+        special_cases.dig('SPECIFIC_IDENTIFIER') || {}
+      end
+
       def fixed_search_values
         configs['FIXED_SEARCH_VALUES'] || {}
       end
