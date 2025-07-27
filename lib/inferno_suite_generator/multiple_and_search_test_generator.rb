@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 require_relative "naming"
-require_relative "special_cases"
 require_relative "search_test_generator"
 require_relative "helpers"
+require_relative "registry"
 
 module InfernoSuiteGenerator
   class Generator
@@ -149,7 +149,7 @@ module InfernoSuiteGenerator
               optional_multiple_and_search_params_string
           end
           properties[:search_by_target_resource_data] = "true" if Helpers.test_on_target_resource_data?(
-            SpecialCases::MULTIPLE_OR_AND_SEARCH_BY_TARGET_RESOURCE,
+            Registry.get(:config_keeper).multiple_or_and_search_by_target_resource,
             resource_type, search_param_names
           )
         end

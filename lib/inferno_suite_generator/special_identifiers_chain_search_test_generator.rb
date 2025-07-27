@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require_relative "naming"
-require_relative "special_cases"
 require_relative "chain_search_test_generator"
 
 module InfernoSuiteGenerator
@@ -19,7 +18,7 @@ module InfernoSuiteGenerator
               current_search_definition[:chain].each do |chain_item|
                 next unless chain_item[:target] == "Patient"
 
-                SpecialCases::PATIENT_IDENTIFIERS.each do |target_identifier|
+                Registry.get(:config_keeper).specific_identifiers["Patient"].each do |target_identifier|
                   new(
                     search_key.to_s,
                     group,
@@ -48,11 +47,11 @@ module InfernoSuiteGenerator
       end
 
       def test_id
-        "#{ig_metadata.ig_test_id_prefix}_#{group_metadata.reformatted_version}_#{profile_identifier}_#{search_identifier}_#{target_identifier[:display].downcase}_chain_search_test"
+        "#{ig_metadata.ig_test_id_prefix}_#{group_metadata.reformatted_version}_#{profile_identifier}_#{search_identifier}_#{target_identifier['display'].downcase}_chain_search_test"
       end
 
       def class_name
-        "#{Naming.upper_camel_case_for_profile(group_metadata)}#{search_title}_#{target_identifier[:display]}_ChainSearchTest"
+        "#{Naming.upper_camel_case_for_profile(group_metadata)}#{search_title}_#{target_identifier['display']}_ChainSearchTest"
       end
 
       def search_properties
@@ -65,13 +64,13 @@ module InfernoSuiteGenerator
       end
 
       def title
-        "Server returns valid results for #{resource_type} search by #{search_param_name_string} (#{target_identifier[:display]}) (chained parameters)"
+        "Server returns valid results for #{resource_type} search by #{search_param_name_string} (#{target_identifier['display']}) (chained parameters)"
       end
 
       def description
         <<~DESCRIPTION.gsub(/\n{3,}/, "\n\n")
           A server #{conformance_expectation} support searching by
-          #{search_param_names.first} (#{target_identifier[:display]}) on the #{resource_type} resource. This test
+          #{search_param_names.first} (#{target_identifier['display']}) on the #{resource_type} resource. This test
           will pass if the server returns a success response to the request.
 
           [AU Core Server CapabilityStatement](http://hl7.org.au/fhir/core/#{url_version}/CapabilityStatement-au-core-server.html)

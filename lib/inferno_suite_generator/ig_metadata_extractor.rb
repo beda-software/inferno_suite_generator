@@ -57,7 +57,7 @@ module InfernoSuiteGenerator
         ig_resources.capability_statement.rest.first.resource
                     .find { |resource| resource.type == "Observation" }
                     .supportedProfile.delete_if do |profile_url|
-          SpecialCases::PROFILES_TO_EXCLUDE.include?(profile_url)
+          Registry.get(:config_keeper).profiles_to_exclude.include?(profile_url)
         end
       end
 
