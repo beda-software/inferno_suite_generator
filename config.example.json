@@ -187,6 +187,9 @@
         "_description": "",
         "resources": ["Medication", "DiagnosticReport"]
       },
+      "VERSION_SPECIFIC_RESOURCES_TO_EXCLUDE": {
+        "v1.0.0": ["Medication", "RelatedPerson"]
+      },
       "PROFILES_TO_EXCLUDE": [],
       "SPECIFIC_IDENTIFIER": {
         "Patient": [

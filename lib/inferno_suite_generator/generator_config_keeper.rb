@@ -128,8 +128,26 @@ module InfernoSuiteGenerator
         special_cases.dig("RESOURCES_TO_EXCLUDE", "resources") || []
       end
 
+      def version_specific_resources_to_exclude(version = nil)
+        return {} if version.nil?
+
+        special_cases["VERSION_SPECIFIC_RESOURCES_TO_EXCLUDE"] || {}
+      end
+
       def specific_identifiers
         special_cases["SPECIFIC_IDENTIFIER"] || {}
+      end
+
+      def search_params_for_include_by_resource
+        special_cases["SEARCH_PARAMS_FOR_INCLUDE_BY_RESOURCE"] || {}
+      end
+
+      def multiple_or_and_search_by_target_resource
+        special_cases["MULTIPLE_OR_AND_SEARCH_BY_TARGET_RESOURCE"] || {}
+      end
+
+      def profiles_to_exclude
+        special_cases["PROFILES_TO_EXCLUDE"] || []
       end
 
       def fixed_search_values

@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require_relative "naming"
-require_relative "special_cases"
 require_relative "basic_test_generator"
 require_relative "registry"
 
@@ -91,11 +90,11 @@ module InfernoSuiteGenerator
       def groups
         ig_metadata.ordered_groups.compact
                    .reject do |group|
-                     version_specific_resources = SpecialCases::VERSION_SPECIFIC_RESOURCES_TO_EXCLUDE[group.version]
+                     version_specific_resources = config_keeper.version_specific_resources_to_exclude(group.version)[group.version]
                      if version_specific_resources
                        version_specific_resources.include?(group.resource)
                      else
-                       SpecialCases::RESOURCES_TO_EXCLUDE.include?(group.resource)
+                       config_keeper.resources_to_exclude.include?(group.resource)
                      end
                    end
       end
