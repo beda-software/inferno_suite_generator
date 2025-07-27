@@ -124,6 +124,10 @@ module InfernoSuiteGenerator
         configs['SPECIAL_CASES'] || {}
       end
 
+      def fixed_search_values
+        configs['FIXED_SEARCH_VALUES'] || {}
+      end
+
       def category_first_profiles
         special_cases.dig('ALL_VERSION_CATEGORY_FIRST_PROFILES', 'profiles') || []
       end

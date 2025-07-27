@@ -214,29 +214,20 @@ module InfernoSuiteGenerator
       end
 
       def values
-        # TODO: Move to the config file
-        fixed_diagnostic_result_values = %w[251739003 24701-5]
-        fixed_date_value = %w[ge1950-01-01 le2050-01-01 gt1950-01-01 lt2050-01-01]
-        fixed_datetime_value = %w[ge1950-01-01T00:00:00.000Z le2050-01-01T23:59:59.999Z gt1950-01-01T00:00:00.000Z lt2050-01-01T23:59:59.999Z]
-        # NOTE: In the current step we don't need to check the correct content of the response.
-        # We should care about the correct structure of the request. In this current case we use dates just
-        # to check that server can make a response for the request.
-        case group_metadata[:resource]
-        when 'Observation'
-          return fixed_datetime_value if param_hash['id'] == 'clinical-date'
-          return fixed_diagnostic_result_values if param_hash['id'] =='clinical-code' && group_metadata[:profile_url] == 'http://hl7.org.au/fhir/core/StructureDefinition/au-core-diagnosticresult'
-        when 'Condition'
-          return fixed_datetime_value if param_hash['id'] == 'Condition-onset-date'
-        when 'Encounter'
-          return fixed_datetime_value if param_hash['id'] == 'clinical-date'
-        when 'Immunization'
-          return fixed_datetime_value if param_hash['id'] == 'clinical-date'
-        when 'MedicationRequest'
-          return fixed_datetime_value if param_hash['id'] == 'MedicationRequest-authoredon'
-        when 'Patient'
-          return fixed_date_value if param_hash['id'] == 'individual-birthdate'
-        when 'Procedure'
-          return fixed_datetime_value if param_hash['id'] == 'clinical-date'
+        config = Registry.get(:config_keeper).fixed_search_values
+
+        if config.dig('resource_mappings', group_metadata[:resource])&.key?(param_hash['id'])
+          mapping = config['resource_mappings'][group_metadata[:resource]][param_hash['id']]
+
+          if mapping.is_a?(String)
+            return config['values'][mapping]
+          end
+
+          if mapping.is_a?(Hash)
+            if mapping.dig('condition', 'profile_url') == group_metadata[:profile_url]
+              return config['values'][mapping['value']]
+            end
+          end
         end
 
         values_from_fixed_codes = value_extractor.values_from_fixed_codes(profile_element, type).presence
@@ -244,7 +235,6 @@ module InfernoSuiteGenerator
         merged_values = Array(values_from_fixed_codes) + Array(values_from_pattern_coding)
 
         values_from_must_supports(profile_element).presence || merged_values.presence ||
-          # value_extractor.values_from_required_binding(profile_element).presence ||
           value_extractor.values_from_value_set_binding(profile_element).presence ||
           values_from_resource_metadata(paths).presence ||
           []
