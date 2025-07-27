@@ -21,6 +21,7 @@ require_relative "inferno_suite_generator/special_identifiers_chain_search_test_
 require_relative "inferno_suite_generator/include_search_test_generator"
 require_relative "inferno_suite_generator/generator_config_keeper"
 require_relative "inferno_suite_generator/registry"
+require_relative "inferno_suite_generator/helpers"
 
 module InfernoSuiteGenerator
   class Generator
