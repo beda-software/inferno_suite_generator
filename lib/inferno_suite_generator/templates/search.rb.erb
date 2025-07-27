@@ -1,11 +1,11 @@
-require_relative '../../../search_test'
+require 'inferno_suite_generator/search_test'
 require 'inferno_suite_generator/group_metadata'
 require 'inferno_suite_generator/helpers'
 
 module <%= suite_module_name %>
   module <%= module_name %>
     class <%= class_name %> < Inferno::Test
-      include <%= suite_module_name %>::SearchTest
+      include InfernoSuiteGenerator::SearchTest
 
       title '(<%= conformance_expectation %>) Server returns valid results for <%= resource_type %> search by <%= search_param_name_string %>'
       description %(
