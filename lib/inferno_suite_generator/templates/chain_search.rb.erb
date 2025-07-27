@@ -1,11 +1,11 @@
-require_relative '../../../chained_search_test'
+require 'inferno_suite_generator/chained_search_test'
 require 'inferno_suite_generator/group_metadata'
 require 'inferno_suite_generator/helpers'
 
 module <%= suite_module_name %>
   module <%= module_name %>
     class <%= class_name %> < Inferno::Test
-      include <%= suite_module_name %>::ChainedSearchTest
+      include InfernoSuiteGenerator::ChainedSearchTest
 
       title '(<%= conformance_expectation %>) <%= title %>'
       description %(<%= description %>)
