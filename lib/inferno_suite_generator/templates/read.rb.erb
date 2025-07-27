@@ -1,9 +1,9 @@
-require_relative '../../../read_test'
+require 'inferno_suite_generator/read_test'
 
 module <%= suite_module_name %>
   module <%= module_name %>
     class <%= class_name %> < Inferno::Test
-      include <%= suite_module_name %>::ReadTest
+      include InfernoSuiteGenerator::ReadTest
 
       title '(<%= conformance_expectation %>) Server returns correct <%= resource_type %> resource from <%= resource_type %> read interaction'
       description 'A server <%= conformance_expectation %> support the <%= resource_type %> read interaction.'

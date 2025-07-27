@@ -1,9 +1,9 @@
-require_relative '../../../validation_test'
+require 'inferno_suite_generator/validation_test'
 
 module <%= suite_module_name %>
   module <%= module_name %>
     class <%= class_name %> < Inferno::Test
-      include <%= suite_module_name %>::ValidationTest
+      include InfernoSuiteGenerator::ValidationTest
 
       id :<%= test_id %>
       title '<%= resource_type %> resources returned during previous tests conform to the <%= profile_name %>'

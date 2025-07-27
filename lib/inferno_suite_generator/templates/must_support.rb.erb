@@ -1,9 +1,9 @@
-require_relative '../../../must_support_test'
+require 'inferno_suite_generator/must_support_test'
 
 module <%= suite_module_name %>
   module <%= module_name %>
     class <%= class_name %> < Inferno::Test
-      include <%= suite_module_name %>::MustSupportTest
+      include InfernoSuiteGenerator::MustSupportTest
 
       title 'All must support elements are provided in the <%= resource_type %> resources returned'
       description %(

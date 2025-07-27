@@ -1,9 +1,9 @@
-require_relative '../../../reference_resolution_test'
+require 'inferno_suite_generator/reference_resolution_test'
 
 module <%= suite_module_name %>
   module <%= module_name %>
     class <%= class_name %> < Inferno::Test
-      include <%= suite_module_name %>::ReferenceResolutionTest
+      include InfernoSuiteGenerator::ReferenceResolutionTest
 
       title 'MustSupport references within <%= resource_type %> resources are valid'
       description %(

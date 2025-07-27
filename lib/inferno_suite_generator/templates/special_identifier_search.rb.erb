@@ -1,10 +1,10 @@
-require_relative '../../../special_identifier_search_test'
+require 'inferno_suite_generator/special_identifier_search_test'
 require 'inferno_suite_generator/group_metadata'
 
 module <%= suite_module_name %>
   module <%= module_name %>
     class <%= class_name %> < Inferno::Test
-      include <%= suite_module_name %>::SpecialIdentifierSearchTest
+      include InfernoSuiteGenerator::SpecialIdentifierSearchTest
 
       title '(SHOULD) <%= title %>'
       description %(<%= description %>)
