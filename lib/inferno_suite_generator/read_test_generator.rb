@@ -73,6 +73,24 @@ module InfernoSuiteGenerator
       def needs_healthcare_service_id?
         resource_type == "HealthcareService"
       end
+
+      def ids_input_data
+        if needs_ids_input?
+          data = Registry.get(:config_keeper).read_test_ids_inputs.dig(resource_type)
+
+          {
+            :id => data["input_id"].to_sym,
+            :title => data["title"],
+            :description => data["description"],
+            :default => data["default"]
+          }
+        end
+      end
+
+      private
+      def needs_ids_input?
+        Registry.get(:config_keeper).read_test_ids_inputs.include?(resource_type)
+      end
     end
   end
 end

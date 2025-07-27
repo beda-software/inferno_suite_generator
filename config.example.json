@@ -163,6 +163,39 @@
     },
     "SPECIAL_CASES": {
       "_description": "Special handling for specific profiles during testing",
+      "READ_TEST_IDS_INPUTS": {
+        "_description": "",
+        "Location": {
+          "input_id": "location_ids",
+          "title": "Location IDs",
+          "description": "Comma separated list of location IDs that in sum contain all MUST SUPPORT elements",
+          "default": "bobrester-medical-center, au-hospital"
+        },
+        "Organization": {
+          "input_id": "organization_ids",
+          "title": "Organization IDs",
+          "description": "Comma separated list of organization IDs that in sum contain all MUST SUPPORT elements",
+          "default": "dva-au, organization-medical-center-tc"
+        },
+        "Practitioner": {
+          "input_id": "practitioner_ids",
+          "title": "Practitioner IDs",
+          "description": "Comma separated list of practitioner IDs that in sum contain all MUST SUPPORT elements",
+          "default": "alderson-helene"
+        },
+        "PractitionerRole": {
+          "input_id": "practitioner_role_ids",
+          "title": "PractitionerRole IDs",
+          "description": "Comma separated list of practitioner role IDs that in sum contain all MUST SUPPORT elements",
+          "default": "cardiologist-sallie-sutherland, bobrester-bob-gp"
+        },
+        "HealthcareService": {
+          "input_id": "healthcare_service_ids",
+          "title": "HealthcareService IDs",
+          "description": "Comma separated list of healthcare services IDs that in sum contain all MUST SUPPORT elements",
+          "default": "generalpractice-bungabbee-medical-clinic, communityhealth-southedge-practice, dentalpractice-annandale-dental, pathologylaboratory-woodcroft-pathology",
+        }
+      },
       "COMPARATORS": {
         "_description": "Hard-coded values are used because the comparator expectation does not exist in the machine-readable files, but it does exist in the narrative. (https://github.com/hl7au/au-fhir-core-inferno/issues/48)",
         "resources": [

@@ -183,6 +183,10 @@ module InfernoSuiteGenerator
         special_cases.dig("ALL_VERSION_NAME_FIRST_PROFILES", "profiles") || []
       end
 
+      def read_test_ids_inputs
+        special_cases.dig('READ_TEST_IDS_INPUTS') || {}
+      end
+
       def name_first_profile?(profile_url)
         name_first_profiles.include?(profile_url)
       end
