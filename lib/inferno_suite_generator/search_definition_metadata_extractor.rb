@@ -134,21 +134,18 @@ module InfernoSuiteGenerator
       end
 
       def comparators
-        # TODO: Move to the config file
-        # NOTE: Hard-coded values are used because the comparator expectation
-        # does not exist in the machine-readable files, but it does exist in the narrative.
-        # NOTE: https://github.com/hl7au/au-fhir-core-inferno/issues/48
-        special_cases_resources = %w[Observation Condition Encounter Immunization MedicationRequest Patient Procedure]
-        special_cases_comparators = %w[gt lt ge le]
-        special_cases_param_ids = %w[clinical-date Condition-onset-date clinical-date MedicationRequest-authoredon individual-birthdate]
+        comp_config = Registry.get(:config_keeper).special_cases.dig('COMPARATORS')
+        special_cases_resources = comp_config.dig('resources') || []
+        special_cases_comparators = comp_config.dig('operators') || []
+        special_cases_param_ids = comp_config.dig('param_ids') || []
 
         {}.tap do |comparators|
           param.comparator&.each_with_index do |comparator, index|
-            comparators[comparator.to_sym] = if (special_cases_resources.include? group_metadata[:resource]) && (special_cases_comparators.include? comparator) && (special_cases_param_ids.include? param_hash['id'])
-                                               'SHALL'
-                                             else
-                                               comparator_expectation(comparator_expectation_extensions[index])
-                                             end
+            is_special_case = (special_cases_resources.include? group_metadata[:resource]) &&
+                              (special_cases_comparators.include? comparator) &&
+                              (special_cases_param_ids.include? param_hash['id'])
+            value = is_special_case ? 'SHALL' : comparator_expectation(comparator_expectation_extensions[index])
+            comparators[comparator.to_sym] = value
           end
         end
       end
@@ -196,26 +193,24 @@ module InfernoSuiteGenerator
              .map { |chain, expectation| { chain:, expectation:, target: } }
       end
 
-      def multiple_or_expectation
-        expectations_hash = Registry.get(:config_keeper).multiple_or_expectations
+      def get_multiple_expectation(multiple_expectation_type = 'or')
+        expectations_hash = if multiple_expectation_type == 'or' then Registry.get(:config_keeper).multiple_or_expectations else Registry.get(:config_keeper).multiple_and_expectations end
         resource_type = group_metadata[:resource]
         param_id = param_hash['id']
+        param_hash_key = if multiple_expectation_type == 'or' then '_multipleOr' else '_multipleAnd' end
 
         expectation_from_config = expectations_hash.dig(resource_type, param_id)
-        expectation_from_ig =  (param_hash['_multipleOr'] && param_hash['_multipleOr']['extension'].first['valueCode'])
+        expectation_from_ig =  (param_hash[param_hash_key] && param_hash[param_hash_key]['extension'].first['valueCode'])
 
         expectation_from_config || expectation_from_ig
       end
 
+      def multiple_or_expectation
+        get_multiple_expectation
+      end
+
       def multiple_and_expectation
-        expectations_hash = Registry.get(:config_keeper).multiple_and_expectations
-        resource_type = group_metadata[:resource]
-        param_id = param_hash['id']
-
-        expectation_from_config = expectations_hash.dig(resource_type, param_id)
-        expectation_from_ig =  (param_hash['_multipleAnd'] && param_hash['_multipleAnd']['extension'].first['valueCode'])
-
-        expectation_from_config || expectation_from_ig
+        get_multiple_expectation('and')
       end
 
       def values
