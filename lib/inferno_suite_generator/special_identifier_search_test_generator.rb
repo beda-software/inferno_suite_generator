@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-require_relative 'naming'
-require_relative 'special_cases'
-require_relative 'search_test_generator'
-require_relative 'registry'
+require_relative "naming"
+require_relative "special_cases"
+require_relative "search_test_generator"
+require_relative "registry"
 
 module InfernoSuiteGenerator
   class Generator
@@ -15,15 +15,16 @@ module InfernoSuiteGenerator
             version_specific_resources ? version_specific_resources.include?(group.resource) : Registry.get(:config_keeper).resources_to_exclude.include?(group.resource)
           end
             .select { |group| Registry.get(:config_keeper).specific_identifiers.keys.include? group.resource }
-            .select { |group| group.searches.present? }
-            .each do |group|
-              group.searches.each do |search|
-                next unless search[:names].include? 'identifier'
-                identifier_arr = Registry.get(:config_keeper).specific_identifiers[group.resource]
-                identifier_arr.each do |special_identifier|
-                  new(group, search, base_output_dir, special_identifier, ig_metadata).generate
-                end
+                     .select { |group| group.searches.present? }
+                     .each do |group|
+            group.searches.each do |search|
+              next unless search[:names].include? "identifier"
+
+              identifier_arr = Registry.get(:config_keeper).specific_identifiers[group.resource]
+              identifier_arr.each do |special_identifier|
+                new(group, search, base_output_dir, special_identifier, ig_metadata).generate
               end
+            end
           end
         end
       end
@@ -51,13 +52,13 @@ module InfernoSuiteGenerator
       end
 
       def title
-        "Server returns valid results for #{resource_type} search by identifier (#{special_identifier['display']})"
+        "Server returns valid results for #{resource_type} search by identifier (#{special_identifier["display"]})"
       end
 
       def description
         <<~DESCRIPTION.gsub(/\n{3,}/, "\n\n")
           A server SHOULD support searching by
-          #{search_param_name_string} (#{special_identifier['display']}) on the #{resource_type} resource. This test
+          #{search_param_name_string} (#{special_identifier["display"]}) on the #{resource_type} resource. This test
           will pass if resources are returned and match the search criteria. If
           none are returned, the test is skipped.
 

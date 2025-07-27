@@ -1,26 +1,26 @@
 # frozen_string_literal: true
 
-require 'fhir_models'
-require 'inferno/ext/fhir_models'
+require "fhir_models"
+require "inferno/ext/fhir_models"
 
-require_relative 'inferno_suite_generator/ig_loader'
-require_relative 'inferno_suite_generator/ig_metadata_extractor'
-require_relative 'inferno_suite_generator/group_generator'
-require_relative 'inferno_suite_generator/must_support_test_generator'
-require_relative 'inferno_suite_generator/provenance_revinclude_search_test_generator'
-require_relative 'inferno_suite_generator/read_test_generator'
-require_relative 'inferno_suite_generator/reference_resolution_test_generator'
-require_relative 'inferno_suite_generator/search_test_generator'
-require_relative 'inferno_suite_generator/suite_generator'
-require_relative 'inferno_suite_generator/validation_test_generator'
-require_relative 'inferno_suite_generator/multiple_or_search_test_generator'
-require_relative 'inferno_suite_generator/multiple_and_search_test_generator'
-require_relative 'inferno_suite_generator/chain_search_test_generator'
-require_relative 'inferno_suite_generator/special_identifier_search_test_generator'
-require_relative 'inferno_suite_generator/special_identifiers_chain_search_test_generator'
-require_relative 'inferno_suite_generator/include_search_test_generator'
-require_relative 'inferno_suite_generator/generator_config_keeper'
-require_relative 'inferno_suite_generator/registry'
+require_relative "inferno_suite_generator/ig_loader"
+require_relative "inferno_suite_generator/ig_metadata_extractor"
+require_relative "inferno_suite_generator/group_generator"
+require_relative "inferno_suite_generator/must_support_test_generator"
+require_relative "inferno_suite_generator/provenance_revinclude_search_test_generator"
+require_relative "inferno_suite_generator/read_test_generator"
+require_relative "inferno_suite_generator/reference_resolution_test_generator"
+require_relative "inferno_suite_generator/search_test_generator"
+require_relative "inferno_suite_generator/suite_generator"
+require_relative "inferno_suite_generator/validation_test_generator"
+require_relative "inferno_suite_generator/multiple_or_search_test_generator"
+require_relative "inferno_suite_generator/multiple_and_search_test_generator"
+require_relative "inferno_suite_generator/chain_search_test_generator"
+require_relative "inferno_suite_generator/special_identifier_search_test_generator"
+require_relative "inferno_suite_generator/special_identifiers_chain_search_test_generator"
+require_relative "inferno_suite_generator/include_search_test_generator"
+require_relative "inferno_suite_generator/generator_config_keeper"
+require_relative "inferno_suite_generator/registry"
 
 module InfernoSuiteGenerator
   class Generator
@@ -56,7 +56,7 @@ module InfernoSuiteGenerator
       self.ig_metadata = IGMetadataExtractor.new(ig_resources).extract
 
       FileUtils.mkdir_p(base_output_dir)
-      File.open(File.join(base_output_dir, 'metadata.yml'), 'w') do |file|
+      File.open(File.join(base_output_dir, "metadata.yml"), "w") do |file|
         file.write(YAML.dump(ig_metadata.to_hash))
       end
     end
@@ -66,7 +66,7 @@ module InfernoSuiteGenerator
     end
 
     def load_ig_package
-      FHIR.logger = Logger.new('/dev/null')
+      FHIR.logger = Logger.new("/dev/null")
       self.ig_resources = IGLoader.new(ig_deps_path).load
     end
 
@@ -138,7 +138,7 @@ module InfernoSuiteGenerator
       related_result_folder = Registry.get(:config_keeper).result_folder
 
       file_content = File.read(file_path)
-      string_to_add = "require_relative '#{related_result_folder.split('/opt/inferno/lib/').last}/au_core_test_suite'"
+      string_to_add = "require_relative '#{related_result_folder.split("/opt/inferno/lib/").last}/au_core_test_suite'"
 
       return if file_content.include? string_to_add
 

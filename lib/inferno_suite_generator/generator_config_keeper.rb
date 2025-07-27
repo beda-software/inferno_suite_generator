@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'json'
+require "json"
 
 module InfernoSuiteGenerator
   class Generator
@@ -17,95 +17,95 @@ module InfernoSuiteGenerator
       end
 
       def cs_profile_url
-        @config['cs_profile_url']
+        @config["cs_profile_url"]
       end
 
       def id
-        @config['id']
+        @config["id"]
       end
 
       def title
-        @config['title']
+        @config["title"]
       end
 
       def suite_module_name
-        @config['suite_module_name']
+        @config["suite_module_name"]
       end
 
       def tx_server_url
-        @config['tx_server_url']
+        @config["tx_server_url"]
       end
 
       def links
-        @config['links'] || []
+        @config["links"] || []
       end
 
       def module_name_prefix
-        @config['module_name_prefix']
+        @config["module_name_prefix"]
       end
 
       def test_id_prefix
-        @config['test_id_prefix']
+        @config["test_id_prefix"]
       end
 
       def metadata
-        @config['metadata'] || {}
+        @config["metadata"] || {}
       end
 
       def description
-        metadata['description']
+        metadata["description"]
       end
 
       def last_updated
-        metadata['last_updated']
+        metadata["last_updated"]
       end
 
       def paths
-        @config['paths'] || {}
+        @config["paths"] || {}
       end
 
       def result_folder
-        paths['result_folder']
+        paths["result_folder"]
       end
 
       def related_result_folder
-        paths['related_result_folder']
+        paths["related_result_folder"]
       end
 
       def ig_packages_path
-        paths['ig_packages']
+        paths["ig_packages"]
       end
 
       def ig_deps_path
-        paths['ig_deps']
+        paths["ig_deps"]
       end
 
       def main_file_path
-        paths['main_file']
+        paths["main_file"]
       end
 
       def ig_output_directory_path
-        paths['ig_output_directory']
+        paths["ig_output_directory"]
       end
 
       def ig_json_files_path
-        paths['ig_json_files']
+        paths["ig_json_files"]
       end
 
       def extra_json_paths
-        paths['extra_json_paths'] || []
+        paths["extra_json_paths"] || []
       end
 
       def naming_mappings
-        configs['NAMING'] || {}
+        configs["NAMING"] || {}
       end
 
       def multiple_and_expectations
-        configs['multipleAndExpectations'] || {}
+        configs["multipleAndExpectations"] || {}
       end
 
       def multiple_or_expectations
-        configs['multipleOrExpectations'] || {}
+        configs["multipleOrExpectations"] || {}
       end
 
       def constant_name_for_profile(profile_url)
@@ -113,7 +113,7 @@ module InfernoSuiteGenerator
       end
 
       def skip_profiles
-        configs.dig('SKIP_PROFILES', 'profiles') || []
+        configs.dig("SKIP_PROFILES", "profiles") || []
       end
 
       def skip_profile?(profile_url)
@@ -121,23 +121,23 @@ module InfernoSuiteGenerator
       end
 
       def special_cases
-        configs['SPECIAL_CASES'] || {}
+        configs["SPECIAL_CASES"] || {}
       end
 
       def resources_to_exclude
-        special_cases.dig('RESOURCES_TO_EXCLUDE', 'resources') || []
+        special_cases.dig("RESOURCES_TO_EXCLUDE", "resources") || []
       end
 
       def specific_identifiers
-        special_cases.dig('SPECIFIC_IDENTIFIER') || {}
+        special_cases["SPECIFIC_IDENTIFIER"] || {}
       end
 
       def fixed_search_values
-        configs['FIXED_SEARCH_VALUES'] || {}
+        configs["FIXED_SEARCH_VALUES"] || {}
       end
 
       def category_first_profiles
-        special_cases.dig('ALL_VERSION_CATEGORY_FIRST_PROFILES', 'profiles') || []
+        special_cases.dig("ALL_VERSION_CATEGORY_FIRST_PROFILES", "profiles") || []
       end
 
       def category_first_profile?(profile_url, version = nil)
@@ -146,7 +146,7 @@ module InfernoSuiteGenerator
       end
 
       def patient_first_profiles
-        special_cases.dig('ALL_VERSION_PATIENT_FIRST_PROFILES', 'profiles') || []
+        special_cases.dig("ALL_VERSION_PATIENT_FIRST_PROFILES", "profiles") || []
       end
 
       def patient_first_profile?(profile_url)
@@ -154,7 +154,7 @@ module InfernoSuiteGenerator
       end
 
       def id_first_profiles
-        special_cases.dig('ALL_VERSION_ID_FIRST_PROFILES', 'profiles') || []
+        special_cases.dig("ALL_VERSION_ID_FIRST_PROFILES", "profiles") || []
       end
 
       def id_first_profile?(profile_url)
@@ -162,7 +162,7 @@ module InfernoSuiteGenerator
       end
 
       def name_first_profiles
-        special_cases.dig('ALL_VERSION_NAME_FIRST_PROFILES', 'profiles') || []
+        special_cases.dig("ALL_VERSION_NAME_FIRST_PROFILES", "profiles") || []
       end
 
       def name_first_profile?(profile_url)
@@ -172,7 +172,7 @@ module InfernoSuiteGenerator
       def version_specific_profiles(version = nil)
         return {} if version.nil?
 
-        special_cases.dig('VERSION_SPECIFIC_PROFILES', 'profiles') || {}
+        special_cases.dig("VERSION_SPECIFIC_PROFILES", "profiles") || {}
       end
 
       def version_specific_category_first_profiles(version = nil)
@@ -185,19 +185,19 @@ module InfernoSuiteGenerator
         if category_first_profile?(profile_url, version)
           %w[patient category]
         elsif patient_first_profile?(profile_url)
-          ['patient']
+          ["patient"]
         elsif id_first_profile?(profile_url)
-          ['_id']
+          ["_id"]
         elsif name_first_profile?(profile_url)
-          ['name']
-        elsif resource == 'Observation'
+          ["name"]
+        elsif resource == "Observation"
           %w[patient code]
-        elsif resource == 'MedicationRequest'
-          ['patient']
-        elsif resource == 'CareTeam'
+        elsif resource == "MedicationRequest"
+          ["patient"]
+        elsif resource == "CareTeam"
           %w[patient status]
         else
-          ['patient']
+          ["patient"]
         end
       end
 
@@ -205,11 +205,11 @@ module InfernoSuiteGenerator
 
       def load_config
         @config = JSON.parse(File.read(@config_file_path))
-        @version = @config['version'] || []
+        @version = @config["version"] || []
       end
 
       def configs
-        @config['configs'] || {}
+        @config["configs"] || {}
       end
     end
   end

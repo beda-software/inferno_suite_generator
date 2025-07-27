@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require_relative 'naming'
-require_relative 'special_cases'
-require_relative 'basic_test_generator'
+require_relative "naming"
+require_relative "special_cases"
+require_relative "basic_test_generator"
 
 module InfernoSuiteGenerator
   class Generator
@@ -20,11 +20,11 @@ module InfernoSuiteGenerator
                      end
                      .each do |group|
             new(group, ig_metadata, base_output_dir:).generate
-            next unless group.resource == 'MedicationRequest'
+            next unless group.resource == "MedicationRequest"
 
             # The Medication validation test lives in the MedicationRequest
             # group, so we need to pass in that group's metadata
-            medication_group_metadata = ig_metadata.groups.find { |group| group.resource == 'Medication' }
+            medication_group_metadata = ig_metadata.groups.find { |group| group.resource == "Medication" }
             new(medication_group_metadata, ig_metadata, group, base_output_dir:).generate
           end
         end
@@ -68,19 +68,19 @@ module InfernoSuiteGenerator
       def skip_if_empty
         # Return true if a system must demonstrate at least one example of the resource type.
         # This drives omit vs. skip result statuses in this test.
-        resource_type != 'Medication'
+        resource_type != "Medication"
       end
 
       def generate
         FileUtils.mkdir_p(output_file_directory)
-        File.open(output_file_name, 'w') { |f| f.write(output) }
+        File.open(output_file_name, "w") { |f| f.write(output) }
 
         test_metadata = {
           id: test_id,
           file_name: base_output_file_name
         }
 
-        if resource_type == 'Medication'
+        if resource_type == "Medication"
           medication_request_metadata.add_test(**test_metadata)
         else
           group_metadata.add_test(**test_metadata)
@@ -99,7 +99,7 @@ module InfernoSuiteGenerator
       end
 
       def description_intro
-        if resource_type == 'Medication'
+        if resource_type == "Medication"
           <<~MEDICATION_INTRO
             This test verifies resources returned from previous tests conform to
             the [#{profile_name}](#{profile_url}).

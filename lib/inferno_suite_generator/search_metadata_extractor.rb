@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
-require_relative 'search_definition_metadata_extractor'
+require_relative "search_definition_metadata_extractor"
 
 module InfernoSuiteGenerator
   class Generator
     class SearchMetadataExtractor
       COMBO_EXTENSION_URL =
-        'http://hl7.org/fhir/StructureDefinition/capabilitystatement-search-parameter-combination'
+        "http://hl7.org/fhir/StructureDefinition/capabilitystatement-search-parameter-combination"
 
       attr_accessor :resource_capabilities, :ig_resources, :profile_elements, :group_metadata
 
@@ -35,6 +35,7 @@ module InfernoSuiteGenerator
 
       def basic_searches
         return [] if no_search_params?
+
         search_parameters = resource_capabilities.searchParam
         filtered_search_parameters = filter_search_params_with_expectation(search_parameters)
         filtered_search_parameters = remove_excluded_search_params(filtered_search_parameters)
@@ -53,14 +54,15 @@ module InfernoSuiteGenerator
 
       def combo_searches
         return [] if search_extensions.blank?
+
         combo_search_params = search_extensions
-                                .select { |extension| extension.url == COMBO_EXTENSION_URL }
-                                .select { |extension| %w[SHALL SHOULD MAY].include? conformance_expectation(extension) }
-                                .map do |extension|
+                              .select { |extension| extension.url == COMBO_EXTENSION_URL }
+                              .select { |extension| %w[SHALL SHOULD MAY].include? conformance_expectation(extension) }
+                              .map do |extension|
           names = extension.extension.select { |param| param.valueString.present? }.map(&:valueString)
           {
             expectation: conformance_expectation(extension),
-            names: names
+            names:
           }
         end
 
@@ -86,11 +88,11 @@ module InfernoSuiteGenerator
         # TODO: Add to config
         # NOTE: https://github.com/hl7au/au-fhir-core-inferno/issues/57
         profile_url = group_metadata[:profile_url]
-        if profile_url == 'http://hl7.org.au/fhir/core/StructureDefinition/au-core-medicationrequest'
-          @searches.map do |search|
-            if search[:names] == ["patient", "intent", "authoredon"] && search[:expectation] == "SHALL"
-              search[:expectation] = "SHOULD"
-            end
+        return unless profile_url == "http://hl7.org.au/fhir/core/StructureDefinition/au-core-medicationrequest"
+
+        @searches.map do |search|
+          if search[:names] == %w[patient intent authoredon] && search[:expectation] == "SHALL"
+            search[:expectation] = "SHOULD"
           end
         end
       end
@@ -105,8 +107,8 @@ module InfernoSuiteGenerator
 
       def remove_excluded_search_params(search_params)
         # TODO: Add to the config
-        search_params.select do |search_param|
-          !%w[_count _sort _include].include? search_param.name
+        search_params.reject do |search_param|
+          %w[_count _sort _include].include? search_param.name
         end
       end
     end

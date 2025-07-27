@@ -1,29 +1,29 @@
 # frozen_string_literal: true
 
 module Helpers
-  DAR_CODE_SYSTEM_URL = 'http://terminology.hl7.org/CodeSystem/data-absent-reason'
-  DAR_EXTENSION_URL = 'http://hl7.org/fhir/StructureDefinition/data-absent-reason'
+  DAR_CODE_SYSTEM_URL = "http://terminology.hl7.org/CodeSystem/data-absent-reason"
+  DAR_EXTENSION_URL = "http://hl7.org/fhir/StructureDefinition/data-absent-reason"
 
   def self.test_on_target_resource_data?(special_cases_hash, resource_type, search_param_names)
-    if special_cases_hash.keys.include? resource_type
-      special_cases_hash[resource_type].include? search_param_names
-    end
+    return unless special_cases_hash.keys.include? resource_type
+
+    special_cases_hash[resource_type].include? search_param_names
   end
 
   def self.multiple_test_description(multiple_type, conformance_expectation, search_param_name_string, resource_type, url_version)
-    multiple_type_str = multiple_type == 'OR' ? 'multipleOr' : 'multipleAnd' 
+    multiple_type_str = multiple_type == "OR" ? "multipleOr" : "multipleAnd"
     <<~DESCRIPTION.gsub(/\n{3,}/, "\n\n")
-    A server #{conformance_expectation} support searching by #{multiple_type_str}
-    #{search_param_name_string} on the #{resource_type} resource. This test
-    will pass if resources are returned and match the search criteria. If
-    none are returned, the test is skipped.
+      A server #{conformance_expectation} support searching by #{multiple_type_str}
+      #{search_param_name_string} on the #{resource_type} resource. This test
+      will pass if resources are returned and match the search criteria. If
+      none are returned, the test is skipped.
 
-    [AU Core Server CapabilityStatement](http://hl7.org.au/fhir/core/#{url_version}/CapabilityStatement-au-core-server.html)
+      [AU Core Server CapabilityStatement](http://hl7.org.au/fhir/core/#{url_version}/CapabilityStatement-au-core-server.html)
     DESCRIPTION
   end
 
   def self.get_http_header(header_name, header_value)
-    (header_name && header_value) ? {header_name => header_value} : {}
+    header_name && header_value ? { header_name => header_value } : {}
   end
 
   def self.extract_extensions_from_resource(resource, extensions = [])
@@ -33,8 +33,8 @@ module Helpers
   end
 
   def self.get_capability_statement_group_description_text(title, for_group_description = true)
-    background_title = for_group_description ? '# Background' : '#### Background'
-    testing_methodology_title = for_group_description ? '# Testing Methodology' : '#### Testing Methodology'
+    background_title = for_group_description ? "# Background" : "#### Background"
+    testing_methodology_title = for_group_description ? "# Testing Methodology" : "#### Testing Methodology"
 
     <<~DESCRIPTION
       #{background_title}
@@ -73,11 +73,11 @@ module Helpers
   def self.get_group_description_text(title, resource_type, profile_name, group_version, profile_url,
                                       required_searches, search_param_name_string, search_validation_resource_type,
                                       for_group_description = true)
-    background_title = for_group_description ? '# Background' : '#### Background'
-    testing_methodology_title = for_group_description ? '# Testing Methodology' : '#### Testing Methodology'
-    must_support_title = for_group_description ? '## Must Support' : '##### Must Support'
-    profile_validation_title = for_group_description ? '## Profile Validation' : '##### Profile Validation'
-    reference_validation_title = for_group_description ? '## Reference Validation' : '##### Reference Validation'
+    background_title = for_group_description ? "# Background" : "#### Background"
+    testing_methodology_title = for_group_description ? "# Testing Methodology" : "#### Testing Methodology"
+    must_support_title = for_group_description ? "## Must Support" : "##### Must Support"
+    profile_validation_title = for_group_description ? "## Profile Validation" : "##### Profile Validation"
+    reference_validation_title = for_group_description ? "## Reference Validation" : "##### Reference Validation"
 
     <<~DESCRIPTION
       #{background_title}
@@ -115,16 +115,16 @@ module Helpers
   end
 
   def self.search_description(required_searches, search_param_name_string, search_validation_resource_type, for_group_description, resource_type)
-    return '' if required_searches.blank?
+    return "" if required_searches.blank?
 
-    is_independant_group = ['Practitioner', 'PractitionerRole', 'Location', 'Organization'].include? resource_type
-    basic_search_parameters_text = 'The first search uses the selected patient(s) from the prior launch sequence. Any subsequent searches will look for its parameter values from the results of the first search. For example, the `identifier` search in the patient sequence is performed by looking for an existing `Patient.identifier` from any of the resources returned in the `_id` search. If a value cannot be found this way, the search is skipped.'
-    independant_search_parameters_text = 'Resources for this test group can\'t be found using patient search parameters. This means that in this particular case, the first test will be a read test, not a search. To ensure that this resource will be available for reading, please review the [prerequisites](https://github.com/hl7au/au-fhir-core-inferno/blob/master/docs/pre-requisites.md). Additionally, you can run this test group separately by using specific resource IDs.'
+    is_independant_group = %w[Practitioner PractitionerRole Location Organization].include? resource_type
+    basic_search_parameters_text = "The first search uses the selected patient(s) from the prior launch sequence. Any subsequent searches will look for its parameter values from the results of the first search. For example, the `identifier` search in the patient sequence is performed by looking for an existing `Patient.identifier` from any of the resources returned in the `_id` search. If a value cannot be found this way, the search is skipped."
+    independant_search_parameters_text = "Resources for this test group can't be found using patient search parameters. This means that in this particular case, the first test will be a read test, not a search. To ensure that this resource will be available for reading, please review the [prerequisites](https://github.com/hl7au/au-fhir-core-inferno/blob/master/docs/pre-requisites.md). Additionally, you can run this test group separately by using specific resource IDs."
     search_parameters_text = is_independant_group ? independant_search_parameters_text : basic_search_parameters_text
 
-    searching_title = for_group_description ? '## Searching' : '##### Searching'
-    search_parameters_title = for_group_description ? '### Search Parameters' : '###### Search Parameters'
-    search_validation_title = for_group_description ? '### Search Validation' : '###### Search Validation'
+    searching_title = for_group_description ? "## Searching" : "##### Searching"
+    search_parameters_title = for_group_description ? "### Search Parameters" : "###### Search Parameters"
+    search_validation_title = for_group_description ? "### Search Validation" : "###### Search Validation"
 
     <<~SEARCH_DESCRIPTION
       #{searching_title}
@@ -159,7 +159,7 @@ module Helpers
   def self.process_resource_element(element, extensions)
     case element
     when Hash
-      extensions.concat(element['extension']) if element['extension'].is_a?(Array)
+      extensions.concat(element["extension"]) if element["extension"].is_a?(Array)
       element.each_value do |value|
         process_resource_element(value, extensions)
       end
@@ -169,7 +169,7 @@ module Helpers
   end
 
   def self.custom_validation_group_title_text
-    'Custom Validation Group'
+    "Custom Validation Group"
   end
 
   def self.custom_validation_group_description_text
@@ -180,11 +180,11 @@ module Helpers
   end
 
   def self.custom_validation_test_title_text
-    'Custom validation of the resource'
+    "Custom validation of the resource"
   end
 
   def self.custom_validation_test_input_text
-    'FHIR resource in JSON format (custom validation)'
+    "FHIR resource in JSON format (custom validation)"
   end
 
   def self.custom_validation_test_description_text
@@ -211,25 +211,25 @@ module Helpers
   end
 
   def self.default_patient_ids_string
-    'baratz-toni, irvine-ronny-lawrence, italia-sofia, howe-deangelo, hayes-arianne, baby-banks-john, banks-mia-leanne'
+    "baratz-toni, irvine-ronny-lawrence, italia-sofia, howe-deangelo, hayes-arianne, baby-banks-john, banks-mia-leanne"
   end
 
   def self.check_for_dar(resource)
-    resource.each_element do |element, _meta, path|
+    resource.each_element do |element, _meta, _path|
       next unless element.is_a?(FHIR::Coding)
 
-      return true if (element.code == 'masked' || element.code == 'unknown') && element.system == DAR_CODE_SYSTEM_URL
+      return true if (element.code == "masked" || element.code == "unknown") && element.system == DAR_CODE_SYSTEM_URL
     end
 
     false
   end
 
   def self.check_for_dar_extension(resource)
-    return resource.source_contents&.include? DAR_EXTENSION_URL
+    resource.source_contents&.include? DAR_EXTENSION_URL
   end
 
   def self.return_uniq_list_resources(resource_list)
-    return resource_list.uniq
+    resource_list.uniq
   end
 
   def self.is_message_exist_in_list(message_list, message)

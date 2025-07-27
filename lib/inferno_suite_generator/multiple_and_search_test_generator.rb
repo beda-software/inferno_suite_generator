@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-require_relative 'naming'
-require_relative 'special_cases'
-require_relative 'search_test_generator'
-require_relative 'helpers'
+require_relative "naming"
+require_relative "special_cases"
+require_relative "search_test_generator"
+require_relative "helpers"
 
 module InfernoSuiteGenerator
   class Generator
@@ -14,7 +14,10 @@ module InfernoSuiteGenerator
                      .select { |group| group.searches.present? }
                      .each do |group|
             group.search_definitions.each_key do |search_key|
-              new(search_key.to_s, group, group.search_definitions[search_key], base_output_dir, ig_metadata).generate if group.search_definitions[search_key].key?(:multiple_and) && search_key.to_s != 'patient'
+              if group.search_definitions[search_key].key?(:multiple_and) && search_key.to_s != "patient"
+                new(search_key.to_s, group, group.search_definitions[search_key], base_output_dir,
+                    ig_metadata).generate
+              end
             end
           end
         end
@@ -33,7 +36,7 @@ module InfernoSuiteGenerator
       end
 
       def search_identifier
-        search_name.to_s.tr('-', '_')
+        search_name.to_s.tr("-", "_")
       end
 
       def search_title
@@ -49,8 +52,8 @@ module InfernoSuiteGenerator
       end
 
       def fixed_value_search?
-        first_search? && search_metadata[:names] != ['patient'] &&
-          !group_metadata.delayed? && resource_type != 'Patient'
+        first_search? && search_metadata[:names] != ["patient"] &&
+          !group_metadata.delayed? && resource_type != "Patient"
       end
 
       def fixed_value_search_param_name
@@ -74,11 +77,11 @@ module InfernoSuiteGenerator
       end
 
       def path_for_value(path)
-        path == 'class' ? 'local_class' : path
+        path == "class" ? "local_class" : path
       end
 
       def optional?
-        conformance_expectation == 'SHOULD' || conformance_expectation == 'MAY'
+        conformance_expectation == "SHOULD" || conformance_expectation == "MAY"
       end
 
       def search_definition(name)
@@ -91,12 +94,12 @@ module InfernoSuiteGenerator
 
       def required_multiple_and_search_params
         @required_multiple_and_search_params ||=
-          search_definition(search_name)[:multiple_and] == 'SHALL'
+          search_definition(search_name)[:multiple_and] == "SHALL"
       end
 
       def optional_multiple_and_search_params
         @optional_multiple_and_search_params ||=
-          search_definition(search_name)[:multiple_and] == 'SHOULD'
+          search_definition(search_name)[:multiple_and] == "SHOULD"
       end
 
       def required_multiple_and_search_params_string
@@ -113,11 +116,11 @@ module InfernoSuiteGenerator
 
       def array_of_strings(array)
         quoted_strings = array.map { |element| "'#{element}'" }
-        "[#{quoted_strings.join(', ')}]"
+        "[#{quoted_strings.join(", ")}]"
       end
 
       def test_reference_variants?
-        first_search? && search_param_names.include?('patient')
+        first_search? && search_param_names.include?("patient")
       end
 
       def test_medication_inclusion?
@@ -130,19 +133,22 @@ module InfernoSuiteGenerator
 
       def search_properties
         {}.tap do |properties|
-          properties[:first_search] = 'true' if first_search?
-          properties[:fixed_value_search] = 'true' if fixed_value_search?
+          properties[:first_search] = "true" if first_search?
+          properties[:fixed_value_search] = "true" if fixed_value_search?
           properties[:resource_type] = "'#{resource_type}'"
           properties[:search_param_names] = search_param_names
-          properties[:saves_delayed_references] = 'true' if saves_delayed_references?
-          properties[:test_medication_inclusion] = 'true' if test_medication_inclusion?
-          properties[:test_reference_variants] = 'true' if test_reference_variants?
+          properties[:saves_delayed_references] = "true" if saves_delayed_references?
+          properties[:test_medication_inclusion] = "true" if test_medication_inclusion?
+          properties[:test_reference_variants] = "true" if test_reference_variants?
           if required_multiple_and_search_params.present?
             properties[:multiple_and_search_params] =
               required_multiple_and_search_params_string
           end
-          properties[:optional_multiple_and_search_params] = optional_multiple_and_search_params_string if optional_multiple_and_search_params.present?
-          properties[:search_by_target_resource_data] = 'true' if Helpers.test_on_target_resource_data?(
+          if optional_multiple_and_search_params.present?
+            properties[:optional_multiple_and_search_params] =
+              optional_multiple_and_search_params_string
+          end
+          properties[:search_by_target_resource_data] = "true" if Helpers.test_on_target_resource_data?(
             SpecialCases::MULTIPLE_OR_AND_SEARCH_BY_TARGET_RESOURCE,
             resource_type, search_param_names
           )
@@ -151,12 +157,13 @@ module InfernoSuiteGenerator
 
       def search_test_properties_string
         search_properties
-          .map { |key, value| "#{' ' * 8}#{key}: #{value}" }
+          .map { |key, value| "#{" " * 8}#{key}: #{value}" }
           .join(",\n")
       end
 
       def description
-        Helpers.multiple_test_description('AND', conformance_expectation, search_param_name_string, resource_type, url_version)
+        Helpers.multiple_test_description("AND", conformance_expectation, search_param_name_string, resource_type,
+                                          url_version)
       end
     end
   end

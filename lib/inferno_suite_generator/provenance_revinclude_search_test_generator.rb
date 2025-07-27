@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require_relative 'naming'
-require_relative 'special_cases'
-require_relative 'basic_test_generator'
+require_relative "naming"
+require_relative "special_cases"
+require_relative "basic_test_generator"
 
 module InfernoSuiteGenerator
   class Generator
@@ -18,7 +18,7 @@ module InfernoSuiteGenerator
                          SpecialCases::RESOURCES_TO_EXCLUDE.include?(group.resource)
                        end
                      end
-                     .select { |group| group.revincludes.include? 'Provenance:target' }
+                     .select { |group| group.revincludes.include? "Provenance:target" }
                      .each { |group| new(group, group.searches.first, base_output_dir, ig_metadata).generate }
         end
       end
@@ -35,7 +35,7 @@ module InfernoSuiteGenerator
       end
 
       def search_identifier
-        'provenance_revinclude'
+        "provenance_revinclude"
       end
 
       def search_title
@@ -57,8 +57,8 @@ module InfernoSuiteGenerator
       end
 
       def fixed_value_search?
-        search_metadata[:names] != ['patient'] &&
-          !group_metadata.delayed? && resource_type != 'Patient'
+        search_metadata[:names] != ["patient"] &&
+          !group_metadata.delayed? && resource_type != "Patient"
       end
 
       def fixed_value_search_param_name
@@ -66,12 +66,12 @@ module InfernoSuiteGenerator
       end
 
       def search_param_name_string
-        "#{search_metadata[:names].join(' + ')} + revInclude:Provenance:target"
+        "#{search_metadata[:names].join(" + ")} + revInclude:Provenance:target"
       end
 
       def needs_patient_id?
-        search_metadata[:names].include?('patient') ||
-          (resource_type == 'Patient' && search_metadata[:names].include?('_id'))
+        search_metadata[:names].include?("patient") ||
+          (resource_type == "Patient" && search_metadata[:names].include?("_id"))
       end
 
       def search_param_names
@@ -83,11 +83,11 @@ module InfernoSuiteGenerator
       end
 
       def path_for_value(path)
-        path == 'class' ? 'local_class' : path
+        path == "class" ? "local_class" : path
       end
 
       def required_comparators_for_param(name)
-        search_definition(name)[:comparators].select { |_comparator, expectation| expectation == 'SHALL' }
+        search_definition(name)[:comparators].select { |_comparator, expectation| expectation == "SHALL" }
       end
 
       def required_comparators
@@ -112,7 +112,7 @@ module InfernoSuiteGenerator
       end
 
       def possible_status_search?
-        !search_metadata[:names].include?('status') && group_metadata.search_definitions.key?(:status)
+        !search_metadata[:names].include?("status") && group_metadata.search_definitions.key?(:status)
       end
 
       def token_search_params
@@ -132,21 +132,21 @@ module InfernoSuiteGenerator
 
       def array_of_strings(array)
         quoted_strings = array.map { |element| "'#{element}'" }
-        "[#{quoted_strings.join(', ')}]"
+        "[#{quoted_strings.join(", ")}]"
       end
 
       def search_properties
         {}.tap do |properties|
-          properties[:fixed_value_search] = 'true' if fixed_value_search?
+          properties[:fixed_value_search] = "true" if fixed_value_search?
           properties[:resource_type] = "'#{resource_type}'"
           properties[:search_param_names] = search_param_names_array
-          properties[:possible_status_search] = 'true' if possible_status_search?
+          properties[:possible_status_search] = "true" if possible_status_search?
         end
       end
 
       def search_test_properties_string
         search_properties
-          .map { |key, value| "#{' ' * 8}#{key}: #{value}" }
+          .map { |key, value| "#{" " * 8}#{key}: #{value}" }
           .join(",\n")
       end
     end

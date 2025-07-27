@@ -9,28 +9,28 @@ module InfernoSuiteGenerator
       ].freeze
 
       VERSION_SPECIFIC_RESOURCES_TO_EXCLUDE = {
-        'v1.0.0' => %w[Medication RelatedPerson]
+        "v1.0.0" => %w[Medication RelatedPerson]
       }.freeze
 
       PROFILES_TO_EXCLUDE = [].freeze
 
       PATIENT_IDENTIFIERS = [
-        { display: 'IHI', url: 'http://ns.electronichealth.net.au/id/hi/ihi/1.0' },
-        { display: 'Medicare', url: 'http://ns.electronichealth.net.au/id/medicare-number' },
-        { display: 'DVA', url: 'http://ns.electronichealth.net.au/id/dva' }
+        { display: "IHI", url: "http://ns.electronichealth.net.au/id/hi/ihi/1.0" },
+        { display: "Medicare", url: "http://ns.electronichealth.net.au/id/medicare-number" },
+        { display: "DVA", url: "http://ns.electronichealth.net.au/id/dva" }
       ].freeze
 
       PRACTITIONER_IDENTIFIERS = [
-        { display: 'HPI-I', url: 'http://ns.electronichealth.net.au/id/hi/hpii/1.0' }
+        { display: "HPI-I", url: "http://ns.electronichealth.net.au/id/hi/hpii/1.0" }
       ].freeze
 
       PRACTITIONER_ROLE_IDENTIFIERS = [
-        { display: 'Medicare', url: 'http://ns.electronichealth.net.au/id/medicare-provider-number' }
+        { display: "Medicare", url: "http://ns.electronichealth.net.au/id/medicare-provider-number" }
       ].freeze
 
       ORGANIZATION_IDENTIFIERS = [
-        { display: 'HPI-O', url: 'http://ns.electronichealth.net.au/id/hi/hpio/1.0' },
-        { display: 'ABN', url: 'http://hl7.org.au/id/abn' }
+        { display: "HPI-O", url: "http://ns.electronichealth.net.au/id/hi/hpio/1.0" },
+        { display: "ABN", url: "http://hl7.org.au/id/abn" }
       ].freeze
 
       # In the current implementation (2024.10.16/1.0.0-ci-build) there is no way
@@ -42,26 +42,26 @@ module InfernoSuiteGenerator
       # https://github.com/hl7au/au-fhir-core-inferno/issues/199
 
       SEARCH_PARAMS_FOR_INCLUDE_BY_RESOURCE = {
-        'MedicationStatement' => [
-          ['medication']
+        "MedicationStatement" => [
+          ["medication"]
         ],
-        'MedicationRequest' => [
-          ['patient'],
+        "MedicationRequest" => [
+          ["patient"],
           %w[patient intent],
           %w[patient intent status],
-          ['_id'],
+          ["_id"],
           %w[patient intent authoredon]
         ],
-        'PractitionerRole' => [
-          ['identifier'],
-          ['practitioner'],
-          ['_id'],
-          ['specialty']
+        "PractitionerRole" => [
+          ["identifier"],
+          ["practitioner"],
+          ["_id"],
+          ["specialty"]
         ]
       }.freeze
 
       MULTIPLE_OR_AND_SEARCH_BY_TARGET_RESOURCE = {
-        'PractitionerRole' => [['practitioner']]
+        "PractitionerRole" => [["practitioner"]]
       }.freeze
     end
   end

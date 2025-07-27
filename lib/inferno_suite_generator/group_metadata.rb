@@ -33,14 +33,14 @@ module InfernoSuiteGenerator
       ].freeze
 
       NON_USCDI_RESOURCES = {
-        'Encounter' => %w[v311 v400],
-        'Location' => %w[v311 v400 v501 v610],
-        'Organization' => %w[v311 v400 v501 v610],
-        'Practitioner' => %w[v311 v400 v501 v610],
-        'PractitionerRole' => %w[v311 v400 v501 v610],
-        'Provenance' => %w[v311 v400 v501 v610],
-        'RelatedPerson' => %w[v501 v610],
-        'Specimen' => ['v610']
+        "Encounter" => %w[v311 v400],
+        "Location" => %w[v311 v400 v501 v610],
+        "Organization" => %w[v311 v400 v501 v610],
+        "Practitioner" => %w[v311 v400 v501 v610],
+        "PractitionerRole" => %w[v311 v400 v501 v610],
+        "Provenance" => %w[v311 v400 v501 v610],
+        "RelatedPerson" => %w[v501 v610],
+        "Specimen" => ["v610"]
       }.freeze
 
       ATTRIBUTES.each { |name| attr_accessor name }
@@ -54,13 +54,13 @@ module InfernoSuiteGenerator
       end
 
       def delayed?
-        return false if resource == 'Patient'
+        return false if resource == "Patient"
 
         no_patient_searches? || non_uscdi_resource?
       end
 
       def no_patient_searches?
-        searches.none? { |search| search[:names].include? 'patient' }
+        searches.none? { |search| search[:names].include? "patient" }
       end
 
       def non_uscdi_resource?
@@ -75,7 +75,7 @@ module InfernoSuiteGenerator
           file_name:
         }
 
-        if delayed? && id.include?('read')
+        if delayed? && id.include?("read")
           self.tests.unshift(test_metadata)
         else
           self.tests << test_metadata
@@ -94,7 +94,7 @@ module InfernoSuiteGenerator
             profile_urls = (reference[:profiles] & delayed_profiles)
             delayed_resources = profile_urls.map { |url| ig_resources.resource_for_profile(url) }
             {
-              path: reference[:path].gsub("#{resource}.", ''),
+              path: reference[:path].gsub("#{resource}.", ""),
               resources: delayed_resources
             }
           end

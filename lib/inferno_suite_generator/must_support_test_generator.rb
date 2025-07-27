@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require_relative 'naming'
-require_relative 'special_cases'
-require_relative 'basic_test_generator'
+require_relative "naming"
+require_relative "special_cases"
+require_relative "basic_test_generator"
 
 module InfernoSuiteGenerator
   class Generator
@@ -37,7 +37,7 @@ module InfernoSuiteGenerator
       end
 
       def resource_collection_string
-        'all_scratch_resources'
+        "all_scratch_resources"
       end
 
       def must_support_list_string
@@ -65,13 +65,13 @@ module InfernoSuiteGenerator
           next unless choice[:uscdi_only].presence == uscdi_only.presence && choice.key?(:paths)
 
           choice[:paths].each { |path| element_names.delete("#{resource_type}.#{path}") }
-          element_names << choice[:paths].map { |path| "#{resource_type}.#{path}" }.join(' or ')
+          element_names << choice[:paths].map { |path| "#{resource_type}.#{path}" }.join(" or ")
         end
 
         (slice_names + element_names + extension_names)
           .uniq
           .sort
-          .map { |name| "#{' ' * 8}* #{name}" }
+          .map { |name| "#{" " * 8}* #{name}" }
           .join("\n")
       end
     end

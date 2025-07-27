@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require_relative 'naming'
-require_relative 'special_cases'
-require_relative 'basic_test_generator'
+require_relative "naming"
+require_relative "special_cases"
+require_relative "basic_test_generator"
 
 module InfernoSuiteGenerator
   class Generator
@@ -37,7 +37,7 @@ module InfernoSuiteGenerator
       end
 
       def search_identifier
-        search_metadata[:names].join('_').tr('-', '_')
+        search_metadata[:names].join("_").tr("-", "_")
       end
 
       def search_title
@@ -59,7 +59,7 @@ module InfernoSuiteGenerator
       end
 
       def first_search_for_patient_by_patient_id
-        first_search? && resource_type == 'Patient' && search_metadata[:names].first == '_id'
+        first_search? && resource_type == "Patient" && search_metadata[:names].first == "_id"
       end
 
       def first_search?
@@ -67,8 +67,8 @@ module InfernoSuiteGenerator
       end
 
       def fixed_value_search?
-        first_search? && search_metadata[:names] != ['patient'] &&
-          !group_metadata.delayed? && resource_type != 'Patient'
+        first_search? && search_metadata[:names] != ["patient"] &&
+          !group_metadata.delayed? && resource_type != "Patient"
       end
 
       def fixed_value_search_param_name
@@ -76,12 +76,12 @@ module InfernoSuiteGenerator
       end
 
       def search_param_name_string
-        search_metadata[:names].join(' + ')
+        search_metadata[:names].join(" + ")
       end
 
       def needs_patient_id?
-        search_metadata[:names].include?('patient') ||
-          (resource_type == 'Patient' && search_metadata[:names].include?('_id'))
+        search_metadata[:names].include?("patient") ||
+          (resource_type == "Patient" && search_metadata[:names].include?("_id"))
       end
 
       def search_param_names
@@ -93,11 +93,11 @@ module InfernoSuiteGenerator
       end
 
       def path_for_value(path)
-        path == 'class' ? 'local_class' : path
+        path == "class" ? "local_class" : path
       end
 
       def required_comparators_for_param(name)
-        search_definition(name)[:comparators].select { |_comparator, expectation| expectation == 'SHALL' }
+        search_definition(name)[:comparators].select { |_comparator, expectation| expectation == "SHALL" }
       end
 
       def required_comparators
@@ -115,7 +115,7 @@ module InfernoSuiteGenerator
         # required in the tests.
         # https://github.com/hl7au/au-fhir-core-inferno/issues/47
         # conformance_expectation != 'SHALL' || !search_metadata[:must_support_or_mandatory]
-        conformance_expectation != 'SHALL'
+        conformance_expectation != "SHALL"
       end
 
       def search_definition(name)
@@ -127,8 +127,8 @@ module InfernoSuiteGenerator
       end
 
       def possible_status_search?
-        search_metadata[:names].none? { |name| name.include? 'status' } &&
-          group_metadata.search_definitions.keys.any? { |key| key.to_s.include? 'status' }
+        search_metadata[:names].none? { |name| name.include? "status" } &&
+          group_metadata.search_definitions.keys.any? { |key| key.to_s.include? "status" }
       end
 
       def token_search_params
@@ -145,14 +145,14 @@ module InfernoSuiteGenerator
       def required_multiple_or_search_params
         @required_multiple_or_search_params ||=
           search_param_names.select do |name|
-            search_definition(name)[:multiple_or] == 'SHALL'
+            search_definition(name)[:multiple_or] == "SHALL"
           end
       end
 
       def optional_multiple_or_search_params
         @optional_multiple_or_search_params ||=
           search_param_names.select do |name|
-            search_definition(name)[:multiple_or] == 'SHOULD'
+            search_definition(name)[:multiple_or] == "SHOULD"
           end
       end
 
@@ -167,14 +167,14 @@ module InfernoSuiteGenerator
       def optional_multiple_and_search_params
         @optional_multiple_and_search_params ||=
           search_param_names.select do |name|
-            search_definition(name)[:multiple_and] == 'SHOULD'
+            search_definition(name)[:multiple_and] == "SHOULD"
           end
       end
 
       def required_multiple_and_search_params
         @required_multiple_and_search_params ||=
           search_param_names.select do |name|
-            search_definition(name)[:multiple_and] == 'SHALL'
+            search_definition(name)[:multiple_and] == "SHALL"
           end
       end
 
@@ -192,13 +192,13 @@ module InfernoSuiteGenerator
 
       def array_of_strings(array)
         quoted_strings = array.map { |element| "'#{element}'" }
-        "[#{quoted_strings.join(', ')}]"
+        "[#{quoted_strings.join(", ")}]"
       end
 
       def test_reference_variants?
-        return true if resource_type == 'PractitionerRole' && search_param_names.include?('practitioner')
+        return true if resource_type == "PractitionerRole" && search_param_names.include?("practitioner")
 
-        first_search? && search_param_names.include?('patient')
+        first_search? && search_param_names.include?("patient")
       end
 
       def test_medication_inclusion?
@@ -215,8 +215,10 @@ module InfernoSuiteGenerator
         # we shall keep special cases to provide functionality for the "_include" tests.
         # https://jira.csiro.au/browse/ST-400
         special_cases = {
-          'MedicationRequest:medication' => { 'parameter' => 'MedicationRequest:medication', 'target_resource' => 'Medication', 'paths' => ['medicationReference'] },
-          'MedicationStatement:medication' => { 'parameter' => 'MedicationStatement:medication', 'target_resource' => 'Medication', 'paths' => ['medicationReference'] }
+          "MedicationRequest:medication" => { "parameter" => "MedicationRequest:medication",
+                                              "target_resource" => "Medication", "paths" => ["medicationReference"] },
+          "MedicationStatement:medication" => { "parameter" => "MedicationStatement:medication",
+                                                "target_resource" => "Medication", "paths" => ["medicationReference"] }
         }
         include_params_list = group_metadata.include_params
         search_definitions = group_metadata.search_definitions
@@ -228,11 +230,11 @@ module InfernoSuiteGenerator
             return [special_cases[include_param]]
           end
 
-          target_resource = ''
-          paths = ''
+          target_resource = ""
+          paths = ""
           search_definitions.each_key do |search_def_key|
             current_search_def_path = search_definitions[search_def_key]
-            next unless current_search_def_path[:full_paths].first.split('.') == include_param.split(':')
+            next unless current_search_def_path[:full_paths].first.split(".") == include_param.split(":")
 
             target_resource = current_search_def_path[:target_resource]
             paths = current_search_def_path[:paths]
@@ -240,39 +242,39 @@ module InfernoSuiteGenerator
           end
 
           {
-            'parameter' => include_param,
-            'target_resource' => target_resource,
-            'paths' => paths
+            "parameter" => include_param,
+            "target_resource" => target_resource,
+            "paths" => paths
           }
         end
       end
 
       def search_properties
         {}.tap do |properties|
-          properties[:first_search] = 'true' if first_search?
-          properties[:fixed_value_search] = 'true' if fixed_value_search?
+          properties[:first_search] = "true" if first_search?
+          properties[:fixed_value_search] = "true" if fixed_value_search?
           properties[:resource_type] = "'#{resource_type}'"
           properties[:search_param_names] = search_param_names_array
-          properties[:saves_delayed_references] = 'true' if saves_delayed_references?
-          properties[:possible_status_search] = 'true' if possible_status_search?
-          properties[:test_medication_inclusion] = 'true' if test_medication_inclusion?
+          properties[:saves_delayed_references] = "true" if saves_delayed_references?
+          properties[:possible_status_search] = "true" if possible_status_search?
+          properties[:test_medication_inclusion] = "true" if test_medication_inclusion?
           properties[:includes] = includes if group_metadata.include_params.present?
           properties[:token_search_params] = token_search_params_string if token_search_params.present?
-          properties[:test_reference_variants] = 'true' if test_reference_variants?
+          properties[:test_reference_variants] = "true" if test_reference_variants?
           properties[:params_with_comparators] = required_comparators_string if required_comparators.present?
-          properties[:test_post_search] = 'true' if first_search?
-          properties[:first_search_for_patient_by_patient_id] = 'true' if first_search_for_patient_by_patient_id
+          properties[:test_post_search] = "true" if first_search?
+          properties[:first_search_for_patient_by_patient_id] = "true" if first_search_for_patient_by_patient_id
         end
       end
 
       def search_test_properties_string
         search_properties
-          .map { |key, value| "#{' ' * 8}#{key}: #{value}" }
+          .map { |key, value| "#{" " * 8}#{key}: #{value}" }
           .join(",\n")
       end
 
       def reference_search_description
-        return '' unless test_reference_variants?
+        return "" unless test_reference_variants?
 
         <<~REFERENCE_SEARCH_DESCRIPTION
           This test verifies that the server supports searching by reference using
@@ -283,7 +285,7 @@ module InfernoSuiteGenerator
       end
 
       def first_search_description
-        return '' unless first_search?
+        return "" unless first_search?
 
         <<~FIRST_SEARCH_DESCRIPTION
           Because this is the first search of the sequence, resources in the
@@ -292,7 +294,7 @@ module InfernoSuiteGenerator
       end
 
       def medication_inclusion_description
-        return '' unless test_medication_inclusion?
+        return "" unless test_medication_inclusion?
 
         <<~MEDICATION_INCLUSION_DESCRIPTION
           If any #{resource_type} resources use external references to
@@ -302,7 +304,7 @@ module InfernoSuiteGenerator
       end
 
       def post_search_description
-        return '' unless test_post_search?
+        return "" unless test_post_search?
 
         <<~POST_SEARCH_DESCRIPTION
           Additionally, this test will check that GET and POST search methods
@@ -329,10 +331,10 @@ module InfernoSuiteGenerator
       end
 
       def search_method
-        if search_metadata[:names].first == 'identifier' && group_metadata.name == 'au_core_patient'
-          'run_search_test_with_system'
+        if search_metadata[:names].first == "identifier" && group_metadata.name == "au_core_patient"
+          "run_search_test_with_system"
         else
-          'run_search_test'
+          "run_search_test"
         end
       end
     end

@@ -20,11 +20,11 @@ module InfernoSuiteGenerator
 
       def element_has_fixed_value?(element)
         case element.type.first.code
-        when 'Quantity'
+        when "Quantity"
           code = profile_elements.find { |e| e.path == "#{element.path}.code" }
           system = profile_elements.find { |e| e.path == "#{element.path}.system" }
           code&.fixedCode || system&.fixedUri
-        when 'code'
+        when "code"
           element.fixedCode.present?
         end
       end
@@ -35,7 +35,7 @@ module InfernoSuiteGenerator
 
       def profile_elements_with_bindings
         profile_elements
-          .select { |element| element.binding.present? && element.binding.strength == 'required' }
+          .select { |element| element.binding.present? && element.binding.strength == "required" }
           .reject { |element| element_has_fixed_value?(element) || element_has_optional_binding_slice?(element) }
       end
 
@@ -45,8 +45,8 @@ module InfernoSuiteGenerator
             type: element.type.first.code,
             strength: element.binding.strength,
             # Goal.target.detail has an unbound binding
-            system: element.binding.valueSet&.split('|')&.first,
-            path: element.path.gsub('[x]', '').gsub("#{resource}.", '')
+            system: element.binding.valueSet&.split("|")&.first,
+            path: element.path.gsub("[x]", "").gsub("#{resource}.", "")
           }
 
           binding[:required_binding_slice] = true if element.sliceName.present? && element.min.positive?
@@ -57,7 +57,7 @@ module InfernoSuiteGenerator
 
       def extension_profile_elements
         profile_elements
-          .select { |element| element.type&.first&.code == 'Extension' }
+          .select { |element| element.type&.first&.code == "Extension" }
           .select { |element| extension_profile_url(element).present? }
       end
 
@@ -76,15 +76,15 @@ module InfernoSuiteGenerator
 
             elements = extension.snapshot.element
             elements_with_bindings = elements.select do |element|
-              element.binding.present? && !element.id.include?('Extension.extension')
+              element.binding.present? && !element.id.include?("Extension.extension")
             end
 
             elements_with_bindings.map do |element|
               {
                 type: element.type.first.code,
                 strength: element.binding.strength,
-                system: element.binding.valueSet&.split('|')&.first,
-                path: element.path.gsub('[x]', '').gsub('Extension.', ''),
+                system: element.binding.valueSet&.split("|")&.first,
+                path: element.path.gsub("[x]", "").gsub("Extension.", ""),
                 extensions: [url]
               }
             end + nested_extension_terminology_bindings(elements, url)
@@ -92,7 +92,7 @@ module InfernoSuiteGenerator
       end
 
       def nested_extension_terminology_bindings(elements, extension_url)
-        nested_extensions = elements.select { |element| element.path == 'Extension.extension' }
+        nested_extensions = elements.select { |element| element.path == "Extension.extension" }
         nested_extensions.flat_map do |nested_extension|
           nested_extension_element = elements.find { |element| element.id == "#{nested_extension.id}.url" }
           next unless nested_extension_element.present?
@@ -106,8 +106,8 @@ module InfernoSuiteGenerator
             {
               type: element.type.first.code,
               strength: element.binding.strength,
-              system: element.binding.valueSet&.split('|')&.first,
-              path: element.path.gsub('[x]', '').gsub('Extension.extension.', ''),
+              system: element.binding.valueSet&.split("|")&.first,
+              path: element.path.gsub("[x]", "").gsub("Extension.extension.", ""),
               extensions: [extension_url, nested_extension_url]
             }
           end

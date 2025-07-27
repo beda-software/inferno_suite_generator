@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require_relative 'naming'
-require_relative 'special_cases'
-require_relative 'basic_test_generator'
+require_relative "naming"
+require_relative "special_cases"
+require_relative "basic_test_generator"
 
 module InfernoSuiteGenerator
   class Generator
@@ -23,7 +23,7 @@ module InfernoSuiteGenerator
         end
 
         def read_interaction(group_metadata)
-          group_metadata.interactions.find { |interaction| interaction[:code] == 'read' }
+          group_metadata.interactions.find { |interaction| interaction[:code] == "read" }
         end
       end
 
@@ -42,10 +42,10 @@ module InfernoSuiteGenerator
       end
 
       def resource_collection_string
-        if group_metadata.delayed? && resource_type != 'Provenance'
+        if group_metadata.delayed? && resource_type != "Provenance"
           "scratch.dig(:references, '#{resource_type}')"
         else
-          'all_scratch_resources'
+          "all_scratch_resources"
         end
       end
 
@@ -54,23 +54,23 @@ module InfernoSuiteGenerator
       end
 
       def needs_location_id?
-        resource_type == 'Location'
+        resource_type == "Location"
       end
 
       def needs_organization_id?
-        resource_type == 'Organization'
+        resource_type == "Organization"
       end
 
       def needs_practitioner_id?
-        resource_type == 'Practitioner'
+        resource_type == "Practitioner"
       end
 
       def needs_practitioner_role_id?
-        resource_type == 'PractitionerRole'
+        resource_type == "PractitionerRole"
       end
 
       def needs_healthcare_service_id?
-        resource_type == 'HealthcareService'
+        resource_type == "HealthcareService"
       end
     end
   end

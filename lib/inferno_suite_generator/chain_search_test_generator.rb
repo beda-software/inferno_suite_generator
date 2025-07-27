@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require_relative 'naming'
-require_relative 'special_cases'
-require_relative 'search_test_generator'
+require_relative "naming"
+require_relative "special_cases"
+require_relative "search_test_generator"
 
 module InfernoSuiteGenerator
   class Generator
@@ -45,7 +45,7 @@ module InfernoSuiteGenerator
       end
 
       def search_identifier
-        search_name.to_s.tr('-', '_')
+        search_name.to_s.tr("-", "_")
       end
 
       def search_title
@@ -81,7 +81,7 @@ module InfernoSuiteGenerator
       end
 
       def optional?
-        conformance_expectation != 'SHALL'
+        conformance_expectation != "SHALL"
       end
 
       def search_definition(name)
@@ -90,12 +90,12 @@ module InfernoSuiteGenerator
 
       def array_of_strings(array)
         quoted_strings = array.map { |element| "'#{element}'" }
-        "[#{quoted_strings.join(', ')}]"
+        "[#{quoted_strings.join(", ")}]"
       end
 
       def search_test_properties_string
         search_properties
-          .map { |key, value| "#{' ' * 8}#{key}: #{value}" }
+          .map { |key, value| "#{" " * 8}#{key}: #{value}" }
           .join(",\n")
       end
 

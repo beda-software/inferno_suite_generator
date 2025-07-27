@@ -20,21 +20,21 @@ module InfernoSuiteGenerator
         choices = []
 
         case profile.type
-        when 'Device'
-          choices << { paths: ['udiCarrier.carrierAIDC', 'udiCarrier.carrierHRF'] }
-        when 'DocumentReference'
-          choices << { paths: ['content.attachment.data', 'content.attachment.url'] }
-        when 'Patient'
+        when "Device"
+          choices << { paths: ["udiCarrier.carrierAIDC", "udiCarrier.carrierHRF"] }
+        when "DocumentReference"
+          choices << { paths: ["content.attachment.data", "content.attachment.url"] }
+        when "Patient"
           # FHIR-40299 adds USCDI MustSupport choices for:
           # * address.period.end and address.use,
           # * name.period.end and name.use
           choices << {
-            paths: ['address.period.end', 'address.use'],
+            paths: ["address.period.end", "address.use"],
             uscdi_only: true
           }
 
           choices << {
-            paths: ['name.period.end', 'name.use'],
+            paths: ["name.period.end", "name.use"],
             uscdi_only: true
           }
         end
@@ -44,19 +44,19 @@ module InfernoSuiteGenerator
 
       # FHIR-40299 removes Patient.address.period from MustSupport,
       def remove_patient_address_period
-        return unless profile.type == 'Patient'
+        return unless profile.type == "Patient"
 
         must_supports[:elements].delete_if do |element|
-          element[:path] == 'address.period'
+          element[:path] == "address.period"
         end
       end
 
       # AU Core clarified that server implmentation is not required to support DocumentReference.custodian (FHIR-28393)
       def remove_document_reference_custodian
-        return unless profile.type == 'DocumentReference'
+        return unless profile.type == "DocumentReference"
 
         must_supports[:elements].delete_if do |element|
-          element[:path] == 'custodian'
+          element[:path] == "custodian"
         end
       end
     end

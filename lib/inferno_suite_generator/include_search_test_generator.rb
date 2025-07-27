@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require_relative 'naming'
-require_relative 'special_cases'
-require_relative 'search_test_generator'
+require_relative "naming"
+require_relative "special_cases"
+require_relative "search_test_generator"
 
 module InfernoSuiteGenerator
   class Generator
@@ -44,7 +44,7 @@ module InfernoSuiteGenerator
       end
 
       def search_identifier
-        search_metadata[:names].join('_').tr('-', '_')
+        search_metadata[:names].join("_").tr("-", "_")
       end
 
       def search_title
@@ -52,7 +52,7 @@ module InfernoSuiteGenerator
       end
 
       def conformance_expectation
-        'SHOULD'
+        "SHOULD"
       end
 
       def optional?
@@ -66,7 +66,7 @@ module InfernoSuiteGenerator
       def search_properties
         {}.tap do |properties|
           properties[:resource_type] = "'#{resource_type}'"
-          properties[:saves_delayed_references] = 'true' if saves_delayed_references?
+          properties[:saves_delayed_references] = "true" if saves_delayed_references?
           properties[:search_param_names] = search_param_names_array
           properties[:includes] = includes if group_metadata.include_params.present?
           properties[:use_any_data_for_search] = true
@@ -74,19 +74,19 @@ module InfernoSuiteGenerator
       end
 
       def target_resources_string
-        includes.map { |include| include['target_resource'] }.join(', ')
+        includes.map { |include| include["target_resource"] }.join(", ")
       end
 
       def include_params_string
-        includes.map { |include| include['parameter'] }.join(', ')
+        includes.map { |include| include["parameter"] }.join(", ")
       end
 
       def search_param_names_string
-        search_param_names.join(', ')
+        search_param_names.join(", ")
       end
 
       def search_param_names_lodash_string
-        search_param_names.join('_')
+        search_param_names.join("_")
       end
 
       def title
@@ -102,7 +102,7 @@ module InfernoSuiteGenerator
       end
 
       def search_method
-        'run_include_test'
+        "run_include_test"
       end
     end
   end

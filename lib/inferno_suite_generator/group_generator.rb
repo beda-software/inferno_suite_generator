@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-require_relative 'naming'
-require_relative 'special_cases'
-require_relative 'basic_test_generator'
-require_relative 'helpers'
+require_relative "naming"
+require_relative "special_cases"
+require_relative "basic_test_generator"
+require_relative "helpers"
 
 module InfernoSuiteGenerator
   class Generator
@@ -35,7 +35,7 @@ module InfernoSuiteGenerator
       end
 
       def base_metadata_file_name
-        'metadata.yml'
+        "metadata.yml"
       end
 
       def title
@@ -71,25 +71,25 @@ module InfernoSuiteGenerator
       end
 
       def optional?
-        resource_type == 'QuestionnaireResponse'
+        resource_type == "QuestionnaireResponse"
       end
 
       def generate
         add_special_tests
-        File.open(output_file_name, 'w') { |f| f.write(output) }
+        File.open(output_file_name, "w") { |f| f.write(output) }
         group_metadata.id = group_id
         group_metadata.file_name = base_output_file_name
-        File.open(metadata_file_name, 'w') { |f| f.write(YAML.dump(group_metadata.to_hash)) }
+        File.open(metadata_file_name, "w") { |f| f.write(YAML.dump(group_metadata.to_hash)) }
       end
 
       def add_special_tests
-        return if group_metadata.reformatted_version == 'v311'
+        return if group_metadata.reformatted_version == "v311"
 
         case group_metadata.resource
-        when 'DocumentReference'
+        when "DocumentReference"
           group_metadata.add_test(
-            id: 'au_core_v400_document_reference_custodian_test',
-            file_name: '../../custom_groups/v4.0.0/document_reference_custodian_test.rb'
+            id: "au_core_v400_document_reference_custodian_test",
+            file_name: "../../custom_groups/v4.0.0/document_reference_custodian_test.rb"
           )
         end
       end
@@ -101,18 +101,18 @@ module InfernoSuiteGenerator
       def test_file_list
         @test_file_list ||=
           group_metadata.tests.map do |test|
-            name_without_suffix = test[:file_name].delete_suffix('.rb')
-            name_without_suffix.start_with?('..') ? name_without_suffix : "#{profile_identifier}/#{name_without_suffix}"
+            name_without_suffix = test[:file_name].delete_suffix(".rb")
+            name_without_suffix.start_with?("..") ? name_without_suffix : "#{profile_identifier}/#{name_without_suffix}"
           end
       end
 
       def required_searches
-        group_metadata.searches.select { |search| search[:expectation] == 'SHALL' }
+        group_metadata.searches.select { |search| search[:expectation] == "SHALL" }
       end
 
       def search_param_name_string
         required_searches
-          .map { |search| search[:names].join(' + ') }
+          .map { |search| search[:names].join(" + ") }
           .map { |names| "* #{names}" }
           .join("\n")
       end

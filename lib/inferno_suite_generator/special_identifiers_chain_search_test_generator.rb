@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require_relative 'naming'
-require_relative 'special_cases'
-require_relative 'chain_search_test_generator'
+require_relative "naming"
+require_relative "special_cases"
+require_relative "chain_search_test_generator"
 
 module InfernoSuiteGenerator
   class Generator
@@ -17,7 +17,7 @@ module InfernoSuiteGenerator
               next unless current_search_definition.key?(:chain) && current_search_definition[:chain].length.positive?
 
               current_search_definition[:chain].each do |chain_item|
-                next unless chain_item[:target] == 'Patient'
+                next unless chain_item[:target] == "Patient"
 
                 SpecialCases::PATIENT_IDENTIFIERS.each do |target_identifier|
                   new(
@@ -36,11 +36,13 @@ module InfernoSuiteGenerator
         end
       end
 
-      attr_accessor :search_name, :group_metadata, :search_metadata, :base_output_dir, :chain_item, :target_identifier, :ig_metadata
+      attr_accessor :search_name, :group_metadata, :search_metadata, :base_output_dir, :chain_item, :target_identifier,
+                    :ig_metadata
 
       self.template_type = TEMPLATE_TYPES[:SPECIAL_IDENTIFIER_CHAIN_SEARCH]
 
-      def initialize(search_name, group_metadata, search_metadata, base_output_dir, chain_item, target_identifier, ig_metadata)
+      def initialize(search_name, group_metadata, search_metadata, base_output_dir, chain_item, target_identifier,
+                     ig_metadata)
         super(search_name, group_metadata, search_metadata, base_output_dir, chain_item, ig_metadata)
         self.target_identifier = target_identifier
       end

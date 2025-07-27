@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative 'value_extractor'
+require_relative "value_extractor"
 
 module InfernoSuiteGenerator
   class Generator
@@ -50,13 +50,13 @@ module InfernoSuiteGenerator
       def full_paths
         @full_paths ||=
           begin
-            full_paths = param.expression.split('|').map do |expr|
-              expr.strip.gsub(/.where\(resolve\((.*)/, '').gsub(/url = '/,
-                                                                'url=\'').gsub(/\.ofType\(([^)]+)\)/) do |_match|
+            full_paths = param.expression.split("|").map do |expr|
+              expr.strip.gsub(/.where\(resolve\((.*)/, "").gsub(/url = '/,
+                                                                "url='").gsub(/\.ofType\(([^)]+)\)/) do |_match|
                 type_name = ::Regexp.last_match(1)
                 "#{type_name[0].upcase}#{type_name[1..]}"
               end
-            end.filter { |path| path.split('.').first == resource }
+            end.filter { |path| path.split(".").first == resource }
 
             full_paths.map do |path|
               path.scan(/[. ]as[( ]([^)]*)[)]?/).flatten.map do |as_type|
@@ -75,7 +75,9 @@ module InfernoSuiteGenerator
             # full_paths = full_paths.map(&:strip)
 
             # There is a bug in AU Core 5 asserted-date search parameter. See FHIR-40573
-            remove_additional_extension_from_asserted_date(full_paths) if param.respond_to?(:version) && param.version == '5.0.1' && name == 'asserted-date'
+            if param.respond_to?(:version) && param.version == "5.0.1" && name == "asserted-date"
+              remove_additional_extension_from_asserted_date(full_paths)
+            end
 
             full_paths
           end
@@ -83,18 +85,18 @@ module InfernoSuiteGenerator
 
       def remove_additional_extension_from_asserted_date(full_paths)
         full_paths.each do |full_path|
-          next unless full_path.include?('http://hl7.org/fhir/StructureDefinition/condition-assertedDate')
+          next unless full_path.include?("http://hl7.org/fhir/StructureDefinition/condition-assertedDate")
 
-          full_path.gsub!(/\).extension./, ').')
+          full_path.gsub!(/\).extension./, ").")
         end
       end
 
       def paths
-        @paths ||= full_paths.map { |a_path| a_path.gsub("#{resource}.", '') }
+        @paths ||= full_paths.map { |a_path| a_path.gsub("#{resource}.", "") }
       end
 
       def extensions
-        @extensions ||= full_paths.select { |a_path| a_path.include?('extension.where') }
+        @extensions ||= full_paths.select { |a_path| a_path.include?("extension.where") }
                                   .map { |a_path| { url: a_path[/(?<=extension.where\(url=').*(?='\))/] } }
                                   .presence
       end
@@ -102,7 +104,7 @@ module InfernoSuiteGenerator
       def profile_element
         @profile_element ||=
           profile_elements.find { |element| full_paths.include?(element.id) } ||
-          extension_definition&.differential&.element&.find { |element| element.id == 'Extension.value[x]' }
+          extension_definition&.differential&.element&.find { |element| element.id == "Extension.value[x]" }
       end
 
       def extension_definition
@@ -118,33 +120,33 @@ module InfernoSuiteGenerator
       end
 
       def comparator_expectation_extensions
-        @comparator_expectation_extensions ||= param_hash['_comparator'] || []
+        @comparator_expectation_extensions ||= param_hash["_comparator"] || []
       end
 
       def support_expectation(extension)
-        extension['extension'].first['valueCode']
+        extension["extension"].first["valueCode"]
       end
 
       def comparator_expectation(extension)
         if extension.nil?
-          'MAY'
+          "MAY"
         else
           support_expectation(extension)
         end
       end
 
       def comparators
-        comp_config = Registry.get(:config_keeper).special_cases.dig('COMPARATORS')
-        special_cases_resources = comp_config.dig('resources') || []
-        special_cases_comparators = comp_config.dig('operators') || []
-        special_cases_param_ids = comp_config.dig('param_ids') || []
+        comp_config = Registry.get(:config_keeper).special_cases["COMPARATORS"]
+        special_cases_resources = comp_config["resources"] || []
+        special_cases_comparators = comp_config["operators"] || []
+        special_cases_param_ids = comp_config["param_ids"] || []
 
         {}.tap do |comparators|
           param.comparator&.each_with_index do |comparator, index|
             is_special_case = (special_cases_resources.include? group_metadata[:resource]) &&
                               (special_cases_comparators.include? comparator) &&
-                              (special_cases_param_ids.include? param_hash['id'])
-            value = is_special_case ? 'SHALL' : comparator_expectation(comparator_expectation_extensions[index])
+                              (special_cases_param_ids.include? param_hash["id"])
+            value = is_special_case ? "SHALL" : comparator_expectation(comparator_expectation_extensions[index])
             comparators[comparator.to_sym] = value
           end
         end
@@ -162,14 +164,14 @@ module InfernoSuiteGenerator
 
       def contains_multiple?
         if profile_element.present?
-          if profile_element.id.start_with?('Extension') && extension_definition.present?
+          if profile_element.id.start_with?("Extension") && extension_definition.present?
             # Find the extension instance in a AU Core profile
             target_element = profile_elements.find do |element|
-              element.type.any? { |type| type.code == 'Extension' && type.profile.include?(extension_definition.url) }
+              element.type.any? { |type| type.code == "Extension" && type.profile.include?(extension_definition.url) }
             end
-            target_element&.max == '*'
+            target_element&.max == "*"
           else
-            profile_element.max == '*'
+            profile_element.max == "*"
           end
         else
           false
@@ -177,7 +179,7 @@ module InfernoSuiteGenerator
       end
 
       def chain_extensions
-        param_hash['_chain']
+        param_hash["_chain"]
       end
 
       def chain_expectations
@@ -193,14 +195,14 @@ module InfernoSuiteGenerator
              .map { |chain, expectation| { chain:, expectation:, target: } }
       end
 
-      def get_multiple_expectation(multiple_expectation_type = 'or')
-        expectations_hash = if multiple_expectation_type == 'or' then Registry.get(:config_keeper).multiple_or_expectations else Registry.get(:config_keeper).multiple_and_expectations end
+      def get_multiple_expectation(multiple_expectation_type = "or")
+        expectations_hash = multiple_expectation_type == "or" ? Registry.get(:config_keeper).multiple_or_expectations : Registry.get(:config_keeper).multiple_and_expectations
         resource_type = group_metadata[:resource]
-        param_id = param_hash['id']
-        param_hash_key = if multiple_expectation_type == 'or' then '_multipleOr' else '_multipleAnd' end
+        param_id = param_hash["id"]
+        param_hash_key = multiple_expectation_type == "or" ? "_multipleOr" : "_multipleAnd"
 
         expectation_from_config = expectations_hash.dig(resource_type, param_id)
-        expectation_from_ig =  (param_hash[param_hash_key] && param_hash[param_hash_key]['extension'].first['valueCode'])
+        expectation_from_ig = param_hash[param_hash_key] && param_hash[param_hash_key]["extension"].first["valueCode"]
 
         expectation_from_config || expectation_from_ig
       end
@@ -210,23 +212,19 @@ module InfernoSuiteGenerator
       end
 
       def multiple_and_expectation
-        get_multiple_expectation('and')
+        get_multiple_expectation("and")
       end
 
       def values
         config = Registry.get(:config_keeper).fixed_search_values
 
-        if config.dig('resource_mappings', group_metadata[:resource])&.key?(param_hash['id'])
-          mapping = config['resource_mappings'][group_metadata[:resource]][param_hash['id']]
+        if config.dig("resource_mappings", group_metadata[:resource])&.key?(param_hash["id"])
+          mapping = config["resource_mappings"][group_metadata[:resource]][param_hash["id"]]
 
-          if mapping.is_a?(String)
-            return config['values'][mapping]
-          end
+          return config["values"][mapping] if mapping.is_a?(String)
 
-          if mapping.is_a?(Hash)
-            if mapping.dig('condition', 'profile_url') == group_metadata[:profile_url]
-              return config['values'][mapping['value']]
-            end
+          if mapping.is_a?(Hash) && (mapping.dig("condition", "profile_url") == group_metadata[:profile_url])
+            return config["values"][mapping["value"]]
           end
         end
 
@@ -243,7 +241,7 @@ module InfernoSuiteGenerator
       def values_from_must_supports(profile_element)
         return if profile_element.nil?
 
-        short_path = profile_element.path.split('.', 2)[1]
+        short_path = profile_element.path.split(".", 2)[1]
 
         values_from_must_support_slices(profile_element, short_path, true).presence ||
           values_from_must_support_slices(profile_element, short_path, false).presence ||
@@ -261,13 +259,13 @@ module InfernoSuiteGenerator
             next if profile_element.min.positive? && slice_element.min.zero? && mandatory_slice_only
 
             case slice[:discriminator][:type]
-            when 'patternCoding', 'patternCodeableConcept'
+            when "patternCoding", "patternCodeableConcept"
               slice[:discriminator][:code]
-            when 'requiredBinding'
+            when "requiredBinding"
               slice[:discriminator][:values]
-            when 'value'
+            when "value"
               slice[:discriminator][:values]
-                .select { |value| value[:path] == 'coding.code' }
+                .select { |value| value[:path] == "coding.code" }
                 .map { |value| value[:value] }
             end
           end
@@ -281,7 +279,7 @@ module InfernoSuiteGenerator
       end
 
       def values_from_resource_metadata(paths)
-        if multiple_or_expectation == 'SHALL' || paths.any? { |path| path.downcase.include?('status') }
+        if multiple_or_expectation == "SHALL" || paths.any? { |path| path.downcase.include?("status") }
           value_extractor.values_from_resource_metadata(paths)
         else
           []
@@ -294,4 +292,3 @@ module InfernoSuiteGenerator
     end
   end
 end
-

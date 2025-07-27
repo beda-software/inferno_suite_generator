@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
-require_relative 'group_metadata'
-require_relative 'ig_metadata'
-require_relative 'must_support_metadata_extractor'
-require_relative 'search_metadata_extractor'
-require_relative 'terminology_binding_metadata_extractor'
-require_relative 'generator_config_keeper'
-require_relative 'registry'
+require_relative "group_metadata"
+require_relative "ig_metadata"
+require_relative "must_support_metadata_extractor"
+require_relative "search_metadata_extractor"
+require_relative "terminology_binding_metadata_extractor"
+require_relative "generator_config_keeper"
+require_relative "registry"
 
 module InfernoSuiteGenerator
   class Generator
@@ -70,7 +70,7 @@ module InfernoSuiteGenerator
 
               full_paths.any? do |path|
                 # allow for non-choice, choice types, and _id
-                name == '_id' || full_must_support_paths.include?(path) || full_must_support_paths.include?("#{path}[x]")
+                name == "_id" || full_must_support_paths.include?(path) || full_must_support_paths.include?("#{path}[x]")
               end
             end
 
@@ -78,9 +78,9 @@ module InfernoSuiteGenerator
               # only handle type slices because that is all we need for now
               # for a slice like Observation.effective[x]:effectiveDateTime, the search parameter's expression could be
               # either Observation.effective or Observation.effectiveDateTime.
-              if slice[:discriminator] && slice[:discriminator][:type] == 'type'
-                full_must_support_path = "#{resource}.#{slice[:path].sub('[x]', slice[:discriminator][:code])}"
-                base_must_support_path = "#{resource}.#{slice[:path].sub('[x]', '')}"
+              if slice[:discriminator] && slice[:discriminator][:type] == "type"
+                full_must_support_path = "#{resource}.#{slice[:path].sub("[x]", slice[:discriminator][:code])}"
+                base_must_support_path = "#{resource}.#{slice[:path].sub("[x]", "")}"
 
                 full_paths.intersection([full_must_support_path, base_must_support_path]).present?
               else
@@ -144,25 +144,26 @@ module InfernoSuiteGenerator
       end
 
       def base_name
-        profile_url.split('StructureDefinition/').last
+        profile_url.split("StructureDefinition/").last
       end
 
       def name
-        base_name.tr('-', '_')
+        base_name.tr("-", "_")
       end
 
       def class_name
         base_name
-          .split('-')
+          .split("-")
           .map(&:capitalize)
           .join
           .gsub(ig_metadata.ig_module_name_prefix, "#{ig_metadata.ig_module_name_prefix}#{ig_metadata.reformatted_version}")
-          .concat('Sequence')
+          .concat("Sequence")
       end
 
       def ig_id
         ig_metadata.ig_id
       end
+
       def version
         ig_metadata.ig_version
       end
@@ -176,7 +177,7 @@ module InfernoSuiteGenerator
       end
 
       def profile_name
-        profile.title.gsub('  ', ' ')
+        profile.title.gsub("  ", " ")
       end
 
       def profile_version
@@ -184,9 +185,11 @@ module InfernoSuiteGenerator
       end
 
       def title
-        title = profile.title.gsub(/AU\s*Core\s*/, '').gsub(/\s*Profile/, '').strip
+        title = profile.title.gsub(/AU\s*Core\s*/, "").gsub(/\s*Profile/, "").strip
 
-        title = "#{resource} #{title.split(resource).map(&:strip).join(' ')}" if Naming.resources_with_multiple_profiles.include?(resource) && !title.start_with?(resource) && version != 'v3.1.1'
+        if Naming.resources_with_multiple_profiles.include?(resource) && !title.start_with?(resource) && version != "v3.1.1"
+          title = "#{resource} #{title.split(resource).map(&:strip).join(" ")}"
+        end
 
         title
       end
@@ -247,12 +250,12 @@ module InfernoSuiteGenerator
       def required_concepts
         # The base FHIR vital signs profile has a required binding that isn't
         # relevant for any of its child profiles
-        return [] if resource == 'Observation'
+        return [] if resource == "Observation"
 
         profile_elements
-          .select { |element| element.type&.any? { |type| type.code == 'CodeableConcept' } }
-          .select { |element| element.binding&.strength == 'required' }
-          .map { |element| element.path.gsub("#{resource}.", '').gsub('[x]', 'CodeableConcept') }
+          .select { |element| element.type&.any? { |type| type.code == "CodeableConcept" } }
+          .select { |element| element.binding&.strength == "required" }
+          .map { |element| element.path.gsub("#{resource}.", "").gsub("[x]", "CodeableConcept") }
           .uniq
       end
 
@@ -287,11 +290,11 @@ module InfernoSuiteGenerator
       def references
         @references ||=
           profile_elements
-          .select { |element| element.type&.first&.code == 'Reference' }
+          .select { |element| element.type&.first&.code == "Reference" }
           .map do |reference_definition|
             {
               path: reference_definition.path,
-              profiles: reference_definition.type.first.targetProfile,
+              profiles: reference_definition.type.first.targetProfile
             }
           end
       end

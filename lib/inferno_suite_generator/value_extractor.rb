@@ -12,18 +12,18 @@ module InfernoSuiteGenerator
       end
 
       def values_from_required_binding(profile_element)
-        return [] unless profile_element&.max == '*'
+        return [] unless profile_element&.max == "*"
 
         profile_elements
           .select do |element|
-            element.path == profile_element.path && element.binding&.strength == 'required'
+            element.path == profile_element.path && element.binding&.strength == "required"
           end
           .map { |element| values_from_value_set_binding(element) }
           .flatten.compact
       end
 
       def values_from_fixed_codes(profile_element, type)
-        return [] unless type == 'CodeableConcept'
+        return [] unless type == "CodeableConcept"
 
         profile_elements
           .select do |element|
@@ -33,7 +33,7 @@ module InfernoSuiteGenerator
       end
 
       def values_from_pattern_coding(profile_element, type)
-        return [] unless type == 'CodeableConcept'
+        return [] unless type == "CodeableConcept"
 
         profile_elements
           .select do |element|
@@ -43,7 +43,7 @@ module InfernoSuiteGenerator
       end
 
       def values_from_pattern_codeable_concept(profile_element, type)
-        return [] unless type == 'CodeableConcept'
+        return [] unless type == "CodeableConcept"
 
         profile_elements
           .select do |element|
@@ -97,7 +97,7 @@ module InfernoSuiteGenerator
         paths.each do |current_path|
           current_metadata = fhir_metadata(current_path)
 
-          values += current_metadata['valid_codes'].values.flatten if current_metadata&.dig('valid_codes').present?
+          values += current_metadata["valid_codes"].values.flatten if current_metadata&.dig("valid_codes").present?
         end
 
         values

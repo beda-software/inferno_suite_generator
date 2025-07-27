@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-require_relative 'naming'
-require_relative 'special_cases'
-require_relative 'basic_test_generator'
-require_relative 'registry'
+require_relative "naming"
+require_relative "special_cases"
+require_relative "basic_test_generator"
+require_relative "registry"
 
 module InfernoSuiteGenerator
   class Generator
@@ -63,8 +63,8 @@ module InfernoSuiteGenerator
 
       def ig_link
         case ig_metadata.ig_version
-        when 'v0.3.0-ballot'
-          'http://hl7.org.au/fhir/core/0.3.0-ballot'
+        when "v0.3.0-ballot"
+          "http://hl7.org.au/fhir/core/0.3.0-ballot"
         end
       end
 
@@ -77,15 +77,15 @@ module InfernoSuiteGenerator
 
         links_array = links.map do |link|
           %(        {
-          label: '#{link['label']}',
-          url: '#{link['url']}'
+          label: '#{link["label"]}',
+          url: '#{link["url"]}'
         })
         end.join(",\n")
 
         links_replacement = "      links [\n#{links_array}\n      ]"
         template_output.gsub!(/      links \[.*?\]/m, links_replacement)
 
-        File.open(output_file_name, 'w') { |f| f.write(template_output) }
+        File.open(output_file_name, "w") { |f| f.write(template_output) }
       end
 
       def groups
@@ -107,17 +107,17 @@ module InfernoSuiteGenerator
 
       def group_file_list
         @group_file_list ||=
-          groups.map { |group| group.file_name.delete_suffix('.rb') }
+          groups.map { |group| group.file_name.delete_suffix(".rb") }
       end
 
       def capability_statement_file_name
         # "../../custom_groups/#{ig_metadata.ig_version}/capability_statement_group"
-        '../../custom_groups/v0.3.0-ballot/capability_statement_group'
+        "../../custom_groups/v0.3.0-ballot/capability_statement_group"
       end
 
       def capability_statement_group_id
         # "au_core_#{ig_metadata.reformatted_version}_capability_statement"
-        'au_core_v030_ballot_capability_statement'
+        "au_core_v030_ballot_capability_statement"
       end
     end
   end

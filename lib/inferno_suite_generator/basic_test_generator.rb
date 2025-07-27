@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-require_relative 'naming'
-require_relative 'special_cases'
-require_relative 'generator_constants'
-require_relative 'registry'
+require_relative "naming"
+require_relative "special_cases"
+require_relative "generator_constants"
+require_relative "registry"
 
 module InfernoSuiteGenerator
   class Generator
@@ -17,7 +17,7 @@ module InfernoSuiteGenerator
       end
 
       def template
-        @template ||= File.read(File.join(__dir__, 'templates', template_file_name))
+        @template ||= File.read(File.join(__dir__, "templates", template_file_name))
       end
 
       def output_file_directory
@@ -58,7 +58,7 @@ module InfernoSuiteGenerator
         when TEMPLATE_TYPES[:INCLUDE]
           "#{basic_test_id}_#{search_param_names_lodash_string}_include_#{search_identifier.downcase}_search_test"
         when TEMPLATE_TYPES[:SPECIAL_IDENTIFIER_SEARCH]
-          "#{basic_test_id}_#{search_identifier}_#{special_identifier["display"].delete('-').downcase}_search_test"
+          "#{basic_test_id}_#{search_identifier}_#{special_identifier["display"].delete("-").downcase}_search_test"
         when TEMPLATE_TYPES[:SPECIAL_IDENTIFIER_CHAIN_SEARCH]
         when TEMPLATE_TYPES[:SUITE]
         when TEMPLATE_TYPES[:GROUP]
@@ -76,12 +76,12 @@ module InfernoSuiteGenerator
         when TEMPLATE_TYPES[:MULTIPLE_AND_SEARCH], TEMPLATE_TYPES[:MULTIPLE_OR_SEARCH]
           "#{basic_class_name_with_search_capitalize}#{CLASS_NAME_SUFFIXES[template_type]}"
         when TEMPLATE_TYPES[:INCLUDE]
-          "#{basic_class_name_with_search}Include#{includes.first['target_resource']}Test"
+          "#{basic_class_name_with_search}Include#{includes.first["target_resource"]}Test"
         when TEMPLATE_TYPES[:SPECIAL_IDENTIFIER_SEARCH]
           puts "basic_test_id: #{basic_test_id}"
           puts "search_identifier: #{search_identifier}"
           puts "special_identifier: #{special_identifier}"
-          "#{basic_class_name_with_search}#{special_identifier["display"].delete('-')}SearchTest"
+          "#{basic_class_name_with_search}#{special_identifier["display"].delete("-")}SearchTest"
         when TEMPLATE_TYPES[:SUITE]
           "#{ig_metadata.ig_module_name_prefix}TestSuite"
         when TEMPLATE_TYPES[:GROUP]
@@ -94,7 +94,7 @@ module InfernoSuiteGenerator
 
       def generate
         FileUtils.mkdir_p(output_file_directory)
-        File.open(output_file_name, 'w') { |f| f.write(output) }
+        File.open(output_file_name, "w") { |f| f.write(output) }
 
         group_metadata.add_test(
           id: test_id,
@@ -129,7 +129,7 @@ module InfernoSuiteGenerator
       end
 
       def url_version
-        group_metadata.version.delete_prefix('v')
+        group_metadata.version.delete_prefix("v")
       end
     end
   end
