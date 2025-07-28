@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require_relative "naming"
-require_relative "generator_constants"
-require_relative "registry"
+require_relative "../naming"
+require_relative "../generator_constants"
+require_relative "../registry"
 
 module InfernoSuiteGenerator
   class Generator
@@ -16,7 +16,7 @@ module InfernoSuiteGenerator
       end
 
       def template
-        @template ||= File.read(File.join(__dir__, "templates", template_file_name))
+        @template ||= File.read(File.join(__dir__, "../templates", template_file_name))
       end
 
       def output_file_directory

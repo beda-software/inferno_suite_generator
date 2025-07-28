@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative "naming"
+require_relative "../naming"
 require_relative "search_test_generator"
 
 module InfernoSuiteGenerator

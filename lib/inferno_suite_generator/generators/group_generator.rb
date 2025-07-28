@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-require_relative "naming"
+require_relative "../naming"
 require_relative "basic_test_generator"
-require_relative "helpers"
-require_relative "registry"
+require_relative "../helpers"
+require_relative "../registry"
 
 module InfernoSuiteGenerator
   class Generator

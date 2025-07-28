@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require_relative 'search_test_properties'
-require_relative 'search_test'
-require_relative 'assert_helpers'
+require_relative "search_test_properties"
+require_relative "search_test"
+require_relative "assert_helpers"
 
 module InfernoSuiteGenerator
   module SpecialIdentifierSearchTest
@@ -10,8 +10,8 @@ module InfernoSuiteGenerator
     include SearchTest
     include AssertHelpers
 
-    def_delegators 'self.class', :metadata, :provenance_metadata, :properties
-    def_delegators 'properties',
+    def_delegators "self.class", :metadata, :provenance_metadata, :properties
+    def_delegators "properties",
                    :resource_type,
                    :search_param_names,
                    :saves_delayed_references?,
@@ -76,7 +76,7 @@ module InfernoSuiteGenerator
         resource_identifier = resource_identifiers.first
         search_value = include_system ? "#{resource_identifier.system}|#{resource_identifier.value}" : resource_identifier.value.to_s
       end
-      search_value&.gsub(',', '\\,')
+      search_value&.gsub(",", '\\,')
     end
 
     def run_special_identifier_search_test

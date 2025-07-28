@@ -2,7 +2,7 @@
 
 module InfernoSuiteGenerator
   module FHIRResourceNavigation
-    DAR_EXTENSION_URL = 'http://hl7.org/fhir/StructureDefinition/data-absent-reason'
+    DAR_EXTENSION_URL = "http://hl7.org/fhir/StructureDefinition/data-absent-reason"
 
     def resolve_path(elements, path)
       elements = Array.wrap(elements)
@@ -10,7 +10,7 @@ module InfernoSuiteGenerator
 
       paths = path.split(/(?<!hl7)\./)
       segment = paths.first
-      remaining_path = paths.drop(1).join('.')
+      remaining_path = paths.drop(1).join(".")
 
       elements.flat_map do |element|
         child = get_next_value(element, segment)
@@ -33,9 +33,9 @@ module InfernoSuiteGenerator
 
       extension_element = extension_elements.first
       case extension_url
-      when 'http://hl7.org.au/fhir/StructureDefinition/indigenous-status'
+      when "http://hl7.org.au/fhir/StructureDefinition/indigenous-status"
         extension_element.valueCoding
-      when 'http://hl7.org/fhir/StructureDefinition/individual-genderIdentity'
+      when "http://hl7.org/fhir/StructureDefinition/individual-genderIdentity"
         extension_element.extension.first.valueCodeableConcept
       else
         extension_element.valueCoding
@@ -62,7 +62,7 @@ module InfernoSuiteGenerator
 
       path_segments = path.split(/(?<!hl7)\./)
 
-      segment = path_segments.shift.delete_suffix('[x]').gsub(/^class$/, 'local_class').gsub(/\[x\]:/, ':').to_sym
+      segment = path_segments.shift.delete_suffix("[x]").gsub(/^class$/, "local_class").gsub(/\[x\]:/, ":").to_sym
       no_elements_present =
         elements.none? do |element|
           child = get_next_value(element, segment)
@@ -70,7 +70,7 @@ module InfernoSuiteGenerator
         end
       return nil if no_elements_present
 
-      remaining_path = path_segments.join('.')
+      remaining_path = path_segments.join(".")
       elements.each do |element|
         child = get_next_value(element, segment)
         element_found =
@@ -89,7 +89,7 @@ module InfernoSuiteGenerator
       extension_url = property[/(?<=where\(url=').*(?='\))/]
       if extension_url.present?
         element.url == extension_url ? element : nil
-      elsif property.to_s.include?(':') && !property.to_s.include?('url')
+      elsif property.to_s.include?(":") && !property.to_s.include?("url")
         find_slice_via_discriminator(element, property)
 
       else
@@ -100,45 +100,45 @@ module InfernoSuiteGenerator
     end
 
     def find_slice_via_discriminator(element, property)
-      element_name = property.to_s.split(':')[0].gsub(/^class$/, 'local_class')
-      slice_name = property.to_s.split(':')[1].gsub(/^class$/, 'local_class')
+      element_name = property.to_s.split(":")[0].gsub(/^class$/, "local_class")
+      slice_name = property.to_s.split(":")[1].gsub(/^class$/, "local_class")
       if metadata.present?
         slice_by_name = metadata.must_supports[:slices].find { |slice| slice[:slice_name] == slice_name }
         discriminator = slice_by_name[:discriminator]
         slices = Array.wrap(element.send(element_name))
         slices.find do |slice|
           case discriminator[:type]
-          when 'patternCodeableConcept'
+          when "patternCodeableConcept"
             slice_value = discriminator[:path].present? ? slice.send((discriminator[:path]).to_s).coding : slice.coding
             slice_value.any? { |coding| coding.code == discriminator[:code] && coding.system == discriminator[:system] }
-          when 'patternCoding'
+          when "patternCoding"
             slice_value = discriminator[:path].present? ? slice.send(discriminator[:path]) : slice
             slice_value.code == discriminator[:code] && slice_value.system == discriminator[:system]
-          when 'patternIdentifier'
+          when "patternIdentifier"
             slice.identifier.system == discriminator[:system]
-          when 'value'
-            values = discriminator[:values].map { |value| value.merge(path: value[:path].split('.')) }
+          when "value"
+            values = discriminator[:values].map { |value| value.merge(path: value[:path].split(".")) }
             verify_slice_by_values(slice, values)
-          when 'type'
+          when "type"
             case discriminator[:code]
-            when 'Date'
+            when "Date"
               begin
                 Date.parse(slice)
               rescue ArgumentError
                 false
               end
-            when 'DateTime'
+            when "DateTime"
               begin
                 DateTime.parse(slice)
               rescue ArgumentError
                 false
               end
-            when 'String'
+            when "String"
               slice.is_a? String
             else
               slice.is_a? FHIR.const_get(discriminator[:code])
             end
-          when 'requiredBinding'
+          when "requiredBinding"
             discriminator[:path].present? ? slice.send((discriminator[:path]).to_s).coding : slice.coding
             slice_value { |coding| discriminator[:values].include?(coding.code) }
           end

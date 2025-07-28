@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require_relative "naming"
+require_relative "../naming"
 require_relative "basic_test_generator"
-require_relative "registry"
+require_relative "../registry"
 
 module InfernoSuiteGenerator
   class Generator
@@ -75,19 +75,20 @@ module InfernoSuiteGenerator
       end
 
       def ids_input_data
-        if needs_ids_input?
-          data = Registry.get(:config_keeper).read_test_ids_inputs.dig(resource_type)
+        return unless needs_ids_input?
 
-          {
-            :id => data["input_id"].to_sym,
-            :title => data["title"],
-            :description => data["description"],
-            :default => data["default"]
-          }
-        end
+        data = Registry.get(:config_keeper).read_test_ids_inputs[resource_type]
+
+        {
+          id: data["input_id"].to_sym,
+          title: data["title"],
+          description: data["description"],
+          default: data["default"]
+        }
       end
 
       private
+
       def needs_ids_input?
         Registry.get(:config_keeper).read_test_ids_inputs.include?(resource_type)
       end

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require_relative 'fhir_resource_navigation'
-require_relative 'assert_helpers'
+require_relative "fhir_resource_navigation"
+require_relative "assert_helpers"
 
 module InfernoSuiteGenerator
   module ReferenceResolutionTest
@@ -9,14 +9,14 @@ module InfernoSuiteGenerator
     include FHIRResourceNavigation
     include AssertHelpers
 
-    def_delegators 'self.class', :metadata
+    def_delegators "self.class", :metadata
 
     def perform_reference_resolution_test(resources)
       conditional_skip_with_msg resources.blank?, no_resources_skip_message
 
       pass if unresolved_references(resources).empty?
 
-      skip_with_msg "Could not resolve and validate any Must Support references for #{unresolved_references_strings.join(', ')}"
+      skip_with_msg "Could not resolve and validate any Must Support references for #{unresolved_references_strings.join(", ")}"
     end
 
     def unresolved_references_strings
@@ -25,7 +25,7 @@ module InfernoSuiteGenerator
           hash[missing[:path]] << missing[:target_profile]
         end
       unresolved_reference_hash.map do |path, profiles|
-        "#{path} element: Reference#{"(#{profiles.join('|')})" unless profiles.first.empty?}"
+        "#{path} element: Reference#{"(#{profiles.join("|")})" unless profiles.first.empty?}"
       end
     end
 
@@ -33,7 +33,9 @@ module InfernoSuiteGenerator
       saved_reference = resolved_references.find { |item| item[:reference] == reference.reference }
 
       if saved_reference.present?
-        saved_reference[:profiles] << target_profile if target_profile.present? && !saved_reference[:profiles].include?(target_profile)
+        if target_profile.present? && !saved_reference[:profiles].include?(target_profile)
+          saved_reference[:profiles] << target_profile
+        end
       else
         saved_reference = {
           reference: reference.reference,
@@ -60,19 +62,19 @@ module InfernoSuiteGenerator
 
     def no_resources_skip_message
       "No #{resource_type} resources appear to be available. " \
-      'Please use patients with more information.'
+      "Please use patients with more information."
     end
 
     def must_support_references
       metadata.must_supports[:elements].select do |element_definition|
-        element_definition[:types]&.include?('Reference')
+        element_definition[:types]&.include?("Reference")
       end
     end
 
     def must_support_references_with_target_profile
       # mapping array of target_profiles to array of {path, target_profile} pair
       must_support_references.map do |element_definition|
-        (element_definition[:target_profiles] || ['']).map do |target_profile|
+        (element_definition[:target_profiles] || [""]).map do |target_profile|
           {
             path: element_definition[:path],
             target_profile:
@@ -147,14 +149,14 @@ module InfernoSuiteGenerator
             end
 
             fhir_read(reference_type, reference_id)&.resource
-          elsif reference.base_uri.chomp('/') == fhir_client.instance_variable_get(:@base_service_url).chomp('/')
+          elsif reference.base_uri.chomp("/") == fhir_client.instance_variable_get(:@base_service_url).chomp("/")
             fhir_read(reference_type, reference_id)&.resource
           else
             get(reference.reference)&.resource
           end
         rescue StandardError => e
-          Inferno::Application['logger'].error("Unable to resolve reference #{reference.reference}")
-          Inferno::Application['logger'].error(e.full_message)
+          Inferno::Application["logger"].error("Unable to resolve reference #{reference.reference}")
+          Inferno::Application["logger"].error(e.full_message)
           return false
         end
 
@@ -184,7 +186,7 @@ module InfernoSuiteGenerator
 
       validator.filter_messages(message_hashes)
 
-      message_hashes.none? { |message_hash| message_hash[:type] == 'error' }
+      message_hashes.none? { |message_hash| message_hash[:type] == "error" }
     end
   end
 end

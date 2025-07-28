@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
-require_relative 'date_search_validation'
-require_relative 'fhir_resource_navigation'
-require_relative 'search_test_properties'
-require_relative 'read_test'
-require_relative 'assert_helpers'
-require_relative 'search_test_helpers'
+require_relative "date_search_validation"
+require_relative "fhir_resource_navigation"
+require_relative "search_test_properties"
+require_relative "read_test"
+require_relative "assert_helpers"
+require_relative "search_test_helpers"
 
 module InfernoSuiteGenerator
   module SearchTest
@@ -15,8 +15,8 @@ module InfernoSuiteGenerator
     include ReadTest
     include AssertHelpers
 
-    def_delegators 'self.class', :metadata, :provenance_metadata, :properties
-    def_delegators 'properties',
+    def_delegators "self.class", :metadata, :provenance_metadata, :properties
+    def_delegators "properties",
                    :resource_type,
                    :search_param_names,
                    :saves_delayed_references?,
@@ -58,7 +58,7 @@ module InfernoSuiteGenerator
     def all_provenance_revinclude_search_params
       @all_provenance_revinclude_search_params ||=
         all_search_params.transform_values! do |params_list|
-          params_list.map { |params| params.merge(_revinclude: 'Provenance:target') }
+          params_list.map { |params| params.merge(_revinclude: "Provenance:target") }
         end
     end
 
@@ -68,7 +68,8 @@ module InfernoSuiteGenerator
 
     def run_provenance_revinclude_search_test
       # TODO: skip if not supported?
-      conditional_skip_with_msg !any_valid_search_params?(all_provenance_revinclude_search_params), unable_to_resolve_params_message
+      conditional_skip_with_msg !any_valid_search_params?(all_provenance_revinclude_search_params),
+                                unable_to_resolve_params_message
 
       provenance_resources =
         all_provenance_revinclude_search_params.flat_map do |_patient_id, params_list|
@@ -79,22 +80,22 @@ module InfernoSuiteGenerator
 
             check_search_response
 
-            fetch_all_bundled_resources(additional_resource_types: ['Provenance'])
-              .select { |resource| resource.resourceType == 'Provenance' }
+            fetch_all_bundled_resources(additional_resource_types: ["Provenance"])
+              .select { |resource| resource.resourceType == "Provenance" }
           end
         end
 
       scratch_provenance_resources[:all] ||= []
       scratch_provenance_resources[:all].concat(provenance_resources)
 
-      save_delayed_references(provenance_resources, 'Provenance')
+      save_delayed_references(provenance_resources, "Provenance")
 
       # NOTE: https://github.com/hl7au/au-fhir-core-inferno/issues/8
       # skip_if provenance_resources.empty?, no_resources_skip_message('Provenance')
     end
 
     def search_by_patient_id_is_available(patient_id)
-      fhir_search('Patient', params: { _id: patient_id })
+      fhir_search("Patient", params: { _id: patient_id })
       response[:status] == 200
     end
 
@@ -127,11 +128,11 @@ module InfernoSuiteGenerator
       end
       pass if resources.length.positive?
 
-      skip_with_msg 'No resources were included in the search results'
+      skip_with_msg "No resources were included in the search results"
     end
 
     def run_read_test_and_skip_first_search(patient_id)
-      resource = create_reference('Patient', patient_id)
+      resource = create_reference("Patient", patient_id)
       read_and_validate_as_first(resource, patient_id)
     end
 
@@ -159,7 +160,12 @@ module InfernoSuiteGenerator
     end
 
     def perform_search(params, patient_id)
-      search_params = is_count_available_for_resource_type?(resource_type, params) == false ? params : params.merge({ _count: 10 })
+      search_params = if is_count_available_for_resource_type?(resource_type,
+                                                               params) == false
+                        params
+                      else
+                        params.merge({ _count: 10 })
+                      end
       fhir_search(resource_type, params: search_params)
 
       if SearchTestHelpers.search_by_reference?(search_params)
@@ -170,7 +176,12 @@ module InfernoSuiteGenerator
       perform_search_with_status(params, patient_id) if response[:status] == 400 && possible_status_search?
 
       check_search_response
-      fetch_all_bundled_resources = is_count_available_for_resource_type?(resource_type, params) == false ? fetch_all_bundled_resources() : fetch_all_bundled_resources(max_pages: 2)
+      fetch_all_bundled_resources = if is_count_available_for_resource_type?(resource_type,
+                                                                             params) == false
+                                      fetch_all_bundled_resources()
+                                    else
+                                      fetch_all_bundled_resources(max_pages: 2)
+                                    end
       resources_returned =
         fetch_all_bundled_resources.select { |resource| resource.resourceType == resource_type }
 
@@ -178,8 +189,8 @@ module InfernoSuiteGenerator
 
       perform_comparator_searches(params, patient_id) if params_with_comparators.present?
 
-      filter_conditions(resources_returned) if resource_type == 'Condition' && metadata.version == 'v5.0.1'
-      filter_devices(resources_returned) if resource_type == 'Device'
+      filter_conditions(resources_returned) if resource_type == "Condition" && metadata.version == "v5.0.1"
+      filter_devices(resources_returned) if resource_type == "Device"
 
       if first_search?
         all_scratch_resources.concat(resources_returned).uniq!
@@ -214,8 +225,8 @@ module InfernoSuiteGenerator
 
       post_search_resources = fetch_all_bundled_resources.select { |resource| resource.resourceType == resource_type }
 
-      filter_conditions(post_search_resources) if resource_type == 'Condition' && metadata.version == 'v5.0.1'
-      filter_devices(post_search_resources) if resource_type == 'Device'
+      filter_conditions(post_search_resources) if resource_type == "Condition" && metadata.version == "v5.0.1"
+      filter_devices(post_search_resources) if resource_type == "Device"
 
       get_resource_count = get_search_resources.length
       post_resource_count = post_search_resources.length
@@ -223,13 +234,13 @@ module InfernoSuiteGenerator
       search_variant_test_records[:post_variant] = true
 
       assert get_resource_count == post_resource_count,
-             'Expected search by POST to return the same results as search by GET, ' \
+             "Expected search by POST to return the same results as search by GET, " \
              "but GET search returned #{get_resource_count} resources, and POST search " \
              "returned #{post_resource_count} resources."
     end
 
     def filter_devices(resources)
-      codes_to_include = implantable_device_codes&.split(',')&.map(&:strip)
+      codes_to_include = implantable_device_codes&.split(",")&.map(&:strip)
       return resources if codes_to_include.blank?
 
       resources.select! do |resource|
@@ -293,9 +304,9 @@ module InfernoSuiteGenerator
     def date_comparator_value(comparator, date)
       date = date.start || date.end if date.is_a? FHIR::Period
       case comparator
-      when 'lt', 'le'
+      when "lt", "le"
         comparator + (DateTime.xmlschema(date) + 1).xmlschema
-      when 'gt', 'ge'
+      when "gt", "ge"
         comparator + (DateTime.xmlschema(date) - 1).xmlschema
       else
         # ''
@@ -307,17 +318,17 @@ module InfernoSuiteGenerator
       metadata
         .search_definitions
         .dig(name.to_sym, :comparators)
-        .select { |_comparator, expectation| expectation == 'SHALL' }
+        .select { |_comparator, expectation| expectation == "SHALL" }
         .keys
         .map(&:to_s)
     end
 
     def birthdate_comparator_value(comparator, date)
       case comparator
-      when 'lt', 'le'
-        comparator + (DateTime.xmlschema(date) + 1).strftime('%F')
-      when 'gt', 'ge'
-        comparator + (DateTime.xmlschema(date) - 1).strftime('%F')
+      when "lt", "le"
+        comparator + (DateTime.xmlschema(date) + 1).strftime("%F")
+      when "gt", "ge"
+        comparator + (DateTime.xmlschema(date) - 1).strftime("%F")
       else
         raise "Unsupported comparator '#{comparator}'"
       end
@@ -330,7 +341,14 @@ module InfernoSuiteGenerator
         required_comparators(name).each do |comparator|
           paths = search_param_paths(name).first
           date_element = find_a_value_at(scratch_resources_for_patient(patient_id), paths)
-          params_with_comparator = params.merge(name => name != 'birthdate' ? date_comparator_value(comparator, date_element) : birthdate_comparator_value(comparator, date_element))
+          params_with_comparator = params.merge(name => if name != "birthdate"
+                                                          date_comparator_value(comparator,
+                                                                                date_element)
+                                                        else
+                                                          birthdate_comparator_value(
+                                                            comparator, date_element
+                                                          )
+                                                        end)
 
           search_and_check_response(params_with_comparator)
 
@@ -347,11 +365,11 @@ module InfernoSuiteGenerator
       return if resource_count.zero?
       return if search_variant_test_records[:reference_variants]
 
-      if params.keys.include?('patient')
-        new_search_params = params.merge('patient' => "Patient/#{params['patient']}")
+      if params.keys.include?("patient")
+        new_search_params = params.merge("patient" => "Patient/#{params["patient"]}")
       else
         param_key = params.keys.first
-        new_search_params = params.merge(param_key => params[param_key].split('/').last)
+        new_search_params = params.merge(param_key => params[param_key].split("/").last)
       end
       search_and_check_response(new_search_params)
 
@@ -359,15 +377,15 @@ module InfernoSuiteGenerator
         resource.resourceType == resource_type
       end
 
-      filter_conditions(reference_with_type_resources) if resource_type == 'Condition' && metadata.version == 'v5.0.1'
-      filter_devices(reference_with_type_resources) if resource_type == 'Device'
+      filter_conditions(reference_with_type_resources) if resource_type == "Condition" && metadata.version == "v5.0.1"
+      filter_devices(reference_with_type_resources) if resource_type == "Device"
 
       new_resource_count = reference_with_type_resources.count
 
       assert new_resource_count == resource_count,
-             "Expected search by `#{params['patient']}` to to return the same results as searching " \
-             "by `#{new_search_params['patient']}`, but found #{resource_count} resources with " \
-             "`#{params['patient']}` and #{new_resource_count} with `#{new_search_params['patient']}`"
+             "Expected search by `#{params["patient"]}` to to return the same results as searching " \
+             "by `#{new_search_params["patient"]}`, but found #{resource_count} resources with " \
+             "`#{params["patient"]}` and #{new_resource_count} with `#{new_search_params["patient"]}`"
 
       search_variant_test_records[:reference_variants] = true
     end
@@ -385,7 +403,7 @@ module InfernoSuiteGenerator
         fetch_all_bundled_resources
         .select { |resource| resource.resourceType == resource_type }
 
-      assert resources_returned.present?, 'No resources were returned when searching by `system|code`'
+      assert resources_returned.present?, "No resources were returned when searching by `system|code`"
 
       search_variant_test_records[:token_variants] = true
     end
@@ -396,7 +414,7 @@ module InfernoSuiteGenerator
       status_search_values: self.status_search_values,
       resource_type: self.resource_type
     )
-      assert resource.is_a?(FHIR::OperationOutcome), 'Server returned a status of 400 without an OperationOutcome'
+      assert resource.is_a?(FHIR::OperationOutcome), "Server returned a status of 400 without an OperationOutcome"
       # TODO: warn about documenting status requirements
       status_search_values.flat_map do |status_value|
         search_params = original_params.merge("#{status_search_param_name}": status_value)
@@ -414,7 +432,7 @@ module InfernoSuiteGenerator
 
     def status_search_param_name
       @status_search_param_name ||=
-        metadata.search_definitions.keys.find { |key| key.to_s.include? 'status' }
+        metadata.search_definitions.keys.find { |key| key.to_s.include? "status" }
     end
 
     def status_search_values
@@ -432,7 +450,7 @@ module InfernoSuiteGenerator
       definition = metadata.search_definitions[param_name]
       return [] if definition.blank?
 
-      definition[:multiple_or] == 'SHALL' || definition[:multiple_or] == 'SHOULD' ? [definition[:values].join(',')] : Array.wrap(definition[:values])
+      definition[:multiple_or] == "SHALL" || definition[:multiple_or] == "SHOULD" ? [definition[:values].join(",")] : Array.wrap(definition[:values])
     end
 
     def default_search_values_clean(param_name)
@@ -454,24 +472,24 @@ module InfernoSuiteGenerator
     end
 
     def perform_multiple_or_search_test
-      perform_multiple_search_test('or')
+      perform_multiple_search_test("or")
     end
 
     def perform_multiple_and_search_test
-      perform_multiple_search_test('and')
+      perform_multiple_search_test("and")
     end
 
     def modify_value_by_multiple_type(values, multiple_type)
-      return [values.join(',')] if multiple_type == 'or'
+      return [values.join(",")] if multiple_type == "or"
 
       Array.wrap(values)
     end
 
     def perform_multiple_search_test(multiple_type)
       if search_param_names.length > 2
-        skip 'Inconsistent state of the test (params to search more than 2)'
+        skip "Inconsistent state of the test (params to search more than 2)"
       elsif search_param_names.empty?
-        skip 'Inconsistent state of the test (number of params to search is 0)'
+        skip "Inconsistent state of the test (number of params to search is 0)"
       else
         param_name = search_param_names[0]
         default_search_values = default_search_values_clean(param_name.to_sym)
@@ -490,8 +508,14 @@ module InfernoSuiteGenerator
             end
           end
         else
-          resources_arr = all_search_params.map { |patient_id, _params_list| scratch_resources_for_patient(patient_id) }.flatten
-          resources_arr = scratch_resources[:all].filter { |r| r.resourceType == resource_type } if resources_arr.empty? && search_by_target_resource_data
+          resources_arr = all_search_params.map do |patient_id, _params_list|
+            scratch_resources_for_patient(patient_id)
+          end.flatten
+          if resources_arr.empty? && search_by_target_resource_data
+            resources_arr = scratch_resources[:all].filter do |r|
+              r.resourceType == resource_type
+            end
+          end
           existing_values = extract_existing_values_safety(resources_arr, param_name)
 
           if existing_values.length > 1
@@ -505,14 +529,14 @@ module InfernoSuiteGenerator
     end
 
     def find_include_resources(params, patient_id, include_param, _keep_search_variant = true)
-      resources_to_check = "#{include_param['target_resource'].downcase}_resources".to_sym
-      target_resource_type = include_param['target_resource']
+      resources_to_check = "#{include_param["target_resource"].downcase}_resources".to_sym
+      target_resource_type = include_param["target_resource"]
       scratch[resources_to_check] ||= {}
       scratch[resources_to_check][:all] ||= []
       scratch[resources_to_check][patient_id] ||= []
       scratch[resources_to_check][:contained] ||= []
 
-      search_params = params.merge(_include: include_param['parameter'])
+      search_params = params.merge(_include: include_param["parameter"])
       search_and_check_response(search_params)
 
       resources = fetch_all_bundled_resources.select { |resource| resource.resourceType == target_resource_type }
@@ -528,8 +552,8 @@ module InfernoSuiteGenerator
     def test_include_param(base_resources, params, patient_id, include_param, keep_search_variant = true)
       return if keep_search_variant && search_variant_test_records[:inclusion]
 
-      resources_to_check = "#{include_param['target_resource'].downcase}_resources".to_sym
-      target_resource_type = include_param['target_resource']
+      resources_to_check = "#{include_param["target_resource"].downcase}_resources".to_sym
+      target_resource_type = include_param["target_resource"]
 
       scratch[resources_to_check] ||= {}
       scratch[resources_to_check][:all] ||= []
@@ -538,12 +562,12 @@ module InfernoSuiteGenerator
 
       base_resources_with_external_reference =
         base_resources
-        .select { |resource| resource&.to_hash&.[](include_param['paths'].first)&.present? }
-        .reject { |resource| resource&.to_hash&.[](include_param['paths'].first)&.fetch('reference', '')&.start_with?('#') }
+        .select { |resource| resource&.to_hash&.[](include_param["paths"].first)&.present? }
+        .reject { |resource| resource&.to_hash&.[](include_param["paths"].first)&.fetch("reference", "")&.start_with?("#") }
 
       contained_resources =
         base_resources
-        .select { |resource| resource&.to_hash&.[](include_param['paths'].first)&.fetch('reference', '')&.start_with?('#') }
+        .select { |resource| resource&.to_hash&.[](include_param["paths"].first)&.fetch("reference", "")&.start_with?("#") }
         .flat_map(&:contained)
         .select { |resource| resource.resourceType == target_resource_type }
 
@@ -553,7 +577,7 @@ module InfernoSuiteGenerator
 
       return if base_resources_with_external_reference.blank?
 
-      search_params = params.merge(_include: include_param['parameter'])
+      search_params = params.merge(_include: include_param["parameter"])
 
       search_and_check_response(search_params)
 
@@ -564,17 +588,19 @@ module InfernoSuiteGenerator
 
       matched_base_resources = base_resources_with_external_reference.select do |base_resource|
         included_resources.any? do |resource_reference|
-          is_reference_match?(base_resource&.to_hash&.[](include_param['paths'].first)&.fetch('reference', ''), resource_reference)
+          is_reference_match?(base_resource&.to_hash&.[](include_param["paths"].first)&.fetch("reference", ""),
+                              resource_reference)
         end
       end
 
       not_matched_included_resources = included_resources.select do |resource_reference|
         matched_base_resources.none? do |base_resource|
-          is_reference_match?(base_resource&.to_hash&.[](include_param['paths'].first)&.fetch('reference', ''), resource_reference)
+          is_reference_match?(base_resource&.to_hash&.[](include_param["paths"].first)&.fetch("reference", ""),
+                              resource_reference)
         end
       end
 
-      not_matched_included_medications_string = not_matched_included_resources.join(',')
+      not_matched_included_medications_string = not_matched_included_resources.join(",")
       assert not_matched_included_resources.empty?,
              "No #{resource_type} references #{not_matched_included_medications_string} in the search result."
 
@@ -604,12 +630,12 @@ module InfernoSuiteGenerator
     end
 
     def references_to_save(resource_type = nil)
-      reference_metadata = resource_type == 'Provenance' ? provenance_metadata : metadata
+      reference_metadata = resource_type == "Provenance" ? provenance_metadata : metadata
       reference_metadata.delayed_references
     end
 
     def fixed_value_search_param_name
-      (search_param_names - ['patient']).first
+      (search_param_names - ["patient"]).first
     end
 
     def fixed_value_search_param_values
@@ -659,7 +685,7 @@ module InfernoSuiteGenerator
     def patient_id_list
       return [nil] unless respond_to? :patient_ids
 
-      patient_ids.split(',').map(&:strip)
+      patient_ids.split(",").map(&:strip)
     end
 
     def patient_search?
@@ -667,12 +693,12 @@ module InfernoSuiteGenerator
     end
 
     def patient_id_param?(name)
-      name == 'patient' || (name == '_id' && resource_type == 'Patient')
+      name == "patient" || (name == "_id" && resource_type == "Patient")
     end
 
     def search_param_paths(name)
       paths = metadata.search_definitions[name.to_sym][:paths]
-      paths[0] = 'local_class' if paths.first == 'class'
+      paths[0] = "local_class" if paths.first == "class"
 
       paths
     end
@@ -682,7 +708,7 @@ module InfernoSuiteGenerator
     end
 
     def array_of_codes(array)
-      array.map { |name| "`#{name}`" }.join(', ')
+      array.map { |name| "`#{name}`" }.join(", ")
     end
 
     def insufficient_number_of_values(values_to_search)
@@ -703,7 +729,9 @@ module InfernoSuiteGenerator
     def no_resources_skip_message(resource_type = self.resource_type)
       msg = "No #{resource_type} resources appear to be available"
 
-      msg.concat(" with the following Device Type Code filter: #{implantable_device_codes}") if resource_type == 'Device' && implantable_device_codes.present?
+      if resource_type == "Device" && implantable_device_codes.present?
+        msg.concat(" with the following Device Type Code filter: #{implantable_device_codes}")
+      end
 
       "#{msg}. Please use patients with more information"
     end
@@ -724,14 +752,14 @@ module InfernoSuiteGenerator
 
       until bundle.nil? || page_count == max_pages
         resources += bundle&.entry&.map { |entry| entry&.resource }
-        next_bundle_link = bundle&.link&.find { |link| link.relation == 'next' }&.url
+        next_bundle_link = bundle&.link&.find { |link| link.relation == "next" }&.url
         reply_handler&.call(response)
 
         break if next_bundle_link.blank?
 
         reply = fhir_client.raw_read_url(next_bundle_link)
 
-        store_request('outgoing') { reply }
+        store_request("outgoing") { reply }
         error_message = cant_resolve_next_bundle_message(next_bundle_link)
 
         assert_response_status(200)
@@ -742,8 +770,8 @@ module InfernoSuiteGenerator
         page_count += 1
       end
 
-      valid_resource_types = [resource_type, 'OperationOutcome'].concat(additional_resource_types)
-      valid_resource_types << 'Medication' if %w[MedicationRequest MedicationDispense].include?(resource_type)
+      valid_resource_types = [resource_type, "OperationOutcome"].concat(additional_resource_types)
+      valid_resource_types << "Medication" if %w[MedicationRequest MedicationDispense].include?(resource_type)
 
       invalid_resource_types =
         resources.reject { |entry| valid_resource_types.include? entry.resourceType }
@@ -751,9 +779,9 @@ module InfernoSuiteGenerator
                  .uniq
 
       if invalid_resource_types.any?
-        info "Received resource type(s) #{invalid_resource_types.join(', ')} in search bundle, " \
-             "but only expected resource types #{valid_resource_types.join(', ')}. " \
-             'This is unusual but allowed if the server believes additional resource types are relevant.'
+        info "Received resource type(s) #{invalid_resource_types.join(", ")} in search bundle, " \
+             "but only expected resource types #{valid_resource_types.join(", ")}. " \
+             "This is unusual but allowed if the server believes additional resource types are relevant."
       end
 
       resources
@@ -783,10 +811,10 @@ module InfernoSuiteGenerator
           when FHIR::CodeableConcept
             if include_system
               coding =
-                find_a_value_at(element, 'coding') { |coding| coding.code.present? && coding.system.present? }
+                find_a_value_at(element, "coding") { |coding| coding.code.present? && coding.system.present? }
               "#{coding.system}|#{coding.code}"
             else
-              find_a_value_at(element, 'coding.code')
+              find_a_value_at(element, "coding.code")
             end
           when FHIR::Identifier
             include_system ? "#{element.system}|#{element.value}" : element.value
@@ -797,8 +825,8 @@ module InfernoSuiteGenerator
           when FHIR::Address
             element.text || element.city || element.state || element.postalCode || element.country
           else
-            if metadata.version != 'v3.1.1' &&
-               metadata.search_definitions[name.to_sym][:type] == 'date' &&
+            if metadata.version != "v3.1.1" &&
+               metadata.search_definitions[name.to_sym][:type] == "date" &&
                params_with_comparators&.include?(name)
               # convert date search to greath-than comparator search with correct precision
               # For all date search parameters:
@@ -806,11 +834,11 @@ module InfernoSuiteGenerator
               #   Goal.target-date has day precision
               #   All others have second + time offset precision
               if /^\d{4}(-\d{2})?$/.match?(element) || # YYYY or YYYY-MM
-                 (/^\d{4}-\d{2}-\d{2}$/.match?(element) && resource_type != 'Goal') # YYY-MM-DD AND Resource is NOT Goal
-                if !(path == 'birthDate' && resource_type == 'Patient')
+                 (/^\d{4}-\d{2}-\d{2}$/.match?(element) && resource_type != "Goal") # YYY-MM-DD AND Resource is NOT Goal
+                if !(path == "birthDate" && resource_type == "Patient")
                   "gt#{(DateTime.xmlschema(element) - 1).xmlschema}"
                 else
-                  "gt#{(DateTime.xmlschema(element) - 1).strftime('%F')}"
+                  "gt#{(DateTime.xmlschema(element) - 1).strftime("%F")}"
                 end
               else
                 element
@@ -822,7 +850,7 @@ module InfernoSuiteGenerator
 
         break if search_value.present?
       end
-      search_value&.gsub(',', '\\,')
+      search_value&.gsub(",", '\\,')
     end
 
     def element_has_valid_value?(element, include_system)
@@ -832,10 +860,10 @@ module InfernoSuiteGenerator
       when FHIR::CodeableConcept
         if include_system
           coding =
-            find_a_value_at(element, 'coding') { |coding| coding.code.present? && coding.system.present? }
+            find_a_value_at(element, "coding") { |coding| coding.code.present? && coding.system.present? }
           coding.present?
         else
-          find_a_value_at(element, 'coding.code').present?
+          find_a_value_at(element, "coding.code").present?
         end
       when FHIR::Identifier
         include_system ? element.value.present? && element.system.present? : element.value.present?
@@ -860,7 +888,7 @@ module InfernoSuiteGenerator
       resources.each do |resource|
         references_to_save(containing_resource_type).each do |reference_to_save|
           resolve_path(resource, reference_to_save[:path])
-            .select { |reference| reference.is_a?(FHIR::Reference) && !reference.contained? && reference.reference.present?}
+            .select { |reference| reference.is_a?(FHIR::Reference) && !reference.contained? && reference.reference.present? }
             .each do |reference|
               resource_type = reference.resource_class.name.demodulize
               need_to_save = reference_to_save[:resources].include?(resource_type)
@@ -878,7 +906,7 @@ module InfernoSuiteGenerator
       extension_elements = resource.extension.filter { |ext| ext.url == extension_url }
       extension_element = extension_elements.first
 
-      return extension_element.extension.first.valueCodeableConcept.coding.first.code if extension_url == 'http://hl7.org/fhir/StructureDefinition/individual-genderIdentity'
+      return extension_element.extension.first.valueCodeableConcept.coding.first.code if extension_url == "http://hl7.org/fhir/StructureDefinition/individual-genderIdentity"
 
       extension_element.valueCoding.code
     end
@@ -886,15 +914,15 @@ module InfernoSuiteGenerator
     def check_resource_against_params(resource, params)
       params.each do |name, escaped_search_value|
         # unescape search value
-        search_value = escaped_search_value&.gsub('\\,', ',')
+        search_value = escaped_search_value&.gsub('\\,', ",")
         paths = search_param_paths(name)
 
         match_found = false
         values_found = []
         if %w[indigenous-status gender-identity].include?(name)
           search_param_extension_map = {
-            'indigenous-status' => 'http://hl7.org.au/fhir/StructureDefinition/indigenous-status',
-            'gender-identity' => 'http://hl7.org/fhir/StructureDefinition/individual-genderIdentity'
+            "indigenous-status" => "http://hl7.org.au/fhir/StructureDefinition/indigenous-status",
+            "gender-identity" => "http://hl7.org/fhir/StructureDefinition/individual-genderIdentity"
           }
           values_found = [extension_check(resource, search_param_extension_map[name])]
           match_found = search_value.to_s == values_found.first if values_found.length.positive?
@@ -913,9 +941,9 @@ module InfernoSuiteGenerator
 
             match_found =
               case type
-              when 'Period', 'date', 'instant', 'dateTime'
+              when "Period", "date", "instant", "dateTime"
                 values_found.any? { |date| validate_date_search(search_value, date) }
-              when 'HumanName'
+              when "HumanName"
                 # When a string search parameter refers to the types HumanName and Address,
                 # the search covers the elements of type string, and does not cover elements such as use and period
                 # https://www.hl7.org/fhir/search.html#string
@@ -927,7 +955,7 @@ module InfernoSuiteGenerator
                     name&.prefix&.any? { |prefix| prefix.downcase.start_with?(search_value_downcase) } ||
                     name&.suffix&.any? { |suffix| suffix.downcase.start_with?(search_value_downcase) }
                 end
-              when 'Address'
+              when "Address"
                 search_value_downcase = search_value.downcase
                 values_found.any? do |address|
                   address&.text&.downcase&.start_with?(search_value_downcase) ||
@@ -936,34 +964,34 @@ module InfernoSuiteGenerator
                     address&.postalCode&.downcase&.start_with?(search_value_downcase) ||
                     address&.country&.downcase&.start_with?(search_value_downcase)
                 end
-              when 'CodeableConcept'
+              when "CodeableConcept"
                 # FHIR token search (https://www.hl7.org/fhir/search.html#token): "When in doubt, servers SHOULD
                 # treat tokens in a case-insensitive manner, on the grounds that including undesired data has
                 # less safety implications than excluding desired behavior".
                 codings = values_found.flat_map(&:coding)
-                if search_value.include? '|'
-                  system = search_value.split('|').first
-                  code = search_value.split('|').last
+                if search_value.include? "|"
+                  system = search_value.split("|").first
+                  code = search_value.split("|").last
                   codings&.any? { |coding| coding.system == system && coding.code&.casecmp?(code) }
                 else
                   codings&.any? { |coding| coding.code&.casecmp?(search_value) }
                 end
-              when 'Coding'
-                if search_value.include? '|'
-                  system = search_value.split('|').first
-                  code = search_value.split('|').last
+              when "Coding"
+                if search_value.include? "|"
+                  system = search_value.split("|").first
+                  code = search_value.split("|").last
                   values_found.any? { |coding| coding.system == system && coding.code&.casecmp?(code) }
                 else
                   values_found.any? { |coding| coding.code&.casecmp?(search_value) }
                 end
-              when 'Identifier'
-                if search_value.include? '|'
+              when "Identifier"
+                if search_value.include? "|"
                   values_found.any? { |identifier| "#{identifier.system}|#{identifier.value}" == search_value }
                 else
                   values_found.any? { |identifier| identifier.value == search_value }
                 end
-              when 'string'
-                searched_values = search_value.downcase.split(/(?<!\\\\),/).map { |string| string.gsub('\\,', ',') }
+              when "string"
+                searched_values = search_value.downcase.split(/(?<!\\\\),/).map { |string| string.gsub('\\,', ",") }
                 values_found.any? do |value_found|
                   searched_values.any? { |searched_value| value_found.downcase.starts_with? searched_value }
                 end
@@ -971,13 +999,13 @@ module InfernoSuiteGenerator
                 # searching by patient requires special case because we are searching by a resource identifier
                 # references can also be URLs, so we may need to resolve those URLs
                 if %w[subject patient].include? name.to_s
-                  id = search_value.split('Patient/').last
+                  id = search_value.split("Patient/").last
                   possible_values = [id, "Patient/#{id}", "#{url}/Patient/#{id}"]
                   values_found.any? do |reference|
                     possible_values.include? reference
                   end
                 else
-                  search_values = search_value.split(/(?<!\\\\),/).map { |string| string.gsub('\\,', ',') }
+                  search_values = search_value.split(/(?<!\\\\),/).map { |string| string.gsub('\\,', ",") }
                   values_found.any? { |value_found| search_values.include? value_found }
                 end
               end
@@ -989,7 +1017,7 @@ module InfernoSuiteGenerator
         assert match_found,
                "#{resource_type}/#{resource.id} did not match the search parameters:\n" \
                "* Expected: #{search_value}\n" \
-               "* Found: #{values_found.map(&:inspect).join(', ')}"
+               "* Found: #{values_found.map(&:inspect).join(", ")}"
       end
     end
 
@@ -1024,7 +1052,7 @@ module InfernoSuiteGenerator
 
       return unless search_is_available == false
 
-      info 'This test was run as a read test. The search functionality is missing in this test, so the test will fail. However, the obtained data will be available.'
+      info "This test was run as a read test. The search functionality is missing in this test, so the test will fail. However, the obtained data will be available."
       assert false
     end
   end

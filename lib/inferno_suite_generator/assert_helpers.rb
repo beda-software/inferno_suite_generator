@@ -4,7 +4,7 @@ module InfernoSuiteGenerator
   module AssertHelpers
     extend Forwardable
 
-    def_delegators 'properties',
+    def_delegators "properties",
                    :conditional_skip_with_msg,
                    :skip_with_msg
 

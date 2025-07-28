@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
-require_relative 'assert_helpers'
+require_relative "assert_helpers"
 
 module InfernoSuiteGenerator
   module ValidationTest
     include AssertHelpers
 
-    DAR_CODE_SYSTEM_URL = 'http://terminology.hl7.org/CodeSystem/data-absent-reason'
-    DAR_EXTENSION_URL = 'http://hl7.org/fhir/StructureDefinition/data-absent-reason'
+    DAR_CODE_SYSTEM_URL = "http://terminology.hl7.org/CodeSystem/data-absent-reason"
+    DAR_EXTENSION_URL = "http://hl7.org/fhir/StructureDefinition/data-absent-reason"
 
     def perform_validation_test(resources,
                                 profile_url,
@@ -25,7 +25,7 @@ module InfernoSuiteGenerator
         check_for_dar(resource)
       end
 
-      errors_found = messages.any? { |message| message[:type] == 'error' }
+      errors_found = messages.any? { |message| message[:type] == "error" }
 
       assert !errors_found, "Resource does not conform to the profile #{profile_with_version}"
     end
@@ -45,17 +45,17 @@ module InfernoSuiteGenerator
     end
 
     def check_for_dar_code(coding)
-      return unless coding.code == 'unknown' && coding.system == DAR_CODE_SYSTEM_URL
+      return unless coding.code == "unknown" && coding.system == DAR_CODE_SYSTEM_URL
 
       scratch[:dar_code_found] = true
-      output dar_code_found: 'true'
+      output dar_code_found: "true"
     end
 
     def check_for_dar_extension(resource)
       return unless resource.source_contents&.include? DAR_EXTENSION_URL
 
       scratch[:dar_extension_found] = true
-      output dar_extension_found: 'true'
+      output dar_extension_found: "true"
     end
   end
 end

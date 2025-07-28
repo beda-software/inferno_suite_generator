@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require_relative 'fhir_resource_navigation'
-require_relative 'helpers'
-require_relative 'assert_helpers'
+require_relative "fhir_resource_navigation"
+require_relative "helpers"
+require_relative "assert_helpers"
 
 module InfernoSuiteGenerator
   module MustSupportTest
@@ -10,7 +10,7 @@ module InfernoSuiteGenerator
     include FHIRResourceNavigation
     include AssertHelpers
 
-    def_delegators 'self.class', :metadata
+    def_delegators "self.class", :metadata
 
     def all_scratch_resources
       scratch_resources[:all]
@@ -26,7 +26,7 @@ module InfernoSuiteGenerator
       handle_must_support_choices if metadata.must_supports[:choices].present?
 
       pass if (missing_elements + missing_slices + missing_extensions).empty?
-      skip_with_msg "Could not find #{missing_must_support_strings.join(', ')} element(s) in the #{resources.length} " \
+      skip_with_msg "Could not find #{missing_must_support_strings.join(", ")} element(s) in the #{resources.length} " \
            "provided #{resource_type} resource(s). To prevent this issue, please add the missing must support "\
            "elements to at least one #{resource_type} resource on the server."
     end
@@ -63,8 +63,8 @@ module InfernoSuiteGenerator
 
     def missing_must_support_strings
       result = missing_elements.map { |element_definition| missing_element_string(element_definition) } +
-        missing_slices.map { |slice_definition| slice_definition[:slice_id] } +
-        missing_extensions.map { |extension_definition| extension_definition[:id] }
+               missing_slices.map { |slice_definition| slice_definition[:slice_id] } +
+               missing_extensions.map { |extension_definition| extension_definition[:id] }
 
       result.map { |missing_element| "'#{missing_element}'" }
     end
@@ -93,7 +93,7 @@ module InfernoSuiteGenerator
       @missing_extensions ||=
         must_support_extensions.select do |extension_definition|
           resources.none? do |resource|
-            resource_extensions_url_arr = Helpers.extract_extensions_from_resource(resource).map { |ext| ext['url'] }
+            resource_extensions_url_arr = Helpers.extract_extensions_from_resource(resource).map { |ext| ext["url"] }
             resource_extensions_url_arr.include? extension_definition[:url]
           end
         end
@@ -114,7 +114,7 @@ module InfernoSuiteGenerator
             path = element_definition[:path] # .delete_suffix('[x]')
             value_found = find_a_value_at(resource, path) do |value|
               value_without_extensions =
-                value.respond_to?(:to_hash) ? value.to_hash.reject { |key, _| key == 'extension' } : value
+                value.respond_to?(:to_hash) ? value.to_hash.reject { |key, _| key == "extension" } : value
 
               (value_without_extensions.present? || value_without_extensions == false) &&
                 (element_definition[:fixed_value].blank? || value == element_definition[:fixed_value])
@@ -147,42 +147,42 @@ module InfernoSuiteGenerator
     def find_slice(resource, path, discriminator)
       find_a_value_at(resource, path) do |element|
         case discriminator[:type]
-        when 'patternCodeableConcept'
-          coding_path = discriminator[:path].present? ? "#{discriminator[:path]}.coding" : 'coding'
+        when "patternCodeableConcept"
+          coding_path = discriminator[:path].present? ? "#{discriminator[:path]}.coding" : "coding"
           find_a_value_at(element, coding_path) do |coding|
             coding.code == discriminator[:code] && coding.system == discriminator[:system]
           end
-        when 'patternCoding'
-          coding_path = discriminator[:path].present? ? discriminator[:path] : ''
+        when "patternCoding"
+          coding_path = discriminator[:path].present? ? discriminator[:path] : ""
           find_a_value_at(element, coding_path) do |coding|
             coding.code == discriminator[:code] && coding.system == discriminator[:system]
           end
-        when 'patternIdentifier'
+        when "patternIdentifier"
           find_a_value_at(element, discriminator[:path]) { |identifier| identifier.system == discriminator[:system] }
-        when 'value'
-          values = discriminator[:values].map { |value| value.merge(path: value[:path].split('.')) }
+        when "value"
+          values = discriminator[:values].map { |value| value.merge(path: value[:path].split(".")) }
           find_slice_by_values(element, values)
-        when 'type'
+        when "type"
           case discriminator[:code]
-          when 'Date'
+          when "Date"
             begin
               Date.parse(element)
             rescue ArgumentError
               false
             end
-          when 'DateTime'
+          when "DateTime"
             begin
               DateTime.parse(element)
             rescue ArgumentError
               false
             end
-          when 'String'
+          when "String"
             element.is_a? String
           else
             element.is_a? FHIR.const_get(discriminator[:code])
           end
-        when 'requiredBinding'
-          coding_path = discriminator[:path].present? ? "#{discriminator[:path]}.coding" : 'coding'
+        when "requiredBinding"
+          coding_path = discriminator[:path].present? ? "#{discriminator[:path]}.coding" : "coding"
           find_a_value_at(element, coding_path) { |coding| discriminator[:values].include?(coding.code) }
         end
       end

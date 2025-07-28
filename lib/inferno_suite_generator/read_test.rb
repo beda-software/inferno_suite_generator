@@ -28,23 +28,23 @@ module InfernoSuiteGenerator
 
     def fetch_resource_ids(resource_type)
       case resource_type
-      when 'Location'
+      when "Location"
         location_ids
-      when 'Organization'
+      when "Organization"
         organization_ids
-      when 'Practitioner'
+      when "Practitioner"
         practitioner_ids
-      when 'PractitionerRole'
+      when "PractitionerRole"
         practitioner_role_ids
-      when 'HealthcareService'
+      when "HealthcareService"
         healthcare_service_ids
       else
-        ''
+        ""
       end
     end
 
     def resource_ids_str_to_arr(resource_ids_str)
-      resource_ids_str.split(',').map(&:strip)
+      resource_ids_str.split(",").map(&:strip)
     end
 
     def read_and_validate_resourses_arr(resources_to_read)
@@ -69,9 +69,9 @@ module InfernoSuiteGenerator
     def readable_resources(resources)
       resources
         .select { |resource| resource.is_a?(resource_class) || resource.is_a?(FHIR::Reference) }
-        .select { |resource| (resource.is_a?(FHIR::Reference) ? resource.reference.split('/').last : resource.id).present? }
+        .select { |resource| (resource.is_a?(FHIR::Reference) ? resource.reference.split("/").last : resource.id).present? }
         .compact
-        .uniq { |resource| resource.is_a?(FHIR::Reference) ? resource.reference.split('/').last : resource.id }
+        .uniq { |resource| resource.is_a?(FHIR::Reference) ? resource.reference.split("/").last : resource.id }
     end
 
     def basic_read_and_validate(resource_to_read)
@@ -100,12 +100,12 @@ module InfernoSuiteGenerator
     end
 
     def resource_id(resource)
-      resource.is_a?(FHIR::Reference) ? resource.reference.split('/').last : resource.id
+      resource.is_a?(FHIR::Reference) ? resource.reference.split("/").last : resource.id
     end
 
     def no_resources_skip_message
       "No #{resource_type} resources appear to be available. " \
-      'Please use patients with more information.'
+      "Please use patients with more information."
     end
 
     def bad_resource_id_message(expected_id)

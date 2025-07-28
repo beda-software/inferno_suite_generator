@@ -184,7 +184,7 @@ module InfernoSuiteGenerator
       end
 
       def read_test_ids_inputs
-        special_cases.dig('READ_TEST_IDS_INPUTS') || {}
+        special_cases["READ_TEST_IDS_INPUTS"] || {}
       end
 
       def name_first_profile?(profile_url)
