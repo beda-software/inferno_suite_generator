@@ -38,7 +38,6 @@ module InfernoSuiteGenerator
     end
 
     def generate
-      # puts "Generating tests for IG #{File.basename(ig_deps_path)}"
       load_ig_package
       extract_metadata
       generate_search_tests
