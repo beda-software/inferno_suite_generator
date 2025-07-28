@@ -59,7 +59,7 @@ module InfernoSuiteGenerator
           properties[:resource_type] = "'#{resource_type}'"
           properties[:search_param_names] = search_param_names_array
           properties[:attr_paths] = attribute_paths
-          properties[:target_identifier] = target_identifier
+          properties[:target_identifier] = target_identifier.transform_keys(&:to_sym)
         end
       end
 

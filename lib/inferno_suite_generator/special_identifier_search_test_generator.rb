@@ -46,7 +46,7 @@ module InfernoSuiteGenerator
           properties[:resource_type] = "'#{resource_type}'"
           properties[:search_param_names] = search_param_names_array
           properties[:token_search_params] = token_search_params_string if token_search_params.present?
-          properties[:target_identifier] = special_identifier
+          properties[:target_identifier] = special_identifier.transform_keys(&:to_sym)
         end
       end
 
