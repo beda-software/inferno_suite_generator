@@ -77,9 +77,6 @@ module InfernoSuiteGenerator
         when TEMPLATE_TYPES[:INCLUDE]
           "#{basic_class_name_with_search}Include#{includes.first["target_resource"]}Test"
         when TEMPLATE_TYPES[:SPECIAL_IDENTIFIER_SEARCH]
-          puts "basic_test_id: #{basic_test_id}"
-          puts "search_identifier: #{search_identifier}"
-          puts "special_identifier: #{special_identifier}"
           "#{basic_class_name_with_search}#{special_identifier["display"].delete("-")}SearchTest"
         when TEMPLATE_TYPES[:SUITE]
           "#{ig_metadata.ig_module_name_prefix}TestSuite"
