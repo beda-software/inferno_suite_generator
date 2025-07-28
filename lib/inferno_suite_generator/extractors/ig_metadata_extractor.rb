@@ -2,7 +2,7 @@
 
 require_relative "../core/ig_metadata"
 require_relative "group_metadata_extractor"
-require_relative "../registry"
+require_relative "../utils/registry"
 
 module InfernoSuiteGenerator
   class Generator

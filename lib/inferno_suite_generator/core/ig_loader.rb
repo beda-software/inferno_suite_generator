@@ -8,7 +8,7 @@ require "zlib"
 require "json"
 require_relative "ig_resources"
 require_relative "generator_config_keeper"
-require_relative "../registry"
+require_relative "../utils/registry"
 
 module InfernoSuiteGenerator
   class Generator

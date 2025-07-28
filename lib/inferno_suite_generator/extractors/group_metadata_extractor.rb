@@ -6,7 +6,7 @@ require_relative "must_support_metadata_extractor"
 require_relative "search_metadata_extractor"
 require_relative "terminology_binding_metadata_extractor"
 require_relative "../core/generator_config_keeper"
-require_relative "../registry"
+require_relative "../utils/registry"
 
 module InfernoSuiteGenerator
   class Generator

@@ -20,8 +20,8 @@ require_relative "inferno_suite_generator/generators/special_identifier_search_t
 require_relative "inferno_suite_generator/generators/special_identifiers_chain_search_test_generator"
 require_relative "inferno_suite_generator/generators/include_search_test_generator"
 require_relative "inferno_suite_generator/core/generator_config_keeper"
-require_relative "inferno_suite_generator/registry"
-require_relative "inferno_suite_generator/helpers"
+require_relative "inferno_suite_generator/utils/registry"
+require_relative "inferno_suite_generator/utils/helpers"
 
 module InfernoSuiteGenerator
   class Generator
