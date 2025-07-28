@@ -13,7 +13,7 @@ module InfernoSuiteGenerator
             version_specific_resources = Registry.get(:config_keeper).version_specific_resources_to_exclude(group.version)[group.version]
             version_specific_resources ? version_specific_resources.include?(group.resource) : Registry.get(:config_keeper).resources_to_exclude.include?(group.resource)
           end
-            .select { |group| Registry.get(:config_keeper).specific_identifiers.keys.include? group.resource }
+            .select { |group| Registry.get(:config_keeper).specific_identifiers.key?(group.resource) }
                      .select { |group| group.searches.present? }
                      .each do |group|
             group.searches.each do |search|

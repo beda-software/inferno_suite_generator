@@ -365,7 +365,7 @@ module InfernoSuiteGenerator
       return if resource_count.zero?
       return if search_variant_test_records[:reference_variants]
 
-      if params.keys.include?("patient")
+      if params.key?("patient")
         new_search_params = params.merge("patient" => "Patient/#{params["patient"]}")
       else
         param_key = params.keys.first
@@ -424,7 +424,7 @@ module InfernoSuiteGenerator
         entries = resource.entry.select { |entry| entry.resource.resourceType == resource_type }
 
         if entries.present?
-          original_params.merge!("#{status_search_param_name}": status_value)
+          original_params[status_search_param_name.to_s] = status_value
           break
         end
       end
@@ -450,7 +450,12 @@ module InfernoSuiteGenerator
       definition = metadata.search_definitions[param_name]
       return [] if definition.blank?
 
-      definition[:multiple_or] == "SHALL" || definition[:multiple_or] == "SHOULD" ? [definition[:values].join(",")] : Array.wrap(definition[:values])
+      if %w[SHALL
+            SHOULD].include?(definition[:multiple_or])
+        [definition[:values].join(",")]
+      else
+        Array.wrap(definition[:values])
+      end
     end
 
     def default_search_values_clean(param_name)
@@ -563,11 +568,17 @@ module InfernoSuiteGenerator
       base_resources_with_external_reference =
         base_resources
         .select { |resource| resource&.to_hash&.[](include_param["paths"].first)&.present? }
-        .reject { |resource| resource&.to_hash&.[](include_param["paths"].first)&.fetch("reference", "")&.start_with?("#") }
+        .reject do |resource|
+          resource&.to_hash&.[](include_param["paths"].first)&.fetch("reference",
+                                                                     "")&.start_with?("#")
+        end
 
       contained_resources =
         base_resources
-        .select { |resource| resource&.to_hash&.[](include_param["paths"].first)&.fetch("reference", "")&.start_with?("#") }
+        .select do |resource|
+          resource&.to_hash&.[](include_param["paths"].first)&.fetch("reference",
+                                                                     "")&.start_with?("#")
+        end
         .flat_map(&:contained)
         .select { |resource| resource.resourceType == target_resource_type }
 

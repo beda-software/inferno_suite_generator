@@ -81,7 +81,7 @@ module InfernoSuiteGenerator
       end
 
       def optional?
-        conformance_expectation == "SHOULD" || conformance_expectation == "MAY"
+        %w[SHOULD MAY].include?(conformance_expectation)
       end
 
       def search_definition(name)

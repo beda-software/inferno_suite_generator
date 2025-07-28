@@ -1,3 +1,8 @@
+plugins:
+  - rubocop-packaging
+  - rubocop-performance
+  - rubocop-md
+
 AllCops:
   TargetRubyVersion: 3.1
 

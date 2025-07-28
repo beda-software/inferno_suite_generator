@@ -20,7 +20,7 @@ The generator creates various types of tests:
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'inferno_suite_generator'
+gem "inferno_suite_generator"
 ```
 
 And then execute:
@@ -56,7 +56,7 @@ gem install inferno_suite_generator
 2. Run the generator:
 
 ```ruby
-require 'inferno_suite_generator'
+require "inferno_suite_generator"
 
 InfernoSuiteGenerator::Generator.generate
 ```

@@ -441,7 +441,7 @@ module InfernoSuiteGenerator
         @must_supports[:elements].delete_if do |element|
           element[:path].start_with?("value[x]") ||
             element[:original_path]&.start_with?("value[x]") ||
-            element[:path] == ("dataAbsentReason") ||
+            element[:path] == "dataAbsentReason" ||
             (
               pattern.match?(element[:path]) && ["3.1.1", "4.0.0"].include?(ig_resources.ig.version)
             )

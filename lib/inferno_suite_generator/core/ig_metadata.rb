@@ -6,7 +6,7 @@ module InfernoSuiteGenerator
       attr_accessor :ig_version, :ig_id, :ig_title, :ig_module_name_prefix, :ig_test_id_prefix, :groups
 
       def reformatted_version
-        @reformatted_version ||= ig_version.delete(".").gsub("-", "_")
+        @reformatted_version ||= ig_version.delete(".").tr("-", "_")
       end
 
       def ordered_groups

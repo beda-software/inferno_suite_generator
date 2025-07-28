@@ -45,7 +45,7 @@ module InfernoSuiteGenerator
 
       def conformance_expectation
         # NOTE: https://github.com/hl7au/au-fhir-core-inferno/issues/61
-        return "SHOULD" if search_name == "status" && (resource_type == "Procedure" || resource_type == "Observation")
+        return "SHOULD" if search_name == "status" && %w[Procedure Observation].include?(resource_type)
 
         search_metadata[:multiple_or]
       end
@@ -84,7 +84,7 @@ module InfernoSuiteGenerator
       end
 
       def optional?
-        conformance_expectation == "SHOULD" || conformance_expectation == "MAY"
+        %w[SHOULD MAY].include?(conformance_expectation)
       end
 
       def search_definition(name)

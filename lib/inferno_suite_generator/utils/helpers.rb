@@ -5,12 +5,13 @@ module Helpers
   DAR_EXTENSION_URL = "http://hl7.org/fhir/StructureDefinition/data-absent-reason"
 
   def self.test_on_target_resource_data?(special_cases_hash, resource_type, search_param_names)
-    return unless special_cases_hash.keys.include? resource_type
+    return unless special_cases_hash.key?(resource_type)
 
     special_cases_hash[resource_type].include? search_param_names
   end
 
-  def self.multiple_test_description(multiple_type, conformance_expectation, search_param_name_string, resource_type, url_version)
+  def self.multiple_test_description(multiple_type, conformance_expectation, search_param_name_string, resource_type,
+                                     url_version)
     multiple_type_str = multiple_type == "OR" ? "multipleOr" : "multipleAnd"
     <<~DESCRIPTION.gsub(/\n{3,}/, "\n\n")
       A server #{conformance_expectation} support searching by #{multiple_type_str}
@@ -114,7 +115,8 @@ module Helpers
     DESCRIPTION
   end
 
-  def self.search_description(required_searches, search_param_name_string, search_validation_resource_type, for_group_description, resource_type)
+  def self.search_description(required_searches, search_param_name_string, search_validation_resource_type,
+                              for_group_description, resource_type)
     return "" if required_searches.blank?
 
     is_independant_group = %w[Practitioner PractitionerRole Location Organization].include? resource_type
@@ -218,7 +220,7 @@ module Helpers
     resource.each_element do |element, _meta, _path|
       next unless element.is_a?(FHIR::Coding)
 
-      return true if (element.code == "masked" || element.code == "unknown") && element.system == DAR_CODE_SYSTEM_URL
+      return true if %w[masked unknown].include?(element.code) && element.system == DAR_CODE_SYSTEM_URL
     end
 
     false
