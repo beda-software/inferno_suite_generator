@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
-require_relative "../group_metadata"
-require_relative "../ig_metadata"
+require_relative "../core/group_metadata"
+require_relative "../core/ig_metadata"
 require_relative "must_support_metadata_extractor"
 require_relative "search_metadata_extractor"
 require_relative "terminology_binding_metadata_extractor"
-require_relative "../generator_config_keeper"
+require_relative "../core/generator_config_keeper"
 require_relative "../registry"
 
 module InfernoSuiteGenerator

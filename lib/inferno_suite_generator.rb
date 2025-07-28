@@ -3,7 +3,7 @@
 require "fhir_models"
 require "inferno/ext/fhir_models"
 
-require_relative "inferno_suite_generator/ig_loader"
+require_relative "inferno_suite_generator/core/ig_loader"
 require_relative "inferno_suite_generator/extractors/ig_metadata_extractor"
 require_relative "inferno_suite_generator/generators/group_generator"
 require_relative "inferno_suite_generator/generators/must_support_test_generator"
@@ -19,7 +19,7 @@ require_relative "inferno_suite_generator/generators/chain_search_test_generator
 require_relative "inferno_suite_generator/generators/special_identifier_search_test_generator"
 require_relative "inferno_suite_generator/generators/special_identifiers_chain_search_test_generator"
 require_relative "inferno_suite_generator/generators/include_search_test_generator"
-require_relative "inferno_suite_generator/generator_config_keeper"
+require_relative "inferno_suite_generator/core/generator_config_keeper"
 require_relative "inferno_suite_generator/registry"
 require_relative "inferno_suite_generator/helpers"
 

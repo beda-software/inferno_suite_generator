@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative "../ig_metadata"
+require_relative "../core/ig_metadata"
 require_relative "group_metadata_extractor"
 require_relative "../registry"
 
