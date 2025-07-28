@@ -4,7 +4,7 @@ require "fhir_models"
 require "inferno/ext/fhir_models"
 
 require_relative "inferno_suite_generator/ig_loader"
-require_relative "inferno_suite_generator/ig_metadata_extractor"
+require_relative "inferno_suite_generator/extractors/ig_metadata_extractor"
 require_relative "inferno_suite_generator/generators/group_generator"
 require_relative "inferno_suite_generator/generators/must_support_test_generator"
 require_relative "inferno_suite_generator/generators/provenance_revinclude_search_test_generator"

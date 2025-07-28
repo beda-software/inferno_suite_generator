@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative "search_test_properties"
+require_relative "../search_test_properties"
 require_relative "search_test"
 
 module InfernoSuiteGenerator
