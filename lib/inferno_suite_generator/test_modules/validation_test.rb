@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative "assert_helpers"
+require_relative "../assert_helpers"
 
 module InfernoSuiteGenerator
   module ValidationTest

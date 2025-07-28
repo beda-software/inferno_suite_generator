@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
-require_relative "date_search_validation"
-require_relative "fhir_resource_navigation"
-require_relative "search_test_properties"
+require_relative "../date_search_validation"
+require_relative "../fhir_resource_navigation"
+require_relative "../search_test_properties"
 require_relative "read_test"
-require_relative "assert_helpers"
-require_relative "search_test_helpers"
+require_relative "../assert_helpers"
+require_relative "../search_test_helpers"
 
 module InfernoSuiteGenerator
   module SearchTest

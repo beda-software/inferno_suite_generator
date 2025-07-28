@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require_relative "search_test_properties"
+require_relative "../search_test_properties"
 require_relative "search_test"
-require_relative "assert_helpers"
+require_relative "../assert_helpers"
 
 module InfernoSuiteGenerator
   module SpecialIdentifierSearchTest

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require_relative "fhir_resource_navigation"
-require_relative "assert_helpers"
+require_relative "../fhir_resource_navigation"
+require_relative "../assert_helpers"
 
 module InfernoSuiteGenerator
   module ReferenceResolutionTest
