@@ -11,7 +11,6 @@ module InfernoSuiteGenerator
 
       def initialize(ig_resources)
         self.ig_resources = ig_resources
-        add_missing_supported_profiles
         remove_extra_supported_profiles
         self.metadata = IGMetadata.new
         self.config_keeper = Registry.get(:config_keeper)
@@ -35,24 +34,6 @@ module InfernoSuiteGenerator
         ig_resources.capability_statement.rest.first.resource
       end
 
-      def add_missing_supported_profiles
-        case ig_resources.ig.version
-        when "3.1.1"
-          # The AU Core v3.1.1 Server Capability Statement does not list support for the
-          # required vital signs profiles, so they need to be added
-          ig_resources.capability_statement.rest.first.resource
-                      .find { |resource| resource.type == "Observation" }
-                      .supportedProfile.concat [
-                        "http://hl7.org/fhir/StructureDefinition/bodyheight",
-                        "http://hl7.org/fhir/StructureDefinition/bodytemp",
-                        "http://hl7.org/fhir/StructureDefinition/bp",
-                        "http://hl7.org/fhir/StructureDefinition/bodyweight",
-                        "http://hl7.org/fhir/StructureDefinition/heartrate",
-                        "http://hl7.org/fhir/StructureDefinition/resprate"
-                      ]
-        end
-      end
-
       def remove_extra_supported_profiles
         ig_resources.capability_statement.rest.first.resource
                     .find { |resource| resource.type == "Observation" }
@@ -62,18 +43,7 @@ module InfernoSuiteGenerator
       end
 
       def add_metadata_from_resources
-        # profile_arr_to_skip = [
-        #   'http://hl7.org.au/fhir/StructureDefinition/au-specimen', # https://github.com/hl7au/au-fhir-core-inferno/issues/244
-        #   'http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire',
-        #   'http://hl7.org.au/fhir/core/StructureDefinition/au-core-norelevantfinding',
-        #   'http://hl7.org/fhir/StructureDefinition/DocumentReference' # https://github.com/hl7au/au-fhir-core-inferno/issues/216
-        # ]
         profile_arr_to_skip = config_keeper.skip_profiles
-
-        # NOTE: We use two different groups because of CapabilityStatement.rest.resource
-        # in AU Core IG supports two ways to describe the profile:
-        # 1. "profile" element which is a string
-        # 2. "supportedProfile" element which is an array of strings
 
         supported_profile_groups = resources_in_capability_statement.flat_map do |resource|
           resource.supportedProfile&.map do |supported_profile|
