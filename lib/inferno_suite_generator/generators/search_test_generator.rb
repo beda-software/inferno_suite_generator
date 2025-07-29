@@ -110,12 +110,6 @@ module InfernoSuiteGenerator
       end
 
       def optional?
-        # NOTE: Original behavior changed because we need a clear
-        # expectation of the search parameters in tests. If in the
-        # CapabilityStatement resource we have SHALL it should be
-        # required in the tests.
-        # https://github.com/hl7au/au-fhir-core-inferno/issues/47
-        # conformance_expectation != 'SHALL' || !search_metadata[:must_support_or_mandatory]
         conformance_expectation != "SHALL"
       end
 
@@ -280,8 +274,7 @@ module InfernoSuiteGenerator
         <<~REFERENCE_SEARCH_DESCRIPTION
           This test verifies that the server supports searching by reference using
           the form `#{search_param_names.first}=[id]` as well as `#{search_param_names.first}=#{search_param_names.first.capitalize}/[id]`. The two
-          different forms are expected to return the same number of results. AU
-          Core requires that both forms are supported by AU Core responders.
+          different forms are expected to return the same number of results. #{Registry.get(:config_keeper).title} requires that both forms are supported by #{Registry.get(:config_keeper).title} responders.
         REFERENCE_SEARCH_DESCRIPTION
       end
 
@@ -311,7 +304,7 @@ module InfernoSuiteGenerator
           Additionally, this test will check that GET and POST search methods
           return the same number of results. Search by POST is required by the
           FHIR R4 specification, and these tests interpret search by GET as a
-          requirement of AU Core #{group_metadata.version}.
+          requirement of #{Registry.get(:config_keeper).title} #{group_metadata.version}.
         POST_SEARCH_DESCRIPTION
       end
 
@@ -327,7 +320,7 @@ module InfernoSuiteGenerator
           #{first_search_description}
           #{post_search_description}
 
-          [AU Core Server CapabilityStatement](http://hl7.org.au/fhir/core/#{url_version}/CapabilityStatement-au-core-server.html)
+          #{capability_statement_reference_string}
         DESCRIPTION
       end
 

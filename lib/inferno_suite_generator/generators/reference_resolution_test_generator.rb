@@ -42,6 +42,10 @@ module InfernoSuiteGenerator
                       .select { |element| element[:types]&.include?("Reference") }
       end
 
+      def title
+        Registry.get(:config_keeper).title
+      end
+
       def must_support_reference_list_string
         must_support_references
           .map { |element| "#{" " * 8}* #{resource_type}.#{element[:path]}" }

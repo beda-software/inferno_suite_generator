@@ -336,17 +336,11 @@ module InfernoSuiteGenerator
         remove_lipid_result_attributes
         # remove_specimen_attribute
 
-        case profile.version
-        when "3.1.1"
+        # Use the version-specific extractor if available
+        # Currently only MustSupportMetadataExtractorAUCore3 is implemented
+        # This is a temporary solution until a more configurable approach is implemented
+        if profile.version == "3.1.1"
           MustSupportMetadataExtractorAUCore3.new(profile, @must_supports).handle_special_cases
-        when "4.0.0"
-          MustSupportMetadataExtractorAUCore4.new(profile, @must_supports).handle_special_cases
-        when "5.0.1"
-          MustSupportMetadataExtractorAUCore5.new(profile, @must_supports).handle_special_cases
-        when "6.1.0"
-          MustSupportMetadataExtractorAUCore6.new(profile, @must_supports).handle_special_cases
-        when "7.0.0-ballot"
-          MustSupportMetadataExtractorAUCore7.new(profile, @must_supports).handle_special_cases
         end
       end
 

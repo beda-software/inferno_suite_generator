@@ -108,7 +108,7 @@ module InfernoSuiteGenerator
           #{search_param_names.first} on the #{resource_type} resource. This test
           will pass if the server returns a success response to the request.
 
-          [AU Core Server CapabilityStatement](http://hl7.org.au/fhir/core/#{url_version}/CapabilityStatement-au-core-server.html)
+          #{capability_statement_reference_string}
         DESCRIPTION
       end
     end

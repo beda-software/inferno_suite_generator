@@ -49,6 +49,10 @@ module InfernoSuiteGenerator
         build_must_support_list_string(true)
       end
 
+      def title
+        Registry.get(:config_keeper).title
+      end
+
       def build_must_support_list_string(uscdi_only)
         slice_names = group_metadata.must_supports[:slices]
                                     .select { |slice| slice[:uscdi_only].presence == uscdi_only.presence }

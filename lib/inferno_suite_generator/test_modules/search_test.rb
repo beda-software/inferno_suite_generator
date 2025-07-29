@@ -249,9 +249,6 @@ module InfernoSuiteGenerator
     end
 
     def filter_conditions(resources)
-      # HL7 JIRA FHIR-37917. AU Core v5.0.1 does not required patient+category.
-      # In order to distinguish which resources matches the current profile, Inferno has to manually filter
-      # the result of first search, which is searching by patient.
       resources.select! do |resource|
         resource.category.any? do |category|
           category.coding.any? do |coding|

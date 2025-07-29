@@ -28,6 +28,10 @@ module InfernoSuiteGenerator
         @config["cs_profile_url"]
       end
 
+      def cs_version_specific_url
+        @config["cs_version_specific_url"]
+      end
+
       def id
         @config["id"]
       end

@@ -61,7 +61,7 @@ module InfernoSuiteGenerator
           will pass if resources are returned and match the search criteria. If
           none are returned, the test is skipped.
 
-          [AU Core Server CapabilityStatement](http://hl7.org.au/fhir/core/#{url_version}/CapabilityStatement-au-core-server.html)
+          #{capability_statement_reference_string}
         DESCRIPTION
       end
     end

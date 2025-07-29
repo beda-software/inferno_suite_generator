@@ -88,6 +88,12 @@ module InfernoSuiteGenerator
         end
       end
 
+      def capability_statement_reference_string
+        config = Registry.get(:config_keeper)
+
+        "[#{config.title} Server CapabilityStatement](#{config.cs_version_specific_url})"
+      end
+
       def generate
         FileUtils.mkdir_p(output_file_directory)
         File.open(output_file_name, "w") { |f| f.write(output) }
