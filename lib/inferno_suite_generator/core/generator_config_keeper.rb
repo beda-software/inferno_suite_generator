@@ -16,6 +16,14 @@ module InfernoSuiteGenerator
         load_config
       end
 
+      def ig_link
+        @config["ig_link"]
+      end
+
+      def ig_name
+        @config["ig_name"]
+      end
+
       def cs_profile_url
         @config["cs_profile_url"]
       end
@@ -221,6 +229,10 @@ module InfernoSuiteGenerator
         else
           ["patient"]
         end
+      end
+
+      def outer_groups
+        @config["outer_groups"] || []
       end
 
       private

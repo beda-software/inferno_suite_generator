@@ -55,16 +55,20 @@ module InfernoSuiteGenerator
         "#{ig_metadata.ig_title} #{ig_metadata.ig_version}"
       end
 
+      def groups_title
+        ig_metadata.ig_title
+      end
+
       def ig_identifier
         version = ig_metadata.ig_version[1..] # Remove leading 'v'
         "#{ig_metadata.ig_id}##{version}"
       end
 
+      def ig_name
+        config_keeper.ig_name
+      end
       def ig_link
-        case ig_metadata.ig_version
-        when "v0.3.0-ballot"
-          "http://hl7.org.au/fhir/core/0.3.0-ballot"
-        end
+        config_keeper.ig_link
       end
 
       def links
@@ -117,6 +121,33 @@ module InfernoSuiteGenerator
       def capability_statement_group_id
         # "au_core_#{ig_metadata.reformatted_version}_capability_statement"
         "au_core_v030_ballot_capability_statement"
+      end
+
+      def outer_groups
+        config_keeper.outer_groups
+      end
+
+      def imports
+        outer_groups.map do |outer_import|
+          require_string = outer_import["import_type"] == "relative" ? "require_relative" : "require"
+          %(#{require_string} '#{outer_import["import_path"]}')
+        end
+      end
+
+      def prepare_outer_groups(position)
+        outer_groups.select do |outer_group|
+          outer_group["group_position"] == position
+        end.map do |outer_group|
+          %(group from: :#{outer_group["group_id"]})
+        end
+      end
+
+      def outer_groups_before
+        prepare_outer_groups("before")
+      end
+
+      def outer_groups_after
+        prepare_outer_groups("after")
       end
     end
   end

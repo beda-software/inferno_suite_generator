@@ -11,6 +11,9 @@
   "module_name_prefix": "AUCore",
   "test_id_prefix": "au_core",
   "cs_profile_url": "http://hl7.org.au/fhir/core/CapabilityStatement/au-core-responder",
+  "default_fhir_server": "https://fhir.hl7.org.au/aucore/fhir/DEFAULT",
+  "ig_link": "https://hl7.org.au/fhir/core/2.0.0-draft/index.html",
+  "ig_name": "AU Core Implementation Guide",
   "tx_server_url": "https://tx.dev.hl7.org.au/fhir",
   "paths": {
     "ig_deps": "lib/au_core_test_kit/igs/",
@@ -24,6 +27,20 @@
       "search-params.json"
     ]
   },
+  "outer_groups": [
+    {
+      "import_type": "relative",
+      "import_path": "../../custom_groups/v0.3.0-ballot/capability_statement_group",
+      "group_position": "before",
+      "group_id": "au_core_v030_ballot_capability_statement"
+    },
+    {
+      "import_type": "relative",
+      "import_path": "../../custom_groups/missing_data_group",
+      "group_position": "after",
+      "group_id": "au_core_missing_data_group"
+    }
+  ],
   "links": [
     {
       "label": "Report Issue",
@@ -193,7 +210,7 @@
           "input_id": "healthcare_service_ids",
           "title": "HealthcareService IDs",
           "description": "Comma separated list of healthcare services IDs that in sum contain all MUST SUPPORT elements",
-          "default": "generalpractice-bungabbee-medical-clinic, communityhealth-southedge-practice, dentalpractice-annandale-dental, pathologylaboratory-woodcroft-pathology",
+          "default": "generalpractice-bungabbee-medical-clinic, communityhealth-southedge-practice, dentalpractice-annandale-dental, pathologylaboratory-woodcroft-pathology"
         }
       },
       "COMPARATORS": {
