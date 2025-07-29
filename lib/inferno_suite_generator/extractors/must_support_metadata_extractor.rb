@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require_relative "value_extractor"
-require_relative "must_support_metadata_extractor_au_core_3"
 
 module InfernoSuiteGenerator
   class Generator
@@ -335,13 +334,6 @@ module InfernoSuiteGenerator
         remove_observation_value_attribute
         remove_lipid_result_attributes
         # remove_specimen_attribute
-
-        # Use the version-specific extractor if available
-        # Currently only MustSupportMetadataExtractorAUCore3 is implemented
-        # This is a temporary solution until a more configurable approach is implemented
-        if profile.version == "3.1.1"
-          MustSupportMetadataExtractorAUCore3.new(profile, @must_supports).handle_special_cases
-        end
       end
 
       def remove_specimen_attribute
