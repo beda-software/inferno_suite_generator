@@ -197,7 +197,7 @@ module InfernoSuiteGenerator
       end
 
       def test_medication_inclusion?
-        %w[MedicationRequest MedicationDispense].include?(resource_type)
+        Registry.get(:config_keeper).medication_inclusion_resources.include?(resource_type)
       end
 
       def test_post_search?
@@ -205,23 +205,12 @@ module InfernoSuiteGenerator
       end
 
       def includes
-        # The medication SearchParameter does not exist for the MedicationStatement
-        # and MedicationRequest resources in the current version of the IG,
-        # we shall keep special cases to provide functionality for the "_include" tests.
-        # https://jira.csiro.au/browse/ST-400
-        special_cases = {
-          "MedicationRequest:medication" => { "parameter" => "MedicationRequest:medication",
-                                              "target_resource" => "Medication", "paths" => ["medicationReference"] },
-          "MedicationStatement:medication" => { "parameter" => "MedicationStatement:medication",
-                                                "target_resource" => "Medication", "paths" => ["medicationReference"] }
-        }
+        special_cases = Registry.get(:config_keeper).special_includes_cases
         include_params_list = group_metadata.include_params
         search_definitions = group_metadata.search_definitions
 
         include_params_list.map do |include_param|
           if special_cases.key?(include_param)
-            # puts "Special case for include_param: #{include_param}"
-
             return [special_cases[include_param]]
           end
 
@@ -325,8 +314,16 @@ module InfernoSuiteGenerator
       end
 
       def search_method
-        if search_metadata[:names].first == "identifier" && group_metadata.name == "au_core_patient"
-          "run_search_test_with_system"
+        config = Registry.get(:config_keeper)
+        special_methods = config.special_search_methods
+        
+        special_method = special_methods.find do |method_config|
+          method_config["search_param"] == search_metadata[:names].first && 
+          method_config["group_name"] == group_metadata.name
+        end
+        
+        if special_method
+          special_method["method"]
         else
           "run_search_test"
         end

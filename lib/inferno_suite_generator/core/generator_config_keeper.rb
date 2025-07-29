@@ -243,6 +243,18 @@ module InfernoSuiteGenerator
         []
       end
 
+      def medication_inclusion_resources
+        special_cases["MEDICATION_INCLUSION_RESOURCES"]&.dig("resources") || %w[MedicationRequest MedicationDispense]
+      end
+
+      def special_includes_cases
+        special_cases["SPECIAL_INCLUDES_CASES"]&.dig("cases") || {}
+      end
+
+      def special_search_methods
+        special_cases["SPECIAL_SEARCH_METHODS"]&.dig("methods") || []
+      end
+
       def first_search_params(profile_url, resource, version = nil)
         if category_first_profile?(profile_url, version)
           %w[patient category]

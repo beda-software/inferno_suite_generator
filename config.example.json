@@ -349,6 +349,35 @@
       "VERSION_SPECIFIC_PROFILES": {
         "_description": "Profiles with version-specific behavior (example for future use)",
         "profiles": {}
+      },
+      "MEDICATION_INCLUSION_RESOURCES": {
+        "_description": "Resources that should be tested for medication inclusion",
+        "resources": ["MedicationRequest", "MedicationDispense"]
+      },
+      "SPECIAL_INCLUDES_CASES": {
+        "_description": "Special cases for include parameters that need custom handling",
+        "cases": {
+          "MedicationRequest:medication": {
+            "parameter": "MedicationRequest:medication",
+            "target_resource": "Medication",
+            "paths": ["medicationReference"]
+          },
+          "MedicationStatement:medication": {
+            "parameter": "MedicationStatement:medication",
+            "target_resource": "Medication",
+            "paths": ["medicationReference"]
+          }
+        }
+      },
+      "SPECIAL_SEARCH_METHODS": {
+        "_description": "Special search methods to use for specific resource and parameter combinations",
+        "methods": [
+          {
+            "search_param": "identifier",
+            "group_name": "au_core_patient",
+            "method": "run_search_test_with_system"
+          }
+        ]
       }
     }
   }
