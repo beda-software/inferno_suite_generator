@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative "registry"
+
 module Helpers
   DAR_CODE_SYSTEM_URL = "http://terminology.hl7.org/CodeSystem/data-absent-reason"
   DAR_EXTENSION_URL = "http://hl7.org/fhir/StructureDefinition/data-absent-reason"
@@ -19,7 +21,7 @@ module Helpers
       will pass if resources are returned and match the search criteria. If
       none are returned, the test is skipped.
 
-      [AU Core Server CapabilityStatement](http://hl7.org.au/fhir/core/#{url_version}/CapabilityStatement-au-core-server.html)
+      [#{Registry.get(:config_keeper).title} Server CapabilityStatement](#{Registry.get(:config_keeper).cs_version_specific_url})
     DESCRIPTION
   end
 
@@ -43,13 +45,13 @@ module Helpers
       features supported by the API by using the [Capability
       Statement](https://www.hl7.org/fhir/capabilitystatement.html) resource.
       The features described in the Capability Statement must be consistent with
-      the required capabilities of a AU Core **Responder**.
+      the required capabilities of a #{Registry.get(:config_keeper).title} **Responder**.
 
       The Capability Statement resource allows clients to determine which
       resources are supported by a FHIR Server. Not all servers are expected to
-      implement all possible queries and data elements described in the AU Core
-      API. The **AU Core Responder Capability Statement** requires that
-      the Patient resource and **at least** one additional resource profile from the AU Core profiles.
+      implement all possible queries and data elements described in the #{Registry.get(:config_keeper).title}
+      API. The **#{Registry.get(:config_keeper).title} Responder Capability Statement** requires that
+      the Patient resource and **at least** one additional resource profile from the #{Registry.get(:config_keeper).title} profiles.
 
       #{testing_methodology_title}
 
@@ -83,10 +85,10 @@ module Helpers
     <<~DESCRIPTION
       #{background_title}
 
-      The AU Core #{title} sequence verifies that the system under test is
+      The #{Registry.get(:config_keeper).title} #{title} sequence verifies that the system under test is
       able to provide correct responses for #{resource_type} queries. These queries
       must contain resources conforming to the #{profile_name} as
-      specified in the AU Core #{group_version} Implementation Guide.
+      specified in the #{Registry.get(:config_keeper).title} #{group_version} Implementation Guide.
 
       #{testing_methodology_title}
       #{search_description(required_searches, search_param_name_string, search_validation_resource_type, for_group_description, resource_type)}
@@ -177,7 +179,7 @@ module Helpers
   def self.custom_validation_group_description_text
     %(
       This test group is designed to validate the conformity of FHIR resources against specified profiles.
-      Leveraging the dynamic capabilities of FHIR, this validation ensures that the resources adhere to the standards and guidelines established within the relevant AU Core.
+      Leveraging the dynamic capabilities of FHIR, this validation ensures that the resources adhere to the standards and guidelines established within the relevant #{Registry.get(:config_keeper).title}.
     )
   end
 

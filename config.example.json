@@ -62,6 +62,8 @@
       "system": "urn:iso:std:iso:3166",
       "code": "AU"
     },
+    "SEARCH_PARAMS_TO_IGNORE": ["count", "_sort", "_include"],
+    "SEARCH_PARAMS_EXPECTATION": ["SHALL", "SHOULD", "MAY"],
     "multipleOrExpectations": {
       "_comment": "Hard-coded values are used because the multipleOr attributes do not exist in the machine-readable files, but they do exist in the narrative. (https://github.com/hl7au/au-fhir-core-inferno/issues/61, https://github.com/hl7au/au-fhir-core-inferno/issues/63)",
       "Procedure": {

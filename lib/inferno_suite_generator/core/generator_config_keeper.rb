@@ -136,6 +136,14 @@ module InfernoSuiteGenerator
         skip_profiles.include?(profile_url)
       end
 
+      def search_params_to_ignore
+        configs["SEARCH_PARAMS_TO_IGNORE"] || []
+      end
+
+      def search_params_expectation
+        configs["SEARCH_PARAMS_EXPECTATION"] || []
+      end
+
       def special_cases
         configs["SPECIAL_CASES"] || {}
       end
