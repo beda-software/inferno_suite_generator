@@ -70,6 +70,9 @@ module InfernoSuiteGenerator
       def ig_link
         config_keeper.ig_link
       end
+      def default_fhir_server
+        config_keeper.default_fhir_server
+      end
 
       def links
         config_keeper.links
@@ -113,6 +116,9 @@ module InfernoSuiteGenerator
           groups.map { |group| group.file_name.delete_suffix(".rb") }
       end
 
+      # NOTE: These methods are not currently used in the codebase.
+      # If they are needed in the future, they should be updated to use configuration values
+      # instead of hardcoded AU Core specific values.
       def capability_statement_file_name
         # "../../custom_groups/#{ig_metadata.ig_version}/capability_statement_group"
         "../../custom_groups/v0.3.0-ballot/capability_statement_group"

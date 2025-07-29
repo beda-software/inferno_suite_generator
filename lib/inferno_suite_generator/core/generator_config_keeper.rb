@@ -44,6 +44,10 @@ module InfernoSuiteGenerator
         @config["tx_server_url"]
       end
 
+      def default_fhir_server
+        @config["default_fhir_server"]
+      end
+
       def links
         @config["links"] || []
       end

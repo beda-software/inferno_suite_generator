@@ -42,8 +42,10 @@ module InfernoSuiteGenerator
           resource = group_metadata.resource
           return resource.underscore unless resource_has_multiple_profiles?(resource)
 
+          config = Registry.get(:config_keeper)
+          test_id_prefix = config.test_id_prefix
           group_metadata.name
-                        .delete_prefix("au_core_")
+                        .delete_prefix("#{test_id_prefix}_")
                         .gsub("diagnosticreport", "diagnostic_report")
                         .underscore
         end

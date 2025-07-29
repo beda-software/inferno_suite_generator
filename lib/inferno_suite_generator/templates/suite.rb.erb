@@ -54,7 +54,7 @@ module <%= suite_module_name %>
       input :url,
         title: 'FHIR Endpoint',
         description: 'URL of the FHIR endpoint',
-        default: 'https://fhir.hl7.org.au/aucore/fhir/DEFAULT'
+        default: '<%= default_fhir_server %>'
       input :smart_credentials,
         title: 'OAuth Credentials',
         type: :oauth_credentials,
