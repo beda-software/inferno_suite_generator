@@ -174,6 +174,10 @@ module InfernoSuiteGenerator
         special_cases["PROFILES_TO_EXCLUDE"] || []
       end
 
+      def search_expectation_overrides
+        special_cases["SEARCH_EXPECTATION_OVERRIDES"] || {}
+      end
+
       def fixed_search_values
         configs["FIXED_SEARCH_VALUES"] || {}
       end

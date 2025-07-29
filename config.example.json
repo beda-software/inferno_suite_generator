@@ -188,6 +188,16 @@
     },
     "SPECIAL_CASES": {
       "_description": "Special handling for specific profiles during testing",
+      "SEARCH_EXPECTATION_OVERRIDES": {
+        "_description": "Overrides for search parameter expectations for specific profiles and search combinations",
+        "http://hl7.org.au/fhir/core/StructureDefinition/au-core-medicationrequest": [
+          {
+            "search_params": ["patient", "intent", "authoredon"],
+            "original_expectation": "SHALL",
+            "override_expectation": "SHOULD"
+          }
+        ]
+      },
       "READ_TEST_IDS_INPUTS": {
         "_description": "",
         "Location": {

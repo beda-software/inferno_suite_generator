@@ -69,7 +69,6 @@ module InfernoSuiteGenerator
         end
 
         combo_search_params.reject do |combo_search_param|
-          # TODO: Move to the config
           combo_search_param[:names].any? { |sp| config.search_params_to_ignore.include? sp }
         end
       end
@@ -87,14 +86,16 @@ module InfernoSuiteGenerator
       end
 
       def handle_special_cases
-        # TODO: Add to config
-        # NOTE: https://github.com/hl7au/au-fhir-core-inferno/issues/57
         profile_url = group_metadata[:profile_url]
-        return unless profile_url == "http://hl7.org.au/fhir/core/StructureDefinition/au-core-medicationrequest"
+        overrides = config.search_expectation_overrides[profile_url]
+        return if overrides.nil?
 
         @searches.map do |search|
-          if search[:names] == %w[patient intent authoredon] && search[:expectation] == "SHALL"
-            search[:expectation] = "SHOULD"
+          overrides.each do |override|
+            if search[:names] == override["search_params"] && 
+               search[:expectation] == override["original_expectation"]
+              search[:expectation] = override["override_expectation"]
+            end
           end
         end
       end
