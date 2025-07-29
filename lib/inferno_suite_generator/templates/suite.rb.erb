@@ -5,6 +5,9 @@ require_relative '../../version'
 <% imports.each do |import| %> <%= import %>
 <% end %>
 
+<% group_file_list.each do |file_name| %>require_relative '<%= file_name %>'
+  <% end %>
+
 module <%= suite_module_name %>
   module <%= module_name %>
     class <%= class_name %> < Inferno::TestSuite
