@@ -38,6 +38,7 @@ module InfernoSuiteGenerator
       end
 
       def search_param_by_exact_resource_and_code(resource, code)
+        config_keeper = Registry.get(:config_keeper)
         search_params = resources_by_type["SearchParameter"]
                         .select { |param| param.base.include?(resource) && param.code == code }
 
@@ -45,7 +46,7 @@ module InfernoSuiteGenerator
           search_params.find do |param|
             param.jurisdiction.any? do |codeable_concept|
               codeable_concept.coding.any? do |coding|
-                coding.system == "urn:iso:std:iso:3166" && coding.code == "AU"
+                coding.system == config_keeper&.jurisdiction_system && coding.code == config_keeper&.jurisdiction_code
               end
             end
           end

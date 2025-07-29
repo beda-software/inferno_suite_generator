@@ -170,6 +170,18 @@ module InfernoSuiteGenerator
         configs["FIXED_SEARCH_VALUES"] || {}
       end
 
+      def jurisdiction_filter
+        configs["JURISDICTION_FILTER"] || {}
+      end
+
+      def jurisdiction_system
+        jurisdiction_filter["system"] || "urn:iso:std:iso:3166"
+      end
+
+      def jurisdiction_code
+        jurisdiction_filter["code"] || "AU"
+      end
+
       def category_first_profiles
         special_cases.dig("ALL_VERSION_CATEGORY_FIRST_PROFILES", "profiles") || []
       end
