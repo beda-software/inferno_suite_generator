@@ -136,9 +136,19 @@ module InfernoSuiteGenerator
       main_file = config.main_file_path
       file_path = File.expand_path(main_file, Dir.pwd)
       related_result_folder = Registry.get(:config_keeper).result_folder
+    
+      test_suite_file_name = "#{ig_metadata.ig_test_id_prefix}_test_suite"
+    
+      require_path = File.join(
+        related_result_folder.split("/opt/inferno/lib/").last,
+        ig_metadata.ig_version,
+        test_suite_file_name
+      )
+
+      require_path = require_path.gsub("./lib/", "")
 
       file_content = File.read(file_path)
-      string_to_add = "require_relative '#{related_result_folder.split("/opt/inferno/lib/").last}/au_core_test_suite'"
+      string_to_add = "require_relative '#{require_path}'"
 
       return if file_content.include? string_to_add
 
