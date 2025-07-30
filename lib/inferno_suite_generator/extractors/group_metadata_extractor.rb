@@ -101,22 +101,6 @@ module InfernoSuiteGenerator
 
       ### BEGIN SPECIAL CASES ###
 
-      def name_first_profile?
-        config_keeper.name_first_profile?(profile_url)
-      end
-
-      def id_first_profile?
-        config_keeper.id_first_profile?(profile_url)
-      end
-
-      def category_first_profile?
-        config_keeper.category_first_profile?(profile_url, reformatted_version)
-      end
-
-      def patient_first_profile?
-        config_keeper.patient_first_profile?(profile_url)
-      end
-
       def first_search_params
         @first_search_params ||= config_keeper.first_search_params(profile_url, resource)
       end
