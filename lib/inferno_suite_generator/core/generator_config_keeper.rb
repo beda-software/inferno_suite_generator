@@ -279,6 +279,18 @@ module InfernoSuiteGenerator
         @config["outer_groups"] || []
       end
 
+      def extractors
+        configs["extractors"] || {}
+      end
+
+      def extractors_must_support
+        extractors["must_support"] || {}
+      end
+
+      def extractors_must_support_remove_elements
+        extractors_must_support["remove_elements"] || []
+      end
+
       private
 
       def load_config

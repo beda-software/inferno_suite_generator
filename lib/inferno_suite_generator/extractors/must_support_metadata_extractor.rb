@@ -1,17 +1,19 @@
 # frozen_string_literal: true
 
 require_relative "value_extractor"
+require_relative "../utils/registry"
 
 module InfernoSuiteGenerator
   class Generator
     class MustSupportMetadataExtractor
-      attr_accessor :profile_elements, :profile, :resource, :ig_resources
+      attr_accessor :profile_elements, :profile, :resource, :ig_resources, :config
 
       def initialize(profile_elements, profile, resource, ig_resources)
         self.profile_elements = profile_elements
         self.profile = profile
         self.resource = resource
         self.ig_resources = ig_resources
+        self.config = Registry.get(:config_keeper)
       end
 
       def must_supports
@@ -175,7 +177,6 @@ module InfernoSuiteGenerator
 
       def value_slices
         must_support_value_slice_elements.map do |current_element|
-          # puts "current_element: #{current_element.id}"
           {
             slice_id: current_element.id,
             slice_name: current_element.sliceName,
@@ -255,10 +256,6 @@ module InfernoSuiteGenerator
       end
 
       def handle_type_must_support_target_profiles(type, metadata)
-        # AU Core 3.1.1 profiles do not have AU Core target profiles.
-        # Vital Sign proifles from FHIR R4 (version 4.0.1) do not have AU Core target profiles either.
-        return if ["3.1.1", "4.0.1"].include?(profile.version)
-
         target_profiles = []
 
         if type.targetProfile&.length == 1
@@ -327,131 +324,36 @@ module InfernoSuiteGenerator
       #### SPECIAL CASE ####
 
       def handle_special_cases
-        remove_vital_sign_component
-        remove_blood_pressure_value_data_absent_reason
-        remove_observation_data_absent_reason
-        remove_observation_method_attribute
-        remove_observation_value_attribute
-        remove_lipid_result_attributes
-        # remove_specimen_attribute
+        remove_elements
       end
 
-      def remove_specimen_attribute
-        # TODO: Temporary solution https://github.com/hl7au/au-fhir-core-inferno/issues/18
-        return unless profile.id == "au-core-diagnosticresult-path"
+      def remove_elements
+        remove_elements_list_config = config.extractors_must_support_remove_elements
+        remove_elements_list_config.each do |remove_elements_config|
+          profiles = remove_elements_config["profiles"]
+          element_key = remove_elements_config["element_key"]
+          condition = remove_elements_config["condition"]
+          value = remove_elements_config["value"]
 
-        @must_supports[:elements].delete_if do |element|
-          ["specimen"].include? element[:path]
-        end
-      end
-
-      def remove_lipid_result_attributes
-        # TODO: This code block should be discussed.
-        # We need to understand why there are a lot of extra attributes
-        # for the current Observation resource profile.
-        return unless profile.id == "au-core-lipid-result"
-
-        @must_supports[:elements].delete_if do |element|
-          ["identifier", "performer", "note",
-           "specimen", "referenceRange.type",
-           "referenceRange.text", "hasMember"].include? element[:path]
-        end
-      end
-
-      def remove_observation_value_attribute
-        return unless is_observation_without_value?
-
-        @must_supports[:elements].delete_if do |element|
-          element[:path] == "value[x]"
-        end
-      end
-
-      def remove_observation_method_attribute
-        # TODO: Discuss with the team the problem related to the method attribute.
-        if %w[AUCorePathologyResult AUCoreLipidResult AUCoreDiagnosticImagingResult
-              AUCoreDiagnosticResult].include? profile.name
-          @must_supports[:elements].delete_if do |element|
-            element[:path] == "method"
+          profiles.each do |resource_profile_url|
+            if profile.url == resource_profile_url
+              @must_supports[:elements].delete_if do |element|
+                case condition
+                when "equal"
+                  element[element_key.to_sym] == value
+                when "start_with?"
+                  element[element_key.to_sym].start_with?(value)
+                when "pattern_match?"
+                  pattern = Regexp.new(value)
+                  pattern.match?(element[element_key.to_sym])
+                when "value_include?"
+                  value.include? element[element_key.to_sym]
+                else
+                  # do nothing
+                end
+              end
+            end
           end
-        end
-      end
-
-      def is_vital_sign?
-        [
-          "http://hl7.org/fhir/StructureDefinition/vitalsigns"
-        ].include?(profile.baseDefinition)
-      end
-
-      def is_observation_without_component?
-        %w[
-          au-core-bmi
-          au-core-bodyweight
-          au-core-oxygensat
-          au-core-bodyheight
-          au-core-headcircum
-          au-core-bodytemp
-          au-core-heartrate
-          au-core-resprate
-          au-core-vitalspanel
-          au-core-lipid-result
-        ].include?(profile.id)
-      end
-
-      def is_observation_without_value?
-        [
-          "au-core-vitalspanel"
-        ].include?(profile.id)
-      end
-
-      def is_blood_pressure?
-        ["au-core-bloodpressure"].include?(profile.id)
-      end
-
-      # Exclude Observation.component from vital sign profiles except observation-bp and observation-pulse-ox
-      def remove_vital_sign_component
-        return if is_blood_pressure? || profile.name == "AUCorePulseOximetryProfile"
-
-        return unless is_vital_sign? || is_observation_without_component?
-
-        @must_supports[:elements].delete_if do |element|
-          element[:path].start_with?("component")
-        end
-      end
-
-      # Exclude Observation.value[x] from observation-bp
-      def remove_blood_pressure_value_data_absent_reason
-        return unless is_blood_pressure?
-
-        pattern = /component(:[^.]+)?\.dataAbsentReason/
-
-        @must_supports[:elements].delete_if do |element|
-          element[:path].start_with?("value[x]") ||
-            element[:original_path]&.start_with?("value[x]") ||
-            element[:path] == "dataAbsentReason" ||
-            (
-              pattern.match?(element[:path]) && ["3.1.1", "4.0.0"].include?(ig_resources.ig.version)
-            )
-        end
-
-        @must_supports[:slices].delete_if do |slice|
-          slice[:path].start_with?("value[x]")
-        end
-      end
-
-      # ONC and AU Core 4.0.0 both clarified that health IT developers that always provide HL7 FHIR "observation" values
-      # are not required to demonstrate Health IT Module support for "dataAbsentReason" elements.
-      # Remove MS check for dataAbsentReason and component.dataAbsentReason from vital sign profiles and observation lab profile
-      # Smoking status profile does not have MS on dataAbsentReason. It is safe to use profile.type == 'Observation'
-      # Since AU Core 5.0.1, Blood Pressure profile restores component.dataAbsentReason as MustSupport.
-      def remove_observation_data_absent_reason
-        return if is_blood_pressure?
-
-        pattern = /(component(:[^.]+)?\.)?dataAbsentReason/
-
-        return unless profile.type == "Observation"
-
-        @must_supports[:elements].delete_if do |element|
-          pattern.match?(element[:path])
         end
       end
     end
