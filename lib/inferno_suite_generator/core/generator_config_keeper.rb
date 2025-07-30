@@ -17,67 +17,55 @@ module InfernoSuiteGenerator
       end
 
       def ig_link
-        @config["ig_link"]
+        ig["link"]
       end
 
       def ig_name
-        @config["ig_name"]
+        ig["name"]
       end
 
       def cs_profile_url
-        @config["cs_profile_url"]
+        ig["cs_profile_url"]
       end
 
       def cs_version_specific_url
-        @config["cs_version_specific_url"]
+        ig["cs_version_specific_url"]
       end
 
       def id
-        @config["id"]
+        ig["id"]
       end
 
       def title
-        @config["title"]
+        suite["title"]
       end
 
       def suite_module_name
-        @config["suite_module_name"]
+        suite["suite_module_name"]
       end
 
       def tx_server_url
-        @config["tx_server_url"]
+        configs_generators_all["tx_server_url"]
       end
 
       def default_fhir_server
-        @config["default_fhir_server"]
+        configs_generators_all["default_fhir_server"]
       end
 
       def links
-        @config["links"] || []
+        suite["links"] || []
       end
 
       def module_name_prefix
-        @config["module_name_prefix"]
+        suite["module_name_prefix"]
       end
 
       def test_id_prefix
-        @config["test_id_prefix"]
-      end
-
-      def metadata
-        @config["metadata"] || {}
-      end
-
-      def description
-        metadata["description"]
-      end
-
-      def last_updated
-        metadata["last_updated"]
+        suite["test_id_prefix"]
       end
 
       def paths
-        @config["paths"] || {}
+        suite["paths"] || {}
       end
 
       def result_folder
@@ -209,7 +197,7 @@ module InfernoSuiteGenerator
       end
 
       def outer_groups
-        @config["outer_groups"] || []
+        suite["outer_groups"] || []
       end
 
       def extractors
@@ -236,7 +224,15 @@ module InfernoSuiteGenerator
 
       def load_config
         @config = JSON.parse(File.read(@config_file_path))
-        @version = @config["version"] || []
+        @version = @config["ig"]["version"] || []
+      end
+
+      def ig
+        @config["ig"] || {}
+      end
+
+      def suite
+        @config["suite"] || {}
       end
 
       def configs

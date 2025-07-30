@@ -1,59 +1,58 @@
 {
-  "metadata": {
-    "description": "Configuration for Australian FHIR Core profiles testing",
-    "last_updated": "2025-07-24",
-    "version": "1.0.0"
+  "ig": {
+    "id": "hl7.fhir.au.core",
+    "version": "2.0.0-draft",
+    "name": "AU Core Implementation Guide",
+    "link": "https://hl7.org.au/fhir/core/2.0.0-draft/index.html",
+    "cs_profile_url": "http://hl7.org.au/fhir/core/CapabilityStatement/au-core-responder",
+    "cs_version_specific_url": "https://hl7.org.au/fhir/core/2.0.0-draft/CapabilityStatement-au-core-responder.html"
   },
-  "id": "hl7.fhir.au.core",
-  "version": "2.0.0-draft",
-  "title": "AU Core",
-  "suite_module_name": "AUCoreTestKit",
-  "module_name_prefix": "AUCore",
-  "test_id_prefix": "au_core",
-  "cs_profile_url": "http://hl7.org.au/fhir/core/CapabilityStatement/au-core-responder",
-  "cs_version_specific_url": "https://hl7.org.au/fhir/core/2.0.0-draft/CapabilityStatement-au-core-responder.html",
-  "default_fhir_server": "https://fhir.hl7.org.au/aucore/fhir/DEFAULT",
-  "ig_link": "https://hl7.org.au/fhir/core/2.0.0-draft/index.html",
-  "ig_name": "AU Core Implementation Guide",
-  "tx_server_url": "https://tx.dev.hl7.org.au/fhir",
-  "paths": {
-    "ig_deps": "lib/au_core_test_kit/igs/",
-    "result_folder": "./lib/au_core_test_kit/generated/",
-    "related_result_folder": "/lib/au_core_test_kit/generated/",
-    "main_file": "lib/au_core_test_kit.rb",
-    "extra_json_paths": ["search-params.json"]
+  "suite": {
+    "title": "AU Core",
+    "suite_module_name": "AUCoreTestKit",
+    "module_name_prefix": "AUCore",
+    "test_id_prefix": "au_core",
+    "paths": {
+      "ig_deps": "lib/au_core_test_kit/igs/",
+      "result_folder": "./lib/au_core_test_kit/generated/",
+      "related_result_folder": "/lib/au_core_test_kit/generated/",
+      "main_file": "lib/au_core_test_kit.rb",
+      "extra_json_paths": ["search-params.json"]
+    },
+    "outer_groups": [
+      {
+        "import_type": "relative",
+        "import_path": "../../custom_groups/capability_statement/capability_statement_group",
+        "group_position": "before",
+        "group_id": "au_core_capability_statement"
+      },
+      {
+        "import_type": "relative",
+        "import_path": "../../custom_groups/missing_data_group",
+        "group_position": "after",
+        "group_id": "au_core_missing_data_group"
+      }
+    ],
+    "links": [
+      {
+        "label": "Report Issue",
+        "url": "https://github.com/hl7au/au-fhir-core-inferno/issues"
+      },
+      {
+        "label": "Open Source",
+        "url": "https://github.com/hl7au/au-fhir-core-inferno"
+      },
+      {
+        "label": "AU Core Implementation Guide",
+        "url": "https://build.fhir.org/ig/hl7au/au-fhir-core/"
+      }
+    ]
   },
-  "outer_groups": [
-    {
-      "import_type": "relative",
-      "import_path": "../../custom_groups/capability_statement/capability_statement_group",
-      "group_position": "before",
-      "group_id": "au_core_capability_statement"
-    },
-    {
-      "import_type": "relative",
-      "import_path": "../../custom_groups/missing_data_group",
-      "group_position": "after",
-      "group_id": "au_core_missing_data_group"
-    }
-  ],
-  "links": [
-    {
-      "label": "Report Issue",
-      "url": "https://github.com/hl7au/au-fhir-core-inferno/issues"
-    },
-    {
-      "label": "Open Source",
-      "url": "https://github.com/hl7au/au-fhir-core-inferno"
-    },
-    {
-      "label": "AU Core Implementation Guide",
-      "url": "https://build.fhir.org/ig/hl7au/au-fhir-core/"
-    }
-  ],
   "configs": {
     "generators": {
       "all": {
+        "default_fhir_server": "https://fhir.hl7.org.au/aucore/fhir/DEFAULT",
+        "tx_server_url": "https://tx.dev.hl7.org.au/fhir",
         "skip_resources": {
           "_description": "",
           "resources": ["Medication", "DiagnosticReport"]
