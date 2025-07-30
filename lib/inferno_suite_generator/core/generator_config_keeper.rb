@@ -88,10 +88,6 @@ module InfernoSuiteGenerator
         paths["related_result_folder"]
       end
 
-      def ig_packages_path
-        paths["ig_packages"]
-      end
-
       def ig_deps_path
         paths["ig_deps"]
       end
@@ -100,36 +96,20 @@ module InfernoSuiteGenerator
         paths["main_file"]
       end
 
-      def ig_output_directory_path
-        paths["ig_output_directory"]
-      end
-
-      def ig_json_files_path
-        paths["ig_json_files"]
-      end
-
       def extra_json_paths
         paths["extra_json_paths"] || []
       end
 
-      def naming_mappings
-        configs["NAMING"] || {}
-      end
-
       def multiple_and_expectations
-        configs["multipleAndExpectations"] || {}
+        configs_extractors_search["multiple_and_expectation"] || {}
       end
 
       def multiple_or_expectations
-        configs["multipleOrExpectations"] || {}
-      end
-
-      def constant_name_for_profile(profile_url)
-        naming_mappings[profile_url]
+        configs_extractors_search["multiple_or_expectation"] || {}
       end
 
       def skip_profiles
-        configs.dig("SKIP_PROFILES", "profiles") || []
+        configs_generators_all.dig("skip_profiles", "profiles") || []
       end
 
       def skip_profile?(profile_url)
@@ -137,11 +117,11 @@ module InfernoSuiteGenerator
       end
 
       def search_params_to_ignore
-        configs["SEARCH_PARAMS_TO_IGNORE"] || []
+        configs_extractors_search['search_params_to_ignore'] || []
       end
 
       def search_params_expectation
-        configs["SEARCH_PARAMS_EXPECTATION"] || []
+        configs_extractors_search['expectation'] || []
       end
 
       def special_cases
@@ -149,21 +129,15 @@ module InfernoSuiteGenerator
       end
 
       def resources_to_exclude
-        special_cases.dig("RESOURCES_TO_EXCLUDE", "resources") || []
-      end
-
-      def version_specific_resources_to_exclude(version = nil)
-        return {} if version.nil?
-
-        special_cases["VERSION_SPECIFIC_RESOURCES_TO_EXCLUDE"] || {}
+        configs_generators_all.dig("skip_resources", "resources") || []
       end
 
       def specific_identifiers
-        special_cases["SPECIFIC_IDENTIFIER"] || {}
+        configs_extractors_search["identifiers"] || {}
       end
 
       def search_params_for_include_by_resource
-        special_cases["SEARCH_PARAMS_FOR_INCLUDE_BY_RESOURCE"] || {}
+        configs_extractors_search["include_searches_by_resource"] || {}
       end
 
       def multiple_or_and_search_by_target_resource
@@ -171,7 +145,7 @@ module InfernoSuiteGenerator
       end
 
       def profiles_to_exclude
-        special_cases["PROFILES_TO_EXCLUDE"] || []
+        configs_extractors_search["profiles_to_exclude"] || []
       end
 
       def search_expectation_overrides
@@ -179,11 +153,11 @@ module InfernoSuiteGenerator
       end
 
       def fixed_search_values
-        configs["FIXED_SEARCH_VALUES"] || {}
+        configs_extractors_search['fixed_search_values'] || {}
       end
 
       def jurisdiction_filter
-        configs["JURISDICTION_FILTER"] || {}
+        configs_extractors_search['jurisdiction_filter'] || {}
       end
 
       def jurisdiction_system
@@ -194,37 +168,8 @@ module InfernoSuiteGenerator
         jurisdiction_filter["code"] || "AU"
       end
 
-      def category_first_profiles
-        special_cases.dig("ALL_VERSION_CATEGORY_FIRST_PROFILES", "profiles") || []
-      end
-
-      def category_first_profile?(profile_url, version = nil)
-        category_first_profiles.include?(profile_url) ||
-          version_specific_category_first_profiles(version)&.include?(profile_url)
-      end
-
-      def patient_first_profiles
-        special_cases.dig("ALL_VERSION_PATIENT_FIRST_PROFILES", "profiles") || []
-      end
-
-      def patient_first_profile?(profile_url)
-        patient_first_profiles.include?(profile_url)
-      end
-
-      def id_first_profiles
-        special_cases.dig("ALL_VERSION_ID_FIRST_PROFILES", "profiles") || []
-      end
-
-      def id_first_profile?(profile_url)
-        id_first_profiles.include?(profile_url)
-      end
-
-      def name_first_profiles
-        special_cases.dig("ALL_VERSION_NAME_FIRST_PROFILES", "profiles") || []
-      end
-
       def read_test_ids_inputs
-        special_cases["READ_TEST_IDS_INPUTS"] || {}
+        configs_generators_read["test_ids_inputs"] || {}
       end
 
       def name_first_profile?(profile_url)
@@ -237,41 +182,29 @@ module InfernoSuiteGenerator
         special_cases.dig("VERSION_SPECIFIC_PROFILES", "profiles") || {}
       end
 
-      def version_specific_category_first_profiles(version = nil)
-        return [] if version.nil?
-
-        []
-      end
-
       def medication_inclusion_resources
         special_cases["MEDICATION_INCLUSION_RESOURCES"]&.dig("resources") || %w[MedicationRequest MedicationDispense]
       end
 
       def special_includes_cases
-        special_cases["SPECIAL_INCLUDES_CASES"]&.dig("cases") || {}
+        configs_extractors_search["include_searches"]&.dig("cases") || {}
       end
 
       def special_search_methods
         special_cases["SPECIAL_SEARCH_METHODS"]&.dig("methods") || []
       end
 
-      def first_search_params(profile_url, resource, version = nil)
-        if category_first_profile?(profile_url, version)
-          %w[patient category]
-        elsif patient_first_profile?(profile_url)
-          ["patient"]
-        elsif id_first_profile?(profile_url)
-          ["_id"]
-        elsif name_first_profile?(profile_url)
-          ["name"]
-        elsif resource == "Observation"
-          %w[patient code]
-        elsif resource == "MedicationRequest"
-          ["patient"]
-        elsif resource == "CareTeam"
-          %w[patient status]
+      def first_search_params(profile_url, resource)
+        profile_url_config = configs_generators_search_first_search_params_config["profile"] || {}
+        resource_config = configs_generators_search_first_search_params_config["resource"] || {}
+        default_value = ["patient"]
+
+        if profile_url_config.key?(profile_url)
+          profile_url_config[profile_url]
+        elsif resource_config.key?(resource)
+          resource_config[resource]
         else
-          ["patient"]
+          default_value
         end
       end
 
@@ -291,6 +224,14 @@ module InfernoSuiteGenerator
         extractors_must_support["remove_elements"] || []
       end
 
+      def configs_extractors_search_comparators
+        configs_extractors_search["comparators"] || {}
+      end
+
+      def configs_generators_search_first_search_params_config
+        configs_generators_search["first_search_parameter_by"] || {}
+      end
+
       private
 
       def load_config
@@ -300,6 +241,30 @@ module InfernoSuiteGenerator
 
       def configs
         @config["configs"] || {}
+      end
+
+      def configs_extractors
+        configs["extractors"] || {}
+      end
+
+      def configs_extractors_search
+        configs_extractors["search"] || {}
+      end
+
+      def configs_generators
+        configs["generators"] || {}
+      end
+
+      def configs_generators_search
+        configs_generators["search"] || {}
+      end
+
+      def configs_generators_read
+        configs_generators["read"] || {}
+      end
+
+      def configs_generators_all
+        configs_generators["all"] || {}
       end
     end
   end

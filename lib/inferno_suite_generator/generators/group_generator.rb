@@ -14,12 +14,7 @@ module InfernoSuiteGenerator
                      .compact
                      .reject do |group|
                        config = Registry.get(:config_keeper)
-                       version_specific_resources = config.version_specific_resources_to_exclude(group.version)[group.version]
-                       if version_specific_resources
-                         version_specific_resources.include?(group.resource)
-                       else
-                         config.resources_to_exclude.include?(group.resource)
-                       end
+                       config.resources_to_exclude.include?(group.resource)
                      end
                      .each { |group| new(group, base_output_dir, ig_metadata).generate }
         end

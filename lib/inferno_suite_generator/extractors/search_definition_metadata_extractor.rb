@@ -121,7 +121,7 @@ module InfernoSuiteGenerator
       end
 
       def comparators
-        comp_config = Registry.get(:config_keeper).special_cases["COMPARATORS"]
+        comp_config = Registry.get(:config_keeper).configs_extractors_search_comparators
         special_cases_resources = comp_config["resources"] || []
         special_cases_comparators = comp_config["operators"] || []
         special_cases_param_ids = comp_config["param_ids"] || []

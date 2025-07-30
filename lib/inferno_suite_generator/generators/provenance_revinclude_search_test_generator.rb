@@ -12,12 +12,7 @@ module InfernoSuiteGenerator
           ig_metadata.groups
                      .reject do |group|
                        config = Registry.get(:config_keeper)
-                       version_specific_resources = config.version_specific_resources_to_exclude(group.version)[group.version]
-                       if version_specific_resources
-                         version_specific_resources.include?(group.resource)
-                       else
-                         config.resources_to_exclude.include?(group.resource)
-                       end
+                       config.resources_to_exclude.include?(group.resource)
                      end
                      .select { |group| group.revincludes.include? "Provenance:target" }
                      .each { |group| new(group, group.searches.first, base_output_dir, ig_metadata).generate }

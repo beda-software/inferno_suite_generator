@@ -118,7 +118,7 @@ module InfernoSuiteGenerator
       end
 
       def first_search_params
-        @first_search_params ||= config_keeper.first_search_params(profile_url, resource, reformatted_version)
+        @first_search_params ||= config_keeper.first_search_params(profile_url, resource)
       end
 
       def handle_special_cases

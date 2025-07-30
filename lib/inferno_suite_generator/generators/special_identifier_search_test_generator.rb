@@ -10,8 +10,7 @@ module InfernoSuiteGenerator
       class << self
         def generate(ig_metadata, base_output_dir)
           ig_metadata.groups.reject do |group|
-            version_specific_resources = Registry.get(:config_keeper).version_specific_resources_to_exclude(group.version)[group.version]
-            version_specific_resources ? version_specific_resources.include?(group.resource) : Registry.get(:config_keeper).resources_to_exclude.include?(group.resource)
+            Registry.get(:config_keeper).resources_to_exclude.include?(group.resource)
           end
             .select { |group| Registry.get(:config_keeper).specific_identifiers.key?(group.resource) }
                      .select { |group| group.searches.present? }

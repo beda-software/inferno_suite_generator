@@ -97,12 +97,7 @@ module InfernoSuiteGenerator
       def groups
         ig_metadata.ordered_groups.compact
                    .reject do |group|
-                     version_specific_resources = config_keeper.version_specific_resources_to_exclude(group.version)[group.version]
-                     if version_specific_resources
-                       version_specific_resources.include?(group.resource)
-                     else
-                       config_keeper.resources_to_exclude.include?(group.resource)
-                     end
+                     config_keeper.resources_to_exclude.include?(group.resource)
                    end
       end
 
