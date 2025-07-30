@@ -129,7 +129,7 @@ module InfernoSuiteGenerator
       end
 
       def multiple_or_and_search_by_target_resource
-        special_cases["MULTIPLE_OR_AND_SEARCH_BY_TARGET_RESOURCE"] || {}
+        configs_extractors_search["multiple_or_and_search_by_target_resource"] || {}
       end
 
       def profiles_to_exclude
@@ -137,7 +137,7 @@ module InfernoSuiteGenerator
       end
 
       def search_expectation_overrides
-        special_cases["SEARCH_EXPECTATION_OVERRIDES"] || {}
+        configs_extractors_search["expectation_overrides"] || {}
       end
 
       def fixed_search_values
@@ -164,14 +164,8 @@ module InfernoSuiteGenerator
         name_first_profiles.include?(profile_url)
       end
 
-      def version_specific_profiles(version = nil)
-        return {} if version.nil?
-
-        special_cases.dig("VERSION_SPECIFIC_PROFILES", "profiles") || {}
-      end
-
       def medication_inclusion_resources
-        special_cases["MEDICATION_INCLUSION_RESOURCES"]&.dig("resources") || %w[MedicationRequest MedicationDispense]
+        configs_extractors_search['test_medication_inclusion']&.dig("resources") || []
       end
 
       def special_includes_cases
@@ -179,7 +173,7 @@ module InfernoSuiteGenerator
       end
 
       def special_search_methods
-        special_cases["SPECIAL_SEARCH_METHODS"]&.dig("methods") || []
+        configs_generators_search["method_to_search"]&.dig("methods") || []
       end
 
       def first_search_params(profile_url, resource)
