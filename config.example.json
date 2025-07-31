@@ -292,11 +292,6 @@
             }
           ]
         },
-        "jurisdiction_filter": {
-          "_description": "Configuration for jurisdiction filtering in search parameters",
-          "system": "urn:iso:std:iso:3166",
-          "code": "AU"
-        },
         "params_to_ignore": ["count", "_sort", "_include"],
         "expectation": ["SHALL", "SHOULD", "MAY"],
         "test_medication_inclusion": {

@@ -189,18 +189,6 @@ module InfernoSuiteGenerator
         get("configs.extractors.search.fixed_search_values", {})
       end
 
-      def jurisdiction_filter
-        get("configs.extractors.search.jurisdiction_filter", {})
-      end
-
-      def jurisdiction_system
-        get("configs.extractors.search.jurisdiction_filter.system", "urn:iso:std:iso:3166")
-      end
-
-      def jurisdiction_code
-        get("configs.extractors.search.jurisdiction_filter.code", "AU")
-      end
-
       def read_test_ids_inputs
         get("configs.generators.read.test_ids_inputs", {})
       end
