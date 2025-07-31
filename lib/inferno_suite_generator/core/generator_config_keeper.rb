@@ -129,6 +129,10 @@ module InfernoSuiteGenerator
         "lib/#{module_directory}/igs/"
       end
 
+      def package_archive_path
+        get("ig.package_archive_path", nil)
+      end
+
       def main_file_path
         "lib/#{module_directory}.rb"
       end
@@ -154,7 +158,7 @@ module InfernoSuiteGenerator
       end
 
       def search_params_to_ignore
-        get("configs.extractors.search.search_params_to_ignore", [])
+        get("configs.extractors.search.params_to_ignore", [])
       end
 
       def search_params_expectation
