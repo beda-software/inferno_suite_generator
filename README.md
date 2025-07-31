@@ -233,6 +233,52 @@ The project follows a clear organization pattern:
 4. **Metadata Extractors**: Extract and process metadata from FHIR IGs
 5. **Configuration**: Uses Registry pattern for global configuration
 
+### Docker
+
+The InfernoSuiteGenerator is available as a Docker image from GitHub Container Registry. This allows you to run the generator without setting up a Ruby environment.
+
+#### Using the Docker Image
+
+Pull the latest image:
+
+```bash
+docker pull ghcr.io/beda-software/inferno_suite_generator:latest
+```
+
+Run the generator with your configuration file:
+
+```bash
+docker run -v $(pwd):/data ghcr.io/beda-software/inferno_suite_generator:latest /data/config.json
+```
+
+This mounts your current directory to `/data` in the container and runs the generator with your configuration file.
+
+#### Building the Docker Image Locally
+
+You can also build the Docker image locally:
+
+```bash
+docker build -t inferno_suite_generator .
+```
+
+And run it:
+
+```bash
+docker run -v $(pwd):/data inferno_suite_generator /data/config.json
+```
+
+### CI/CD
+
+The project uses GitHub Actions for continuous integration and delivery:
+
+1. **Code Style Checking**: RuboCop runs on all pull requests and pushes to the main branch to ensure code quality.
+2. **Docker Image Building**: When changes are pushed to the main branch, a Docker image is automatically built and pushed to GitHub Container Registry.
+
+The CI/CD pipeline ensures that:
+- Code follows the style guidelines
+- The Docker image is always up-to-date with the latest changes
+- The Docker image is available for easy use without local setup
+
 ## Contributing
 
 Bug reports and pull requests are welcome on GitHub at https://github.com/beda-software/inferno_suite_generator. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [code of conduct](https://github.com/beda-software/inferno_suite_generator/blob/main/CODE_OF_CONDUCT.md).
