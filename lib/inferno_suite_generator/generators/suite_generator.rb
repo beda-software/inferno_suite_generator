@@ -67,9 +67,11 @@ module InfernoSuiteGenerator
       def ig_name
         config_keeper.ig_name
       end
+
       def ig_link
         config_keeper.ig_link
       end
+
       def default_fhir_server
         config_keeper.default_fhir_server
       end

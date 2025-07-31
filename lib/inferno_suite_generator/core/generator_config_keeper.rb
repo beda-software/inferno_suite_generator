@@ -28,9 +28,10 @@ module InfernoSuiteGenerator
       def get(path, default = nil)
         return @cache[path] if @cache.key?(path)
 
-        keys = path.split('.')
+        keys = path.split(".")
         value = keys.reduce(@config) do |result, key|
           break nil unless result.is_a?(Hash) && result.key?(key)
+
           result[key]
         end
 
@@ -40,20 +41,21 @@ module InfernoSuiteGenerator
       end
 
       def get_description(path)
-        parent_path = path.split('.')[0...-1].join('.')
-        section_name = path.split('.').last
-        
+        parent_path = path.split(".")[0...-1].join(".")
+        path.split(".").last
+
         parent = get(parent_path)
         return nil unless parent.is_a?(Hash)
-        
+
         description_key = parent.keys.find { |k| k =~ /^_description$|^_comment$/ }
         description_key ? parent[description_key] : nil
       end
 
       def has?(path)
-        keys = path.split('.')
+        keys = path.split(".")
         keys.reduce(@config) do |result, key|
           return false unless result.is_a?(Hash) && result.key?(key)
+
           result[key]
         end
         true
@@ -268,16 +270,14 @@ module InfernoSuiteGenerator
       end
 
       def env_override(path)
-        env_var = "INFERNO_CONFIG_#{path.gsub('.', '_').upcase}"
+        env_var = "INFERNO_CONFIG_#{path.tr(".", "_").upcase}"
         ENV[env_var]
       end
 
       private
 
       def load_config
-        unless File.exist?(@config_file_path)
-          raise ArgumentError, "Configuration file not found: #{@config_file_path}"
-        end
+        raise ArgumentError, "Configuration file not found: #{@config_file_path}" unless File.exist?(@config_file_path)
 
         begin
           @config = JSON.parse(File.read(@config_file_path))
@@ -291,9 +291,7 @@ module InfernoSuiteGenerator
         required_sections = %w[ig suite configs]
 
         required_sections.each do |section|
-          unless @config.key?(section)
-            raise ArgumentError, "Missing required configuration section: #{section}"
-          end
+          raise ArgumentError, "Missing required configuration section: #{section}" unless @config.key?(section)
         end
       end
     end

@@ -92,7 +92,7 @@ module InfernoSuiteGenerator
 
         @searches.map do |search|
           overrides.each do |override|
-            if search[:names] == override["search_params"] && 
+            if search[:names] == override["search_params"] &&
                search[:expectation] == override["original_expectation"]
               search[:expectation] = override["override_expectation"]
             end

@@ -205,9 +205,7 @@ module InfernoSuiteGenerator
         search_definitions = group_metadata.search_definitions
 
         include_params_list.map do |include_param|
-          if special_cases.key?(include_param)
-            return [special_cases[include_param]]
-          end
+          return [special_cases[include_param]] if special_cases.key?(include_param)
 
           target_resource = ""
           paths = ""
@@ -311,12 +309,12 @@ module InfernoSuiteGenerator
       def search_method
         config = Registry.get(:config_keeper)
         special_methods = config.special_search_methods
-        
+
         special_method = special_methods.find do |method_config|
-          method_config["search_param"] == search_metadata[:names].first && 
-          method_config["group_name"] == group_metadata.name
+          method_config["search_param"] == search_metadata[:names].first &&
+            method_config["group_name"] == group_metadata.name
         end
-        
+
         if special_method
           special_method["method"]
         else

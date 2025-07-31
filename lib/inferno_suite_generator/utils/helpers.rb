@@ -13,7 +13,7 @@ module Helpers
   end
 
   def self.multiple_test_description(multiple_type, conformance_expectation, search_param_name_string, resource_type,
-                                     url_version)
+                                     _url_version)
     multiple_type_str = multiple_type == "OR" ? "multipleOr" : "multipleAnd"
     <<~DESCRIPTION.gsub(/\n{3,}/, "\n\n")
       A server #{conformance_expectation} support searching by #{multiple_type_str}

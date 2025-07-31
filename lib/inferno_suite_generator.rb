@@ -136,9 +136,9 @@ module InfernoSuiteGenerator
       main_file = config.main_file_path
       file_path = File.expand_path(main_file, Dir.pwd)
       related_result_folder = Registry.get(:config_keeper).result_folder
-    
+
       test_suite_file_name = "#{ig_metadata.ig_test_id_prefix}_test_suite"
-    
+
       require_path = File.join(
         related_result_folder.split("/opt/inferno/lib/").last,
         ig_metadata.ig_version,

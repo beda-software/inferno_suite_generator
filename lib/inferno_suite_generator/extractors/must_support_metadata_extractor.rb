@@ -336,21 +336,21 @@ module InfernoSuiteGenerator
           value = remove_elements_config["value"]
 
           profiles.each do |resource_profile_url|
-            if profile.url == resource_profile_url
-              @must_supports[:elements].delete_if do |element|
-                case condition
-                when "equal"
-                  element[element_key.to_sym] == value
-                when "start_with?"
-                  element[element_key.to_sym].start_with?(value)
-                when "pattern_match?"
-                  pattern = Regexp.new(value)
-                  pattern.match?(element[element_key.to_sym])
-                when "value_include?"
-                  value.include? element[element_key.to_sym]
-                else
-                  # do nothing
-                end
+            next unless profile.url == resource_profile_url
+
+            @must_supports[:elements].delete_if do |element|
+              case condition
+              when "equal"
+                element[element_key.to_sym] == value
+              when "start_with?"
+                element[element_key.to_sym].start_with?(value)
+              when "pattern_match?"
+                pattern = Regexp.new(value)
+                pattern.match?(element[element_key.to_sym])
+              when "value_include?"
+                value.include? element[element_key.to_sym]
+              else
+                # do nothing
               end
             end
           end
