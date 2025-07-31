@@ -273,11 +273,25 @@ The project uses GitHub Actions for continuous integration and delivery:
 
 1. **Code Style Checking**: RuboCop runs on all pull requests and pushes to the main branch to ensure code quality.
 2. **Docker Image Building**: When changes are pushed to the main branch, a Docker image is automatically built and pushed to GitHub Container Registry.
+3. **Manual Build and Push**: A separate workflow is available for manually triggering the build and push process without running RuboCop checks.
 
 The CI/CD pipeline ensures that:
 - Code follows the style guidelines
 - The Docker image is always up-to-date with the latest changes
 - The Docker image is available for easy use without local setup
+
+#### Manual Build and Push
+
+In some cases, you may need to build and push a Docker image without running RuboCop checks. For this purpose, a manual workflow is available:
+
+1. Go to the GitHub repository
+2. Navigate to the "Actions" tab
+3. Select the "Manual Build and Push" workflow
+4. Click "Run workflow"
+5. Optionally, provide a reason for the manual build
+6. Click "Run workflow" to start the build and push process
+
+This is useful in situations where you need to quickly deploy a new image without addressing code style issues.
 
 ## Contributing
 
