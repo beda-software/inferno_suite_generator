@@ -86,7 +86,11 @@ module InfernoSuiteGenerator
       end
 
       def suite_module_name
-        get("suite.suite_module_name")
+        "#{module_name_prefix}TestKit"
+      end
+
+      def module_directory
+        "#{test_id_prefix}_test_kit"
       end
 
       def tx_server_url
@@ -102,11 +106,11 @@ module InfernoSuiteGenerator
       end
 
       def module_name_prefix
-        get("suite.module_name_prefix")
+        title.gsub(" ", "")
       end
 
       def test_id_prefix
-        get("suite.test_id_prefix")
+        title&.downcase.gsub(" ", "_")
       end
 
       def paths
@@ -114,23 +118,23 @@ module InfernoSuiteGenerator
       end
 
       def result_folder
-        get("suite.paths.result_folder")
+        "./lib/#{module_directory}/generated/"
       end
 
       def related_result_folder
-        get("suite.paths.related_result_folder")
+        "/lib/#{module_directory}/generated/"
       end
 
       def ig_deps_path
-        get("suite.paths.ig_deps")
+        "lib/#{module_directory}/igs/"
       end
 
       def main_file_path
-        get("suite.paths.main_file")
+        "lib/#{module_directory}.rb"
       end
 
       def extra_json_paths
-        get("suite.paths.extra_json_paths", [])
+        get("suite.extra_json_paths", [])
       end
 
       def multiple_and_expectations

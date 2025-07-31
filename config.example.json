@@ -9,16 +9,7 @@
   },
   "suite": {
     "title": "AU Core",
-    "suite_module_name": "AUCoreTestKit",
-    "module_name_prefix": "AUCore",
-    "test_id_prefix": "au_core",
-    "paths": {
-      "ig_deps": "lib/au_core_test_kit/igs/",
-      "result_folder": "./lib/au_core_test_kit/generated/",
-      "related_result_folder": "/lib/au_core_test_kit/generated/",
-      "main_file": "lib/au_core_test_kit.rb",
-      "extra_json_paths": ["search-params.json"]
-    },
+    "extra_json_paths": ["search-params.json"],
     "outer_groups": [
       {
         "import_type": "relative",
