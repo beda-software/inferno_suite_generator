@@ -49,26 +49,6 @@ module InfernoSuiteGenerator
         read_interaction[:expectation]
       end
 
-      def needs_location_id?
-        resource_type == "Location"
-      end
-
-      def needs_organization_id?
-        resource_type == "Organization"
-      end
-
-      def needs_practitioner_id?
-        resource_type == "Practitioner"
-      end
-
-      def needs_practitioner_role_id?
-        resource_type == "PractitionerRole"
-      end
-
-      def needs_healthcare_service_id?
-        resource_type == "HealthcareService"
-      end
-
       def ids_input_data
         return unless needs_ids_input?
 

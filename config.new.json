@@ -1,0 +1,463 @@
+{
+  "ig": {
+    "id": "hl7.fhir.au.core",
+    "version": "2.0.0-draft",
+    "name": "AU Core Implementation Guide",
+    "link": "https://hl7.org.au/fhir/core/2.0.0-draft/index.html",
+    "cs_profile_url": "http://hl7.org.au/fhir/core/CapabilityStatement/au-core-responder",
+    "cs_version_specific_url": "https://hl7.org.au/fhir/core/2.0.0-draft/CapabilityStatement-au-core-responder.html"
+  },
+  "suite": {
+    "title": "AU Core",
+    "tx_server_url": "https://tx.dev.hl7.org.au/fhir",
+    "extra_json_paths": ["search-params.json"],
+    "outer_groups": [
+      {
+        "import_type": "relative",
+        "import_path": "../../custom_groups/capability_statement/capability_statement_group",
+        "group_position": "before",
+        "group_id": "au_core_capability_statement"
+      },
+      {
+        "import_type": "relative",
+        "import_path": "../../custom_groups/missing_data_group",
+        "group_position": "after",
+        "group_id": "au_core_missing_data_group"
+      }
+    ],
+    "links": [
+      {
+        "label": "Report Issue",
+        "url": "https://github.com/hl7au/au-fhir-core-inferno/issues"
+      },
+      {
+        "label": "Open Source",
+        "url": "https://github.com/hl7au/au-fhir-core-inferno"
+      },
+      {
+        "label": "AU Core Implementation Guide",
+        "url": "https://build.fhir.org/ig/hl7au/au-fhir-core/"
+      }
+    ]
+  },
+  "constants": {
+    "default_fhir_server": "https://fhir.hl7.org.au/aucore/fhir/DEFAULT",
+    "read_ids.location": "bobrester-medical-center, au-hospital",
+    "read_ids.organization": "dva-au, organization-medical-center-tc",
+    "read_ids.practitioner": "alderson-helene",
+    "read_ids.practitioner_role": "cardiologist-sallie-sutherland, bobrester-bob-gp",
+    "read_ids.healthcare_service": "generalpractice-bungabbee-medical-clinic, communityhealth-southedge-practice, dentalpractice-annandale-dental, pathologylaboratory-woodcroft-pathology",
+    "search_default_values.diagnostic_result": ["251739003", "24701-5"],
+    "search_default_values.date": ["ge1950-01-01", "le2050-01-01", "gt1950-01-01", "lt2050-01-01"],
+    "search_default_values.datetime": ["ge1950-01-01T00:00:00.000Z", "le2050-01-01T23:59:59.999Z", "gt1950-01-01T00:00:00.000Z", "lt2050-01-01T23:59:59.999Z"],
+    "search.comparators": ["gt", "lt", "ge", "le"]
+  },
+  "configs": {
+    "generic": {
+      "expectation": ["SHALL", "SHOULD", "MAY"],
+      "search_params_to_ignore": ["count", "_sort", "_include"]
+    },
+    "profiles": {
+      "http://hl7.org.au/fhir/core/StructureDefinition/au-core-bodyweight": {
+        "must_support": {
+          "remove_elements": [
+            {
+              "element_key": "path",
+              "condition": "pattern_match?",
+              "value": "(component(:[^.]+)?\\.)?dataAbsentReason"
+            }
+          ]
+        }
+      },
+      "http://hl7.org.au/fhir/core/StructureDefinition/au-core-bloodpressure": {
+        "must_support": {
+          "remove_elements": [
+            {
+              "element_key": "path",
+              "condition": "pattern_match?",
+              "value": "(component(:[^.]+)?\\.)?dataAbsentReason"
+            }
+          ]
+        }
+      },
+      "http://hl7.org.au/fhir/core/StructureDefinition/au-core-bodyheight": {
+        "must_support": {
+          "remove_elements": [
+            {
+              "element_key": "path",
+              "condition": "pattern_match?",
+              "value": "(component(:[^.]+)?\\.)?dataAbsentReason"
+            }
+          ]
+        }
+      },
+      "http://hl7.org.au/fhir/core/StructureDefinition/au-core-bodytemp": {
+        "must_support": {
+          "remove_elements": [
+            {
+              "element_key": "path",
+              "condition": "pattern_match?",
+              "value": "(component(:[^.]+)?\\.)?dataAbsentReason"
+            }
+          ]
+        }
+      },
+      "http://hl7.org.au/fhir/core/StructureDefinition/au-core-heartrate": {
+        "must_support": {
+          "remove_elements": [
+            {
+              "element_key": "path",
+              "condition": "pattern_match?",
+              "value": "(component(:[^.]+)?\\.)?dataAbsentReason"
+            }
+          ]
+        }
+      },
+      "http://hl7.org.au/fhir/core/StructureDefinition/au-core-resprate": {
+        "must_support": {
+          "remove_elements": [
+            {
+              "element_key": "path",
+              "condition": "pattern_match?",
+              "value": "(component(:[^.]+)?\\.)?dataAbsentReason"
+            }
+          ]
+        }
+      },
+      "http://hl7.org.au/fhir/core/StructureDefinition/au-core-smokingstatus": {
+        "must_support": {
+          "remove_elements": [
+            {
+              "element_key": "path",
+              "condition": "pattern_match?",
+              "value": "(component(:[^.]+)?\\.)?dataAbsentReason"
+            }
+          ]
+        }
+      },
+      "http://hl7.org.au/fhir/core/StructureDefinition/au-core-waistcircum": {
+        "must_support": {
+          "remove_elements": [
+            {
+              "element_key": "path",
+              "condition": "pattern_match?",
+              "value": "(component(:[^.]+)?\\.)?dataAbsentReason"
+            },
+            {
+              "element_key": "path",
+              "condition": "start_with?",
+              "value": "component"
+            }
+          ]
+        }
+      },
+      "http://hl7.org.au/fhir/core/StructureDefinition/au-core-patient": {
+        "first_class_profile": true,
+        "override_executor": {
+          "search": {
+            "param": "identifier",
+            "method": "run_search_test_with_system"
+          }
+        }
+      },
+      "http://hl7.org.au/fhir/core/StructureDefinition/au-core-location": {
+        "first_class_profile": true
+      },
+      "http://hl7.org.au/fhir/core/StructureDefinition/au-core-organization": {
+        "first_class_profile": true
+      },
+      "http://hl7.org.au/fhir/core/StructureDefinition/au-core-practitioner": {
+        "first_class_profile": true
+      },
+      "http://hl7.org.au/fhir/core/StructureDefinition/au-core-practitionerrole": {
+        "first_class_profile": true,
+        "extra_searches": [
+          {
+            "type": "search",
+            "params": [["identifier"], ["practitioner"], ["_id"], ["specialty"]]
+          }
+        ]
+      },
+      "http://hl7.org.au/fhir/core/StructureDefinition/au-core-healthcareservice": {
+        "first_class_profile": true,
+        "forced_initial_search": ["name"]
+      },
+      "http://hl7.org.au/fhir/core/StructureDefinition/au-core-medicationstatement": {
+        "extra_searches": [
+          {
+            "type": "search",
+            "params": ["medication"]
+          },
+          {
+            "type": "include",
+            "param": "medication",
+            "target_resource": "Medication",
+            "paths": ["medicationReference"]
+          }
+        ]
+      },
+      "http://hl7.org.au/fhir/core/StructureDefinition/au-core-medicationrequest": {
+        "search_param": {
+          "patient": {
+            "expectation_change": {
+              "from": "SHALL",
+              "to": "SHOULD"
+            }
+          },
+          "intent": {
+            "expectation_change": {
+              "from": "SHALL",
+              "to": "SHOULD"
+            }
+          },
+          "authoredon": {
+            "expectation_change": {
+              "from": "SHALL",
+              "to": "SHOULD"
+            }
+          }
+        },
+        "extra_searches": [
+          {
+            "type": "search",
+            "params": ["patient"]
+          },
+          {
+            "type": "search",
+            "params": ["patient", "intent"]
+          },
+          {
+            "type": "search",
+            "params": ["patient", "intent", "status"]
+          },
+          {
+            "type": "search",
+            "params": ["_id"]
+          },
+          {
+            "type": "search",
+            "params": ["patient", "intent", "authoredon"]
+          },
+          {
+            "type": "include",
+            "param": "medication",
+            "target_resource": "Medication",
+            "paths": ["medicationReference"]
+          }
+        ]
+      },
+      "http://hl7.org.au/fhir/core/StructureDefinition/au-core-diagnosticresult-path": {
+        "forced_initial_search": ["patient", "category"],
+        "must_support": {
+          "remove_elements": [
+            {
+              "element_key": "path",
+              "condition": "pattern_match?",
+              "value": "(component(:[^.]+)?\\.)?dataAbsentReason"
+            },
+            {
+              "element_key": "path",
+              "condition": "equal",
+              "value": "method"
+            }
+          ]
+        }
+      },
+      "http://hl7.org.au/fhir/core/StructureDefinition/au-core-diagnosticresult-imag": {
+        "forced_initial_search": ["patient", "category"]
+      },
+      "http://hl7.org.au/fhir/core/StructureDefinition/au-core-diagnosticresult": {
+        "must_support": {
+          "remove_elements": [
+            {
+              "element_key": "path",
+              "condition": "pattern_match?",
+              "value": "(component(:[^.]+)?\\.)?dataAbsentReason"
+            },
+            {
+              "element_key": "path",
+              "condition": "equal",
+              "value": "method"
+            }
+          ]
+        },
+        "search_param": {
+          "clinical-code": {
+            "default_values": "search_default_values.diagnostic_result"
+          }
+        }
+      },
+      "http://hl7.org.au/fhir/StructureDefinition/au-specimen": {
+        "skip": true
+      },
+      "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire": {
+        "skip": true
+      },
+      "http://hl7.org.au/fhir/core/StructureDefinition/au-core-norelevantfinding": {
+        "skip": true
+      },
+      "http://hl7.org/fhir/StructureDefinition/DocumentReference": {
+        "skip": true
+      }
+    },
+    "resources": {
+      "Organization": {
+        "search_param": {
+          "identifier": {
+            "extra_tests_with": [
+              {
+                "display": "HPI-O",
+                "url": "http://ns.electronichealth.net.au/id/hi/hpio/1.0"
+              },
+              {
+                "display": "ABN",
+                "url": "http://hl7.org.au/id/abn"
+              }
+            ]
+          }
+        }
+      },
+      "PractitionerRole": {
+        "search_multiple_or_and_by_target_resource": ["practitioner"],
+        "search_param": {
+          "identifier": {
+            "extra_tests_with": [
+              {
+                "display": "Medicare",
+                "url": "http://ns.electronichealth.net.au/id/medicare-provider-number"
+              }
+            ]
+          }
+        }
+      },
+      "Practitioner": {
+        "search_param": {
+          "identifier": {
+            "extra_tests_with": [
+              {
+                "display": "HPI-I",
+                "url": "http://ns.electronichealth.net.au/id/hi/hpii/1.0"
+              }
+            ]
+          }
+        }
+      },
+      "Medication": {
+        "skip": true
+      },
+      "DiagnosticReport": {
+        "skip": true
+      },
+      "Observation": {
+        "forced_initial_search": ["patient", "code"],
+        "search_param": {
+          "clinical-date": {
+            "default_values": "search_default_values.datetime",
+            "multiple_and_expectation": "SHOULD",
+            "comparators": "search.comparators"
+          },
+          "Observation-status": {
+            "multiple_or_expectation": "SHALL"
+          },
+          "clinical-code": {
+            "multiple_or_expectation": "SHOULD"
+          }
+        }
+      },
+      "Condition": {
+        "search_param": {
+          "Condition-onset-date": {
+            "default_values": "search_default_values.datetime",
+            "multiple_and_expectation": "SHOULD",
+            "comparators": "search.comparators"
+          },
+          "clinical-code": {
+            "multiple_or_expectation": "MAY"
+          }
+        }
+      },
+      "Encounter": {
+        "search_param": {
+          "clinical-date": {
+            "default_values": "search_default_values.datetime",
+            "multiple_and_expectation": "SHOULD",
+            "comparators": "search.comparators"
+          },
+          "Encounter-status": {
+            "multiple_or_expectation": "MAY"
+          }
+        }
+      },
+      "Immunization": {
+        "search_param": {
+          "clinical-date": {
+            "default_values": "search_default_values.datetime",
+            "multiple_and_expectation": "SHOULD",
+            "comparators": "search.comparators"
+          },
+          "Immunization-vaccine-code": {
+            "multiple_or_expectation": "SHOULD"
+          }
+        }
+      },
+      "MedicationRequest": {
+        "search": {
+          "test_medication_inclusion": true
+        },
+        "search_param": {
+          "MedicationRequest-authoredon": {
+            "default_values": "search_default_values.datetime",
+            "multiple_and_expectation": "SHOULD",
+            "comparators": "search.comparators"
+          },
+          "medications-status": {
+            "multiple_or_expectation": "SHALL"
+          },
+          "MedicationRequest-intent": {
+            "multiple_or_expectation": "SHOULD"
+          }
+        }
+      },
+      "Patient": {
+        "search_param": {
+          "identifier": {
+            "extra_tests_with": [
+              {
+                "display": "IHI",
+                "url": "http://ns.electronichealth.net.au/id/hi/ihi/1.0"
+              },
+              {
+                "display": "Medicare",
+                "url": "http://ns.electronichealth.net.au/id/medicare-number"
+              },
+              {
+                "display": "DVA",
+                "url": "http://ns.electronichealth.net.au/id/dva"
+              }
+            ]
+          },
+          "individual-birthdate": {
+            "default_values": "search_default_values.date",
+            "multiple_and_expectation": "MAY",
+            "comparators": "search.comparators"
+          }
+        }
+      },
+      "Procedure": {
+        "search_param": {
+          "clinical-date": {
+            "default_values": "search_default_values.datetime",
+            "multiple_and_expectation": "MAY",
+            "comparators": "search.comparators"
+          },
+          "Procedure-status": {
+            "multiple_or_expectation": "SHALL"
+          },
+          "clinical-code": {
+            "multiple_or_expectation": "SHOULD"
+          }
+        }
+      }
+    }
+  }
+}

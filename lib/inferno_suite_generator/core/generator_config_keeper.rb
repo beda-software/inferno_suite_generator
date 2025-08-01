@@ -158,11 +158,11 @@ module InfernoSuiteGenerator
       end
 
       def search_params_to_ignore
-        get("configs.extractors.search.params_to_ignore", [])
+        get("configs.generic.search_params_to_ignore", [])
       end
 
       def search_params_expectation
-        get("configs.extractors.search.expectation", [])
+        get("configs.generic.expectation", [])
       end
 
       def special_cases
@@ -253,6 +253,10 @@ module InfernoSuiteGenerator
 
       def configs_generators_search_first_search_params_config
         get("configs.generators.search.first_search_parameter_by", {})
+      end
+
+      def constants
+        get("configs.constants", {})
       end
 
       def keys_at(path)
