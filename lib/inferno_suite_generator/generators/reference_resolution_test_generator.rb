@@ -12,7 +12,7 @@ module InfernoSuiteGenerator
           ig_metadata.groups
                      .reject do |group|
                        config = Registry.get(:config_keeper)
-                       config.resources_to_exclude.include?(group.resource)
+                       config.exclude_resource?(group.resource)
                      end
                      .each { |group| new(group, base_output_dir, ig_metadata).generate }
         end

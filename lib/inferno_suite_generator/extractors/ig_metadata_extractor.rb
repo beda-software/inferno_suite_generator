@@ -43,12 +43,10 @@ module InfernoSuiteGenerator
       end
 
       def add_metadata_from_resources
-        profile_arr_to_skip = config_keeper.skip_profiles
-
         supported_profile_groups = resources_in_capability_statement.flat_map do |resource|
           resource.supportedProfile&.map do |supported_profile|
             supported_profile = supported_profile.split("|").first
-            next if profile_arr_to_skip.include?(supported_profile)
+            next if config_keeper.skip_profile?(supported_profile)
 
             GroupMetadataExtractor.new(resource, supported_profile, metadata, ig_resources).group_metadata
           end
@@ -56,7 +54,7 @@ module InfernoSuiteGenerator
 
         profile_groups = resources_in_capability_statement.flat_map do |resource|
           next unless resource.profile.present?
-          next if profile_arr_to_skip.include?(resource.profile)
+          next if config_keeper.skip_profile?(resource.profile)
 
           GroupMetadataExtractor.new(resource, resource.profile, metadata, ig_resources).group_metadata
         end.compact

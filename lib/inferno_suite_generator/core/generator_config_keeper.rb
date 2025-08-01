@@ -154,7 +154,8 @@ module InfernoSuiteGenerator
       end
 
       def skip_profile?(profile_url)
-        skip_profiles.include?(profile_url)
+        profiles = get("configs.profiles", {})
+        profiles.key?(profile_url) ? profiles[profile_url]["skip"] || false : false
       end
 
       def search_params_to_ignore
@@ -171,6 +172,11 @@ module InfernoSuiteGenerator
 
       def resources_to_exclude
         get("configs.generators.all.skip_resources.resources", [])
+      end
+
+      def exclude_resource?(resource_type)
+        resource_types = get("configs.resources", {})
+        resource_types.key?(resource_type) ? resource_types[resource_type]["skip"] || false : false
       end
 
       def specific_identifiers
