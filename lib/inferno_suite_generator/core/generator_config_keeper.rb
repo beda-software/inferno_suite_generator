@@ -174,9 +174,32 @@ module InfernoSuiteGenerator
         get("configs.generators.all.skip_resources.resources", [])
       end
 
+      def profiles_configs
+        get("configs.profiles", {})
+      end
+
+      def resources_configs
+        get("configs.resources", {})
+      end
+
+      def skip_profile?(profile_url)
+        profiles_configs.key?(profile_url) ? profiles_configs[profile_url]["skip"] || false : false
+      end
+
       def exclude_resource?(resource_type)
-        resource_types = get("configs.resources", {})
-        resource_types.key?(resource_type) ? resource_types[resource_type]["skip"] || false : false
+        resources_configs.key?(resource_type) ? resources_configs[resource_type]["skip"] || false : false
+      end
+
+      def get_comparators(profile_url, resource_type, param_id)
+        profile_path = "configs.profiles.#{profile_url}.search_param.#{param_id}.comparators"
+        resource_path = "configs.resources.#{resource_type}.search_param.#{param_id}.comparators"
+
+        profile_comparators = get(profile_path, [])
+        profile_result = constants[profile_comparators] || profile_comparators
+        return profile_result if profile_result.any?
+
+        resource_comparators = get(resource_path, [])
+        constants[resource_comparators] || resource_comparators
       end
 
       def specific_identifiers
@@ -253,16 +276,12 @@ module InfernoSuiteGenerator
         get("configs.extractors.must_support.remove_elements", [])
       end
 
-      def configs_extractors_search_comparators
-        get("configs.extractors.search.comparators", {})
-      end
-
       def configs_generators_search_first_search_params_config
         get("configs.generators.search.first_search_parameter_by", {})
       end
 
       def constants
-        get("configs.constants", {})
+        get("constants", {})
       end
 
       def keys_at(path)

@@ -97,10 +97,9 @@ module InfernoSuiteGenerator
       end
 
       def groups
-        ig_metadata.ordered_groups.compact
-                   .reject do |group|
-                     config_keeper.resources_to_exclude.include?(group.resource)
-                   end
+        ig_metadata.ordered_groups.compact.reject do |group|
+          config_keeper.exclude_resource?(group.resource)
+        end
       end
 
       def group_id_list

@@ -121,16 +121,10 @@ module InfernoSuiteGenerator
       end
 
       def comparators
-        comp_config = Registry.get(:config_keeper).configs_extractors_search_comparators
-        special_cases_resources = comp_config["resources"] || []
-        special_cases_comparators = comp_config["operators"] || []
-        special_cases_param_ids = comp_config["param_ids"] || []
-
         {}.tap do |comparators|
           param.comparator&.each_with_index do |comparator, index|
-            is_special_case = (special_cases_resources.include? group_metadata[:resource]) &&
-                              (special_cases_comparators.include? comparator) &&
-                              (special_cases_param_ids.include? param_hash["id"])
+            resource_profile_comparators = Registry.get(:config_keeper).get_comparators(group_metadata[:url], group_metadata[:resource], param_hash["id"])
+            is_special_case = resource_profile_comparators.any? && resource_profile_comparators.include?(comparator)
             value = is_special_case ? "SHALL" : comparator_expectation(comparator_expectation_extensions[index])
             comparators[comparator.to_sym] = value
           end
