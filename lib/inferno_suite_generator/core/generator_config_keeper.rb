@@ -129,21 +129,12 @@ module InfernoSuiteGenerator
         get("configs.generators.all.skip_profiles.profiles", [])
       end
 
-      def skip_profile?(profile_url)
-        profiles = get("configs.profiles", {})
-        profiles.key?(profile_url) ? profiles[profile_url]["skip"] || false : false
-      end
-
       def search_params_to_ignore
         get("configs.generic.search_params_to_ignore", [])
       end
 
       def search_params_expectation
         get("configs.generic.expectation", [])
-      end
-
-      def special_cases
-        get("configs.SPECIAL_CASES", {})
       end
 
       def resources_to_exclude
@@ -213,10 +204,6 @@ module InfernoSuiteGenerator
         get("configs.generators.read.test_ids_inputs", {})
       end
 
-      def name_first_profile?(profile_url)
-        name_first_profiles.include?(profile_url)
-      end
-
       def medication_inclusion_resources
         get("configs.extractors.search.test_medication_inclusion.resources", [])
       end
@@ -259,27 +246,8 @@ module InfernoSuiteGenerator
         get("configs.extractors.must_support.remove_elements", [])
       end
 
-      def configs_generators_search_first_search_params_config
-        get("configs.generators.search.first_search_parameter_by", {})
-      end
-
       def constants
         get("constants", {})
-      end
-
-      def keys_at(path)
-        section = get(path)
-        section.is_a?(Hash) ? section.keys : []
-      end
-
-      def values_at(path)
-        section = get(path)
-        section.is_a?(Hash) ? section.values : []
-      end
-
-      def env_override(path)
-        env_var = "INFERNO_CONFIG_#{path.tr(".", "_").upcase}"
-        ENV[env_var]
       end
 
       private
