@@ -123,7 +123,8 @@ module InfernoSuiteGenerator
       def comparators
         {}.tap do |comparators|
           param.comparator&.each_with_index do |comparator, index|
-            resource_profile_comparators = Registry.get(:config_keeper).get_comparators(group_metadata[:url], group_metadata[:resource], param_hash["id"])
+            resource_profile_comparators = Registry.get(:config_keeper).get_comparators(group_metadata[:url],
+                                                                                        group_metadata[:resource], param_hash["id"])
             is_special_case = resource_profile_comparators.any? && resource_profile_comparators.include?(comparator)
             value = is_special_case ? "SHALL" : comparator_expectation(comparator_expectation_extensions[index])
             comparators[comparator.to_sym] = value
@@ -174,12 +175,16 @@ module InfernoSuiteGenerator
       end
 
       def get_multiple_expectation(multiple_expectation_type = "or")
-        expectations_hash = multiple_expectation_type == "or" ? Registry.get(:config_keeper).multiple_or_expectations : Registry.get(:config_keeper).multiple_and_expectations
-        resource_type = group_metadata[:resource]
-        param_id = param_hash["id"]
         param_hash_key = multiple_expectation_type == "or" ? "_multipleOr" : "_multipleAnd"
-
-        expectation_from_config = expectations_hash.dig(resource_type, param_id)
+        expectation_from_config = if multiple_expectation_type == "or"
+                                    Registry.get(:config_keeper).multiple_or_expectation(
+                                      group_metadata[:url], group_metadata[:resource], param_hash["id"]
+                                    )
+                                  else
+                                    Registry.get(:config_keeper).multiple_and_expectation(
+                                      group_metadata[:url], group_metadata[:resource], param_hash["id"]
+                                    )
+                                  end
         expectation_from_ig = param_hash[param_hash_key] && param_hash[param_hash_key]["extension"].first["valueCode"]
 
         expectation_from_config || expectation_from_ig
@@ -195,11 +200,10 @@ module InfernoSuiteGenerator
 
       def values
         fixed_search_values = Registry.get(:config_keeper).fixed_search_values(
-          group_metadata[:profile_url], group_metadata[:resource], param_hash["id"])
+          group_metadata[:profile_url], group_metadata[:resource], param_hash["id"]
+        )
 
-        if fixed_search_values.any?
-          return fixed_search_values
-        end
+        return fixed_search_values if fixed_search_values.any?
 
         values_from_fixed_codes = value_extractor.values_from_fixed_codes(profile_element, type).presence
         values_from_pattern_coding = value_extractor.values_from_pattern_coding(profile_element, type).presence

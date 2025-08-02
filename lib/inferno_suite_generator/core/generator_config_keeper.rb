@@ -74,11 +74,11 @@ module InfernoSuiteGenerator
       end
 
       def module_name_prefix
-        title.gsub(" ", "")
+        title.delete(" ")
       end
 
       def test_id_prefix
-        title&.downcase.gsub(" ", "_")
+        title&.downcase&.tr(" ", "_")
       end
 
       def paths
@@ -109,12 +109,20 @@ module InfernoSuiteGenerator
         get("suite.extra_json_paths", [])
       end
 
-      def multiple_and_expectations
-        get("configs.extractors.search.multiple_and_expectation", {})
+      def multiple_and_expectation(profile_url, resource_type, param_id)
+        resolve_profile_resource_value(
+          "configs.profiles.#{profile_url}.search_param.#{param_id}.multiple_and_expectation",
+          "configs.resources.#{resource_type}.search_param.#{param_id}.multiple_and_expectation",
+          nil
+        )
       end
 
-      def multiple_or_expectations
-        get("configs.extractors.search.multiple_or_expectation", {})
+      def multiple_or_expectation(profile_url, resource_type, param_id)
+        resolve_profile_resource_value(
+          "configs.profiles.#{profile_url}.search_param.#{param_id}.multiple_or_expectation",
+          "configs.resources.#{resource_type}.search_param.#{param_id}.multiple_or_expectation",
+          nil
+        )
       end
 
       def skip_profiles
@@ -161,7 +169,7 @@ module InfernoSuiteGenerator
       def resolve_profile_resource_value(profile_path, resource_path, default_value)
         profile_comparators = get(profile_path, default_value)
         profile_result = constants[profile_comparators] || profile_comparators
-        return profile_result if profile_result.any?
+        return profile_result if profile_result&.any?
 
         resource_comparators = get(resource_path, default_value)
         constants[resource_comparators] || resource_comparators
@@ -170,7 +178,8 @@ module InfernoSuiteGenerator
       def get_comparators(profile_url, resource_type, param_id)
         resolve_profile_resource_value(
           "configs.profiles.#{profile_url}.search_param.#{param_id}.comparators",
-        "configs.resources.#{resource_type}.search_param.#{param_id}.comparators", [])
+          "configs.resources.#{resource_type}.search_param.#{param_id}.comparators", []
+        )
       end
 
       def specific_identifiers
@@ -196,7 +205,8 @@ module InfernoSuiteGenerator
       def fixed_search_values(profile_url, resource_type, param_id)
         resolve_profile_resource_value(
           "configs.profiles.#{profile_url}.search_param.#{param_id}.default_values",
-          "configs.resources.#{resource_type}.search_param.#{param_id}.default_values", [])
+          "configs.resources.#{resource_type}.search_param.#{param_id}.default_values", []
+        )
       end
 
       def read_test_ids_inputs
