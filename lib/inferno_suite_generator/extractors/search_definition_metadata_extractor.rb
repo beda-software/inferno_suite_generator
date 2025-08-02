@@ -194,16 +194,11 @@ module InfernoSuiteGenerator
       end
 
       def values
-        config = Registry.get(:config_keeper).fixed_search_values
+        fixed_search_values = Registry.get(:config_keeper).fixed_search_values(
+          group_metadata[:profile_url], group_metadata[:resource], param_hash["id"])
 
-        if config.dig("resource_mappings", group_metadata[:resource])&.key?(param_hash["id"])
-          mapping = config["resource_mappings"][group_metadata[:resource]][param_hash["id"]]
-
-          return config["values"][mapping] if mapping.is_a?(String)
-
-          if mapping.is_a?(Hash) && (mapping.dig("condition", "profile_url") == group_metadata[:profile_url])
-            return config["values"][mapping["value"]]
-          end
+        if fixed_search_values.any?
+          return fixed_search_values
         end
 
         values_from_fixed_codes = value_extractor.values_from_fixed_codes(profile_element, type).presence
