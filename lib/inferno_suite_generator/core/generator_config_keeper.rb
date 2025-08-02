@@ -165,6 +165,9 @@ module InfernoSuiteGenerator
       def resolve_profile_resource_value(profile_path, resource_path, default_value)
         profile_comparators = get_new(profile_path, default_value)
         profile_result = constants[profile_comparators] || profile_comparators
+        if default_value.is_a?(TrueClass) || default_value.is_a?(FalseClass)
+          return profile_result || default_value
+        end
         return profile_result if profile_result&.any?
 
         resource_comparators = get_new(resource_path, default_value)
@@ -222,14 +225,22 @@ module InfernoSuiteGenerator
       end
 
       def first_search_params(profile_url, resource)
-        profile_config = get("configs.generators.search.first_search_parameter_by.profile", {})
-        resource_config = get("configs.generators.search.first_search_parameter_by.resource", {})
+        is_first_class = resolve_profile_resource_value(
+          "configs&.profiles&.#{profile_url}&.first_class_profile",
+          "configs&.resources&.#{resource}&.first_class_profile",
+          false
+        )
+        forced_initial_search = resolve_profile_resource_value(
+          "configs&.profiles&.#{profile_url}&.forced_initial_search",
+          "configs&.resources&.#{resource}&.forced_initial_search",
+          []
+        )
         default_value = ["patient"]
 
-        if profile_config.key?(profile_url)
-          profile_config[profile_url]
-        elsif resource_config.key?(resource)
-          resource_config[resource]
+        if is_first_class
+          ["_id"]
+        elsif forced_initial_search.any?
+          forced_initial_search
         else
           default_value
         end
