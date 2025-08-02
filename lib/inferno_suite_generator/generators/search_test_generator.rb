@@ -307,19 +307,8 @@ module InfernoSuiteGenerator
       end
 
       def search_method
-        config = Registry.get(:config_keeper)
-        special_methods = config.special_search_methods
-
-        special_method = special_methods.find do |method_config|
-          method_config["search_param"] == search_metadata[:names].first &&
-            method_config["group_name"] == group_metadata.name
-        end
-
-        if special_method
-          special_method["method"]
-        else
-          "run_search_test"
-        end
+        Registry.get(:config_keeper).get_executor(
+          group_metadata.profile_url, group_metadata.resource, search_metadata[:names].first)
       end
     end
   end

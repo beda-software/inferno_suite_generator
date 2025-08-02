@@ -165,6 +165,9 @@ module InfernoSuiteGenerator
       def resolve_profile_resource_value(profile_path, resource_path, default_value)
         profile_comparators = get_new(profile_path, default_value)
         profile_result = constants[profile_comparators] || profile_comparators
+        if default_value.is_a?(String)
+          return profile_result || default_value
+        end
         if default_value.is_a?(TrueClass) || default_value.is_a?(FalseClass)
           return profile_result || default_value
         end
@@ -222,6 +225,14 @@ module InfernoSuiteGenerator
 
       def special_search_methods
         get("configs.generators.search.method_to_search.methods", [])
+      end
+
+      def get_executor(profile_url, resource, param_id)
+        resolve_profile_resource_value(
+          "configs&.profiles&.#{profile_url}&.override_executor&.search&.#{param_id}",
+          "configs&.resources&.#{resource}&.override_executor&.search&.#{param_id}",
+          "run_search_test"
+        )
       end
 
       def first_search_params(profile_url, resource)
