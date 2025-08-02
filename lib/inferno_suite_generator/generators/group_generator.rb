@@ -13,8 +13,7 @@ module InfernoSuiteGenerator
           ig_metadata.ordered_groups
                      .compact
                      .reject do |group|
-                       config = Registry.get(:config_keeper)
-                       config.exclude_resource?(group.resource)
+                       Registry.get(:config_keeper).exclude_resource?(group.profile_url, group.resource)
                      end
                      .each { |group| new(group, base_output_dir, ig_metadata).generate }
         end

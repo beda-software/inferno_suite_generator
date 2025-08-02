@@ -46,7 +46,7 @@ module InfernoSuiteGenerator
         supported_profile_groups = resources_in_capability_statement.flat_map do |resource|
           resource.supportedProfile&.map do |supported_profile|
             supported_profile = supported_profile.split("|").first
-            next if config_keeper.skip_profile?(supported_profile)
+            next if config_keeper.skip_metadata_extraction?(supported_profile, resource.type)
 
             GroupMetadataExtractor.new(resource, supported_profile, metadata, ig_resources).group_metadata
           end
@@ -54,7 +54,7 @@ module InfernoSuiteGenerator
 
         profile_groups = resources_in_capability_statement.flat_map do |resource|
           next unless resource.profile.present?
-          next if config_keeper.skip_profile?(resource.profile)
+          next if config_keeper.skip_metadata_extraction?(resource.profile, resource.type)
 
           GroupMetadataExtractor.new(resource, resource.profile, metadata, ig_resources).group_metadata
         end.compact

@@ -98,7 +98,7 @@ module InfernoSuiteGenerator
 
       def groups
         ig_metadata.ordered_groups.compact.reject do |group|
-          config_keeper.exclude_resource?(group.resource)
+          config_keeper.exclude_resource?(group.profile_url, group.resource)
         end
       end
 

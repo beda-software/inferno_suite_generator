@@ -142,24 +142,41 @@ module InfernoSuiteGenerator
         get("configs.generic.expectation", [])
       end
 
-      def resources_to_exclude
-        get("configs.generators.all.skip_resources.resources", [])
-      end
-
-      def profiles_configs
-        get("configs.profiles", {})
+      def resources_to_exclude(profile_url, resource_type)
+        resolve_profile_resource_value(
+          "configs&.profiles&.#{profile_url}&.skip",
+          "configs&.resources&.#{resource_type}&.skip",
+          false
+        )
       end
 
       def resources_configs
         get("configs.resources", {})
       end
 
-      def skip_profile?(profile_url)
-        profiles_configs.key?(profile_url) ? profiles_configs[profile_url]["skip"] || false : false
+      def skip_metadata_extraction?(profile_url, resource_type)
+        resolve_profile_resource_value(
+          "configs&.profiles&.#{profile_url}&.skip",
+          "configs&.resources&.#{resource_type}&.skip",
+          false
+        )
       end
 
-      def exclude_resource?(resource_type)
+      def exclude_resource_old?(resource_type)
         resources_configs.key?(resource_type) ? resources_configs[resource_type]["skip"] || false : false
+      end
+
+      def exclude_resource?(profile_url, resource_type)
+        profile_path = "configs&.profiles&.#{profile_url}&.skip"
+        resource_path = "configs&.resources&.#{resource_type}&.skip"
+        result = resolve_profile_resource_value(profile_path, resource_path, nil)
+        if resource_type == "Medication"
+          puts "profile_path: #{profile_path}"
+          puts "resource_path: #{resource_path}"
+          puts "get: #{get_new(resource_path, false)}"
+          puts "result: #{result}"
+        end
+        result
       end
 
       def resolve_profile_resource_value(profile_path, resource_path, default_value)
@@ -259,14 +276,6 @@ module InfernoSuiteGenerator
 
       def outer_groups
         get("suite.outer_groups", [])
-      end
-
-      def extractors
-        get("configs.extractors", {})
-      end
-
-      def extractors_must_support
-        get("configs.extractors.must_support", {})
       end
 
       def extractors_must_support_remove_elements
