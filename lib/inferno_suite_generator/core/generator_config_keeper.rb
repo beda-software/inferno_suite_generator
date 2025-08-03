@@ -217,8 +217,12 @@ module InfernoSuiteGenerator
         get("configs.extractors.search.profiles_to_exclude", [])
       end
 
-      def search_expectation_overrides
-        get("configs.extractors.search.expectation_overrides", {})
+      def override_search_expectation(profile_url, resource_type, param_id)
+        resolve_profile_resource_value(
+          "configs&.profiles&.#{profile_url}&.search_param&.#{param_id}&.expectation_change",
+          "configs&.resources&.#{resource_type}&.search_param&.#{param_id}&.expectation_change",
+          nil
+        )
       end
 
       def fixed_search_values(profile_url, resource_type, param_id)
