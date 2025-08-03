@@ -226,8 +226,16 @@ module InfernoSuiteGenerator
         get("configs.generators.read.test_ids_inputs", {})
       end
 
-      def medication_inclusion_resources
-        get("configs.extractors.search.test_medication_inclusion.resources", [])
+      def test_medication_inclusion?(profile_url, resource_type)
+        # NOTE: This attribute of the config should be changed for something generic
+        profile_path = "configs&.profiles&.#{profile_url}&.search&.test_medication_inclusion"
+        resource_path = "configs&.resources&.#{resource_type}&.search&.test_medication_inclusion"
+
+        resolve_profile_resource_value(
+          profile_path,
+          resource_path,
+          nil
+        )
       end
 
       def special_includes_cases(profile_url, resource)

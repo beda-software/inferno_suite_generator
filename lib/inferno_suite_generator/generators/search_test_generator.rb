@@ -191,7 +191,7 @@ module InfernoSuiteGenerator
       end
 
       def test_medication_inclusion?
-        Registry.get(:config_keeper).medication_inclusion_resources.include?(resource_type)
+        Registry.get(:config_keeper).test_medication_inclusion?(group_metadata.profile_url, group_metadata.resource)
       end
 
       def test_post_search?
