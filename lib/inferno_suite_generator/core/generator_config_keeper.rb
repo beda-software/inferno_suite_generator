@@ -234,20 +234,16 @@ module InfernoSuiteGenerator
         ) == "read"
       end
 
-      def first_class_search(profile_url, resource_type)
+      def first_class_search(profile_url, resource_type, search_params)
         resolve_profile_resource_value(
           "configs&.profiles&.#{profile_url}&.first_class_profile",
           "configs&.resources&.#{resource_type}&.first_class_profile",
           ""
-        ) == "search"
-      end
-
-      def is_first_class(profile_url, resource_type)
-        first_class_read(profile_url, resource_type) || first_class_search(profile_url, resource_type)
+        ) == "search" && search_params == ["_id"]
       end
 
       def read_test_ids_inputs(profile_url, resource_type)
-        if is_first_class(profile_url, resource_type) && first_class_read(profile_url, resource_type)
+        if first_class_read(profile_url, resource_type)
           snake_case_resource_type = camel_to_snake(resource_type)
 
           {
@@ -259,8 +255,8 @@ module InfernoSuiteGenerator
         end
       end
 
-      def search_test_ids_inputs(profile_url, resource_type)
-        if is_first_class(profile_url, resource_type) && first_class_search(profile_url, resource_type)
+      def search_test_ids_inputs(profile_url, resource_type, param_names)
+        if first_class_search(profile_url, resource_type, param_names)
           snake_case_resource_type = camel_to_snake(resource_type)
 
           {

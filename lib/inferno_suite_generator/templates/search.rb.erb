@@ -20,6 +20,13 @@ module <%= suite_module_name %>
         description: 'Comma separated list of patient IDs that in sum contain all MUST SUPPORT elements',
         default: '<%= Helpers.default_patient_ids_string %>'
   <% end %>
+      <% if needs_ids_input? %>
+      input :<%= ids_input_data[:id] %>,
+            title: '<%= ids_input_data[:title] %>',
+            description: '<%= ids_input_data[:description] %>',
+            default: '<%= ids_input_data[:default] %>'
+      <% end %>
+
       def self.properties
         @properties ||= InfernoSuiteGenerator::SearchTestProperties.new(
   <%= search_test_properties_string %>

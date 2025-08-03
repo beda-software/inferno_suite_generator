@@ -75,8 +75,7 @@ module InfernoSuiteGenerator
       end
 
       def needs_patient_id?
-        search_metadata[:names].include?("patient") ||
-          (resource_type == "Patient" && search_metadata[:names].include?("_id"))
+        search_metadata[:names].include?("patient")
       end
 
       def search_param_names
@@ -315,7 +314,7 @@ module InfernoSuiteGenerator
       def ids_input_data
         return unless needs_ids_input?
 
-        data = Registry.get(:config_keeper).search_test_ids_inputs(group_metadata.profile_url, resource_type)
+        data = Registry.get(:config_keeper).search_test_ids_inputs(group_metadata.profile_url, resource_type, search_param_names)
 
         {
           id: data["input_id"].to_sym,
@@ -328,7 +327,7 @@ module InfernoSuiteGenerator
       private
 
       def needs_ids_input?
-        Registry.get(:config_keeper).search_test_ids_inputs(group_metadata.profile_url, resource_type).present?
+        Registry.get(:config_keeper).first_class_search(group_metadata.profile_url, resource_type, search_param_names)
       end
     end
   end
