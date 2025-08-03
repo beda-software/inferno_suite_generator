@@ -282,8 +282,12 @@ module InfernoSuiteGenerator
         get("suite.outer_groups", [])
       end
 
-      def extractors_must_support_remove_elements
-        get("configs.extractors.must_support.remove_elements", [])
+      def must_support_remove_elements(profile_url, resource)
+        resolve_profile_resource_value(
+          "configs&.profiles&.#{profile_url}&.must_support&.remove_elements",
+          "configs&.resources&.#{resource}&.must_support&.remove_elements",
+          []
+        )
       end
 
       def constants

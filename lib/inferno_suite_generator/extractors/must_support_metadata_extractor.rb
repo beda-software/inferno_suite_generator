@@ -330,30 +330,24 @@ module InfernoSuiteGenerator
       end
 
       def remove_elements
-        remove_elements_list_config = config.extractors_must_support_remove_elements
-        remove_elements_list_config.each do |remove_elements_config|
-          profiles = remove_elements_config["profiles"]
+        config.must_support_remove_elements(profile.url, resource).each do |remove_elements_config|
           element_key = remove_elements_config["element_key"]
           condition = remove_elements_config["condition"]
           value = remove_elements_config["value"]
 
-          profiles.each do |resource_profile_url|
-            next unless profile.url == resource_profile_url
-
-            @must_supports[:elements].delete_if do |element|
-              case condition
-              when "equal"
-                element[element_key.to_sym] == value
-              when "start_with?"
-                element[element_key.to_sym].start_with?(value)
-              when "pattern_match?"
-                pattern = Regexp.new(value)
-                pattern.match?(element[element_key.to_sym])
-              when "value_include?"
-                value.include? element[element_key.to_sym]
-              else
-                # do nothing
-              end
+          @must_supports[:elements].delete_if do |element|
+            case condition
+            when "equal"
+              element[element_key.to_sym] == value
+            when "start_with?"
+              element[element_key.to_sym].start_with?(value)
+            when "pattern_match?"
+              pattern = Regexp.new(value)
+              pattern.match?(element[element_key.to_sym])
+            when "value_include?"
+              value.include? element[element_key.to_sym]
+            else
+              # do nothing
             end
           end
         end
