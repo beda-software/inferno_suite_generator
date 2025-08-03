@@ -240,12 +240,23 @@ module InfernoSuiteGenerator
         get("configs.extractors.search.test_medication_inclusion.resources", [])
       end
 
-      def special_includes_cases
-        get("configs.extractors.search.include_searches.cases", {})
-      end
+      def special_includes_cases(profile_url, resource)
+        result = {}
+        extra_searches = resolve_profile_resource_value(
+          "configs&.profiles&.#{profile_url}&.extra_searches",
+          "configs&.resources&.#{resource}&.extra_searches",
+          []
+        )
+        extra_searches.select { |search| search["type"] == "include" }.each do |search|
+          include_parameter = "#{resource}:#{search["param"]}"
+          result[include_parameter] = {
+            "parameter" => include_parameter,
+            "target_resource" => search["target_resource"],
+            "paths" => search["paths"]
+          }
+        end
 
-      def special_search_methods
-        get("configs.generators.search.method_to_search.methods", [])
+        result
       end
 
       def get_executor(profile_url, resource, param_id)

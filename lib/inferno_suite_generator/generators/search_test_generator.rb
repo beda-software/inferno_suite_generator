@@ -199,7 +199,7 @@ module InfernoSuiteGenerator
       end
 
       def includes
-        special_cases = Registry.get(:config_keeper).special_includes_cases
+        special_cases = Registry.get(:config_keeper).special_includes_cases(group_metadata.profile_url, group_metadata.resource)
         include_params_list = group_metadata.include_params
         search_definitions = group_metadata.search_definitions
 
