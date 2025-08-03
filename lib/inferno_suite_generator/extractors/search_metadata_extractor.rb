@@ -87,12 +87,11 @@ module InfernoSuiteGenerator
 
       def handle_special_cases
         @searches.map do |search|
-          override_expectation = config.override_search_expectation(group_metadata[:profile_url], group_metadata[:resource], search[:names].first)
+          override_expectation = config.override_search_expectation(group_metadata[:profile_url],
+                                                                    group_metadata[:resource], search[:names].first)
           next if override_expectation.nil?
 
-          if search[:expectation] == override_expectation["from"]
-            search[:expectation] = override_expectation["to"]
-          end
+          search[:expectation] = override_expectation["to"] if search[:expectation] == override_expectation["from"]
         end
       end
 

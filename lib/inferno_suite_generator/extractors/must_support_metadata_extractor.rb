@@ -191,12 +191,12 @@ module InfernoSuiteGenerator
                   element.path == "#{current_element.path}.#{discriminator.path}"
               end
 
-              if fixed_element
-                {
-                  path: discriminator.path,
-                  value: fixed_element.fixedUri || fixed_element.fixedCode
-                }
-              end
+              next unless fixed_element
+
+              {
+                path: discriminator.path,
+                value: fixed_element.fixedUri || fixed_element.fixedCode
+              }
             end
 
             metadata[:uscdi_only] = true if is_uscdi_requirement_element?(current_element)

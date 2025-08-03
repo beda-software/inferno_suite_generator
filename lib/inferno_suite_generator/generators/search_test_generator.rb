@@ -11,7 +11,7 @@ module InfernoSuiteGenerator
         def generate(ig_metadata, base_output_dir)
           ig_metadata.groups
                      .reject do |group|
-                        Registry.get(:config_keeper).exclude_resource?(group.profile_url, group.resource)
+                       Registry.get(:config_keeper).exclude_resource?(group.profile_url, group.resource)
                      end
                      .select { |group| group.searches.present? }
                      .each do |group|
@@ -199,7 +199,8 @@ module InfernoSuiteGenerator
       end
 
       def includes
-        special_cases = Registry.get(:config_keeper).special_includes_cases(group_metadata.profile_url, group_metadata.resource)
+        special_cases = Registry.get(:config_keeper).special_includes_cases(group_metadata.profile_url,
+                                                                            group_metadata.resource)
         include_params_list = group_metadata.include_params
         search_definitions = group_metadata.search_definitions
 
@@ -307,7 +308,8 @@ module InfernoSuiteGenerator
 
       def search_method
         Registry.get(:config_keeper).get_executor(
-          group_metadata.profile_url, group_metadata.resource, search_metadata[:names].first)
+          group_metadata.profile_url, group_metadata.resource, search_metadata[:names].first
+        )
       end
     end
   end

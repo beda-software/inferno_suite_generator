@@ -172,12 +172,8 @@ module InfernoSuiteGenerator
       def resolve_profile_resource_value(profile_path, resource_path, default_value)
         profile_comparators = get_new(profile_path, default_value)
         profile_result = constants[profile_comparators] || profile_comparators
-        if default_value.is_a?(String)
-          return profile_result || default_value
-        end
-        if default_value.is_a?(TrueClass) || default_value.is_a?(FalseClass)
-          return profile_result || default_value
-        end
+        return profile_result || default_value if default_value.is_a?(String)
+        return profile_result || default_value if default_value.is_a?(TrueClass) || default_value.is_a?(FalseClass)
         return profile_result if profile_result&.any?
 
         resource_comparators = get_new(resource_path, default_value)
