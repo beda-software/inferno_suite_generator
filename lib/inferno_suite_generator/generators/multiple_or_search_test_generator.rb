@@ -151,10 +151,8 @@ module InfernoSuiteGenerator
             properties[:optional_multiple_or_search_params] =
               optional_multiple_or_search_params_string
           end
-          properties[:search_by_target_resource_data] = "true" if Helpers.test_on_target_resource_data?(
-            Registry.get(:config_keeper).multiple_or_and_search_by_target_resource,
-            resource_type, search_param_names
-          )
+          properties[:search_by_target_resource_data] = "true" if Registry.get(:config_keeper).multiple_or_and_search_by_target_resource(
+            group_metadata.profile_url, resource_type, search_param_names)
         end
       end
 

@@ -205,8 +205,12 @@ module InfernoSuiteGenerator
         get("configs.extractors.search.include_searches_by_resource", {})
       end
 
-      def multiple_or_and_search_by_target_resource
-        get("configs.extractors.search.multiple_or_and_search_by_target_resource", {})
+      def multiple_or_and_search_by_target_resource(profile_url, resource_type, params)
+        resolve_profile_resource_value(
+          "configs&.profiles&.#{profile_url}&.search_multiple_or_and_by_target_resource",
+          "configs&.resources&.#{resource_type}&.search_multiple_or_and_by_target_resource",
+          []
+        ) == params
       end
 
       def override_search_expectation(profile_url, resource_type, param_id)
