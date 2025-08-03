@@ -11,7 +11,6 @@ module InfernoSuiteGenerator
 
       def initialize(ig_resources)
         self.ig_resources = ig_resources
-        remove_extra_supported_profiles
         self.metadata = IGMetadata.new
         self.config_keeper = Registry.get(:config_keeper)
       end
@@ -32,14 +31,6 @@ module InfernoSuiteGenerator
 
       def resources_in_capability_statement
         ig_resources.capability_statement.rest.first.resource
-      end
-
-      def remove_extra_supported_profiles
-        ig_resources.capability_statement.rest.first.resource
-                    .find { |resource| resource.type == "Observation" }
-                    .supportedProfile.delete_if do |profile_url|
-          Registry.get(:config_keeper).profiles_to_exclude.include?(profile_url)
-        end
       end
 
       def add_metadata_from_resources

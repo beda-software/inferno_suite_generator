@@ -130,10 +130,6 @@ module InfernoSuiteGenerator
         )
       end
 
-      def skip_profiles
-        get("configs.generators.all.skip_profiles.profiles", [])
-      end
-
       def search_params_to_ignore
         get("configs.generic.search_params_to_ignore", [])
       end
@@ -213,10 +209,6 @@ module InfernoSuiteGenerator
         get("configs.extractors.search.multiple_or_and_search_by_target_resource", {})
       end
 
-      def profiles_to_exclude
-        get("configs.extractors.search.profiles_to_exclude", [])
-      end
-
       def override_search_expectation(profile_url, resource_type, param_id)
         resolve_profile_resource_value(
           "configs&.profiles&.#{profile_url}&.search_param&.#{param_id}&.expectation_change",
@@ -259,14 +251,6 @@ module InfernoSuiteGenerator
         result
       end
 
-      def get_executor(profile_url, resource, param_id)
-        resolve_profile_resource_value(
-          "configs&.profiles&.#{profile_url}&.override_executor&.search&.#{param_id}",
-          "configs&.resources&.#{resource}&.override_executor&.search&.#{param_id}",
-          "run_search_test"
-        )
-      end
-
       def first_search_params(profile_url, resource)
         is_first_class = resolve_profile_resource_value(
           "configs&.profiles&.#{profile_url}&.first_class_profile",
@@ -289,10 +273,6 @@ module InfernoSuiteGenerator
         end
       end
 
-      def outer_groups
-        get("suite.outer_groups", [])
-      end
-
       def must_support_remove_elements(profile_url, resource)
         resolve_profile_resource_value(
           "configs&.profiles&.#{profile_url}&.must_support&.remove_elements",
@@ -301,8 +281,20 @@ module InfernoSuiteGenerator
         )
       end
 
+      def get_executor(profile_url, resource, param_id)
+        resolve_profile_resource_value(
+          "configs&.profiles&.#{profile_url}&.override_executor&.search&.#{param_id}",
+          "configs&.resources&.#{resource}&.override_executor&.search&.#{param_id}",
+          "run_search_test"
+        )
+      end
+
       def constants
         get("constants", {})
+      end
+
+      def outer_groups
+        get("suite.outer_groups", [])
       end
 
       private
