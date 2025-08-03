@@ -19,12 +19,6 @@ module <%= suite_module_name %>
         title: 'Patient IDs',
         description: 'Comma separated list of patient IDs that in sum contain all MUST SUPPORT elements',
         default: '<%= Helpers.default_patient_ids_string %>'
-  <% end %><% if resource_type == 'Device' %>
-      input :implantable_device_codes,
-        title: 'Implantable Device Type Code',
-        description: 'Enter the code for an Implantable Device type, or multiple codes separated by commas. '\
-                    'If blank, Inferno will validate all Device resources against the Implantable Device profile',
-        optional: true
   <% end %>
       def self.properties
         @properties ||= InfernoSuiteGenerator::SearchTestProperties.new(

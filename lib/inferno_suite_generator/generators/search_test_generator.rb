@@ -311,6 +311,25 @@ module InfernoSuiteGenerator
           group_metadata.profile_url, group_metadata.resource, search_metadata[:names].first
         )
       end
+
+      def ids_input_data
+        return unless needs_ids_input?
+
+        data = Registry.get(:config_keeper).search_test_ids_inputs(group_metadata.profile_url, resource_type)
+
+        {
+          id: data["input_id"].to_sym,
+          title: data["title"],
+          description: data["description"],
+          default: data["default"]
+        }
+      end
+
+      private
+
+      def needs_ids_input?
+        Registry.get(:config_keeper).search_test_ids_inputs(group_metadata.profile_url, resource_type).present?
+      end
     end
   end
 end

@@ -51,7 +51,7 @@ module InfernoSuiteGenerator
       def ids_input_data
         return unless needs_ids_input?
 
-        data = Registry.get(:config_keeper).read_test_ids_inputs[resource_type]
+        data = Registry.get(:config_keeper).read_test_ids_inputs(group_metadata.profile_url, resource_type)
 
         {
           id: data["input_id"].to_sym,
@@ -64,7 +64,7 @@ module InfernoSuiteGenerator
       private
 
       def needs_ids_input?
-        Registry.get(:config_keeper).read_test_ids_inputs.include?(resource_type)
+        Registry.get(:config_keeper).read_test_ids_inputs(group_metadata.profile_url, resource_type).present?
       end
     end
   end
