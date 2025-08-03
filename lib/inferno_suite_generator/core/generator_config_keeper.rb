@@ -165,14 +165,8 @@ module InfernoSuiteGenerator
       def exclude_resource?(profile_url, resource_type)
         profile_path = "configs&.profiles&.#{profile_url}&.skip"
         resource_path = "configs&.resources&.#{resource_type}&.skip"
-        result = resolve_profile_resource_value(profile_path, resource_path, nil)
-        if resource_type == "Medication"
-          puts "profile_path: #{profile_path}"
-          puts "resource_path: #{resource_path}"
-          puts "get: #{get_new(resource_path, false)}"
-          puts "result: #{result}"
-        end
-        result
+
+        resolve_profile_resource_value(profile_path, resource_path, nil)
       end
 
       def resolve_profile_resource_value(profile_path, resource_path, default_value)
@@ -201,8 +195,12 @@ module InfernoSuiteGenerator
         get("configs.extractors.search.identifiers", {})
       end
 
-      def search_params_for_include_by_resource
-        get("configs.extractors.search.include_searches_by_resource", {})
+      def add_extra_searches?(profile_url, resource_type, search_names)
+        resolve_profile_resource_value(
+          "configs&.profiles&.#{profile_url}&.extra_searches",
+          "configs&.resources&.#{resource_type}&.extra_searches",
+          []
+        ).select { |search| search["type"] == "search" }.map { |search| search["params"] }.include?(search_names)
       end
 
       def multiple_or_and_search_by_target_resource(profile_url, resource_type, params)

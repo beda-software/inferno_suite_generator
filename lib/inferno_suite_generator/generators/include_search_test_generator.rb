@@ -17,7 +17,7 @@ module InfernoSuiteGenerator
                      .each do |group|
             group.searches.each do |search|
               config = Registry.get(:config_keeper)
-              next unless config.search_params_for_include_by_resource[group.resource]&.include? search[:names]
+              next unless config.add_extra_searches?(group.profile_url, group.resource, search[:names])
 
               group.include_params.each do |include_param|
                 new(group, search, base_output_dir, include_param, ig_metadata).generate
