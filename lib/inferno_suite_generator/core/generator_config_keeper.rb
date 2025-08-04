@@ -67,11 +67,11 @@ module InfernoSuiteGenerator
       end
 
       def tx_server_url
-        get("configs.generators.all.tx_server_url")
+        get("suite.tx_server_url")
       end
 
       def default_fhir_server
-        get("configs.generators.all.default_fhir_server")
+        get("constants.default_fhir_server")
       end
 
       def links
