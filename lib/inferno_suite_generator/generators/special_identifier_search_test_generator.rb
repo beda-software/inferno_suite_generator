@@ -9,16 +9,17 @@ module InfernoSuiteGenerator
     class SpecialIdentifierSearchTestGenerator < SearchTestGenerator
       class << self
         def generate(ig_metadata, base_output_dir)
+          # TODO: This approach is too custom to keep it inside the generator. Should be fixed or removed because the current structure of the config semantically promise specific search for any resource type and search parameter, but it's not true.
           ig_metadata.groups.reject do |group|
             Registry.get(:config_keeper).resources_to_exclude(group.profile_url, group.resource)
           end
-            .select { |group| Registry.get(:config_keeper).specific_identifiers.key?(group.resource) }
+            .select { |group| Registry.get(:config_keeper).specific_identifiers(group.profile_url, group.resource, "identifier").any? }
                      .select { |group| group.searches.present? }
                      .each do |group|
             group.searches.each do |search|
               next unless search[:names].include? "identifier"
 
-              identifier_arr = Registry.get(:config_keeper).specific_identifiers[group.resource]
+              identifier_arr = Registry.get(:config_keeper).specific_identifiers(group.profile_url, group.resource, "identifier")
               identifier_arr.each do |special_identifier|
                 new(group, search, base_output_dir, special_identifier, ig_metadata).generate
               end

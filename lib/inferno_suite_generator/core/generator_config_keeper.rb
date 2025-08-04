@@ -187,8 +187,12 @@ module InfernoSuiteGenerator
         )
       end
 
-      def specific_identifiers
-        get("configs.extractors.search.identifiers", {})
+      def specific_identifiers(profile_url, resource_type, param_id)
+        resolve_profile_resource_value(
+          "configs&.profiles&.#{profile_url}&.search_param&.#{param_id}&.extra_tests_with",
+          "configs&.resources&.#{resource_type}&.search_param&.#{param_id}&.extra_tests_with",
+          []
+        )
       end
 
       def add_extra_searches?(profile_url, resource_type, search_names)

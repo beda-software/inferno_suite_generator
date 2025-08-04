@@ -8,6 +8,7 @@ module InfernoSuiteGenerator
     class SpecialIdentifiersChainSearchTestGenerator < ChainSearchTestGenerator
       class << self
         def generate(ig_metadata, base_output_dir)
+          # TODO: This approach is too custom to keep it inside the generator. Should be fixed or removed because the current structure of the config semantically promise specific search for any resource type and search parameter, but it's not true.
           ig_metadata.groups
                      .select { |group| group.searches.present? }
                      .each do |group|
@@ -18,7 +19,7 @@ module InfernoSuiteGenerator
               current_search_definition[:chain].each do |chain_item|
                 next unless chain_item[:target] == "Patient"
 
-                Registry.get(:config_keeper).specific_identifiers["Patient"].each do |target_identifier|
+                Registry.get(:config_keeper).specific_identifiers("http://hl7.org.au/fhir/core/StructureDefinition/au-core-patient", "Patient", "identifier").each do |target_identifier|
                   new(
                     search_key.to_s,
                     group,
