@@ -3,6 +3,10 @@
 module InfernoSuiteGenerator
   class Generator
     class GeneratorConfigKeeper
+      # Provides methods for extracting specific configuration values for test generation
+      #
+      # This module contains methods that extract and process configuration values
+      # related to search parameters, expectations, and other test-specific settings.
       module GeneratorConfigKeeperExtractors
         def multiple_and_expectation(profile_url, resource_type, param_id)
           resolve_profile_resource_value(
@@ -58,26 +62,31 @@ module InfernoSuiteGenerator
           )
         end
 
-        def first_search_params(profile_url, resource)
-          is_first_class = resolve_profile_resource_value(
+        def get_first_class_status(profile_url, resource)
+          resolve_profile_resource_value(
             "configs&.profiles&.#{profile_url}&.first_class_profile",
             "configs&.resources&.#{resource}&.first_class_profile",
             false
           )
-          forced_initial_search = resolve_profile_resource_value(
+        end
+
+        def get_forced_initial_search(profile_url, resource)
+          resolve_profile_resource_value(
             "configs&.profiles&.#{profile_url}&.forced_initial_search",
             "configs&.resources&.#{resource}&.forced_initial_search",
             []
           )
+        end
+
+        def first_search_params(profile_url, resource)
+          is_first_class = get_first_class_status(profile_url, resource)
+          forced_initial_search = get_forced_initial_search(profile_url, resource)
           default_value = ["patient"]
 
-          if is_first_class
-            ["_id"]
-          elsif forced_initial_search.any?
-            forced_initial_search
-          else
-            default_value
-          end
+          return ["_id"] if is_first_class
+          return forced_initial_search if forced_initial_search.any?
+
+          default_value
         end
       end
     end

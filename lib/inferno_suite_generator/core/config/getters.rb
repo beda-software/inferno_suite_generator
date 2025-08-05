@@ -3,6 +3,10 @@
 module InfernoSuiteGenerator
   class Generator
     class GeneratorConfigKeeper
+      # Provides getter methods for accessing configuration values
+      #
+      # This module contains methods for retrieving various configuration settings
+      # from the GeneratorConfigKeeper's configuration object.
       module GeneratorConfigKeeperGetters
         def get(path, default = nil)
           # TODO: Remove

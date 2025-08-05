@@ -64,15 +64,28 @@ module InfernoSuiteGenerator
         "lib/#{module_directory}.rb"
       end
 
-      def resolve_profile_resource_value(profile_path, resource_path, default_value)
-        profile_comparators = get_new(profile_path, default_value)
-        profile_result = constants[profile_comparators] || profile_comparators
-        return profile_result || default_value if default_value.is_a?(String)
-        return profile_result || default_value if default_value.is_a?(TrueClass) || default_value.is_a?(FalseClass)
-        return profile_result if profile_result&.any?
+      def simple_type?(value)
+        value.is_a?(String) || value.is_a?(TrueClass) || value.is_a?(FalseClass)
+      end
 
-        resource_comparators = get_new(resource_path, default_value)
-        constants[resource_comparators] || resource_comparators
+      def collection_with_elements?(value)
+        value.respond_to?(:any?) && value.any?
+      end
+
+      def resolve_from_constants(value)
+        constants[value] || value
+      end
+
+      # Resolve configuration value from profile or resource path with fallback to default
+      def resolve_profile_resource_value(profile_path, resource_path, default_value)
+        profile_value = get_new(profile_path, default_value)
+        resolved_profile_value = resolve_from_constants(profile_value)
+
+        return resolved_profile_value || default_value if simple_type?(default_value)
+        return resolved_profile_value if collection_with_elements?(resolved_profile_value)
+
+        resource_value = get_new(resource_path, default_value)
+        resolve_from_constants(resource_value)
       end
 
       def camel_to_snake(str)

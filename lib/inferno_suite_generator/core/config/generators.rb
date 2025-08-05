@@ -3,6 +3,10 @@
 module InfernoSuiteGenerator
   class Generator
     class GeneratorConfigKeeper
+      # Provides methods for generating test-specific configuration and inputs
+      #
+      # This module contains methods that generate configuration values and inputs
+      # for various test types, including search tests, read tests, and special cases.
       module GeneratorConfigKeeperGenerators
         def resources_to_exclude(profile_url, resource_type)
           resolve_profile_resource_value(
@@ -67,12 +71,13 @@ module InfernoSuiteGenerator
           return unless first_class_read(profile_url, resource_type)
 
           snake_case_resource_type = camel_to_snake(resource_type)
+          resource_display_name = snake_case_resource_type.tr("_", " ")
 
           {
             "input_id" => "#{snake_case_resource_type}_ids",
             "title" => "#{resource_type} IDs",
-            "description" => "Comma separated list of #{snake_case_resource_type.tr("_",
-                                                                                    " ")} IDs that in sum contain all MUST SUPPORT elements",
+            "description" => "Comma separated list of #{resource_display_name} " \
+                             "IDs that in sum contain all MUST SUPPORT elements",
             "default" => constants["read_ids.#{snake_case_resource_type}"] || ""
           }
         end
@@ -81,12 +86,13 @@ module InfernoSuiteGenerator
           return unless first_class_search(profile_url, resource_type, param_names)
 
           snake_case_resource_type = camel_to_snake(resource_type)
+          resource_display_name = snake_case_resource_type.tr("_", " ")
 
           {
             "input_id" => "#{snake_case_resource_type}_ids",
             "title" => "#{resource_type} IDs",
-            "description" => "Comma separated list of #{snake_case_resource_type.tr("_",
-                                                                                    " ")} IDs that in sum contain all MUST SUPPORT elements",
+            "description" => "Comma separated list of #{resource_display_name} " \
+                             "IDs that in sum contain all MUST SUPPORT elements",
             "default" => constants["read_ids.#{snake_case_resource_type}"] || ""
           }
         end
@@ -103,6 +109,16 @@ module InfernoSuiteGenerator
           )
         end
 
+        def process_include_search(result, resource, search)
+          include_parameter = "#{resource}:#{search["param"]}"
+          result[include_parameter] = {
+            "parameter" => include_parameter,
+            "target_resource" => search["target_resource"],
+            "paths" => search["paths"]
+          }
+        end
+
+        # Get special include cases from configuration
         def special_includes_cases(profile_url, resource)
           result = {}
           extra_searches = resolve_profile_resource_value(
@@ -110,14 +126,9 @@ module InfernoSuiteGenerator
             "configs&.resources&.#{resource}&.extra_searches",
             []
           )
-          extra_searches.select { |search| search["type"] == "include" }.each do |search|
-            include_parameter = "#{resource}:#{search["param"]}"
-            result[include_parameter] = {
-              "parameter" => include_parameter,
-              "target_resource" => search["target_resource"],
-              "paths" => search["paths"]
-            }
-          end
+
+          extra_searches.select { |search| search["type"] == "include" }
+                        .each { |search| process_include_search(result, resource, search) }
 
           result
         end
