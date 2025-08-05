@@ -13,13 +13,17 @@ module InfernoSuiteGenerator
           ig_metadata.groups.reject do |group|
             Registry.get(:config_keeper).resources_to_exclude(group.profile_url, group.resource)
           end
-            .select { |group| Registry.get(:config_keeper).specific_identifiers(group.profile_url, group.resource, "identifier").any? }
+            .select do |group|
+            Registry.get(:config_keeper).specific_identifiers(group.profile_url, group.resource,
+                                                              "identifier").any?
+          end
                      .select { |group| group.searches.present? }
                      .each do |group|
             group.searches.each do |search|
               next unless search[:names].include? "identifier"
 
-              identifier_arr = Registry.get(:config_keeper).specific_identifiers(group.profile_url, group.resource, "identifier")
+              identifier_arr = Registry.get(:config_keeper).specific_identifiers(group.profile_url, group.resource,
+                                                                                 "identifier")
               identifier_arr.each do |special_identifier|
                 new(group, search, base_output_dir, special_identifier, ig_metadata).generate
               end

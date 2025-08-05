@@ -19,7 +19,9 @@ module InfernoSuiteGenerator
               current_search_definition[:chain].each do |chain_item|
                 next unless chain_item[:target] == "Patient"
 
-                Registry.get(:config_keeper).specific_identifiers("http://hl7.org.au/fhir/core/StructureDefinition/au-core-patient", "Patient", "identifier").each do |target_identifier|
+                Registry.get(:config_keeper).specific_identifiers(
+                  "http://hl7.org.au/fhir/core/StructureDefinition/au-core-patient", "Patient", "identifier"
+                ).each do |target_identifier|
                   new(
                     search_key.to_s,
                     group,

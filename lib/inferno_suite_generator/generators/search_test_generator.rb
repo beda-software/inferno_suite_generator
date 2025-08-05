@@ -314,7 +314,8 @@ module InfernoSuiteGenerator
       def ids_input_data
         return unless needs_ids_input?
 
-        data = Registry.get(:config_keeper).search_test_ids_inputs(group_metadata.profile_url, resource_type, search_param_names)
+        data = Registry.get(:config_keeper).search_test_ids_inputs(group_metadata.profile_url, resource_type,
+                                                                   search_param_names)
 
         {
           id: data["input_id"].to_sym,

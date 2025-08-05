@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module InfernoSuiteGenerator
   class Generator
     class GeneratorConfigKeeper
@@ -62,29 +64,31 @@ module InfernoSuiteGenerator
         end
 
         def read_test_ids_inputs(profile_url, resource_type)
-          if first_class_read(profile_url, resource_type)
-            snake_case_resource_type = camel_to_snake(resource_type)
+          return unless first_class_read(profile_url, resource_type)
 
-            {
-              "input_id" => "#{snake_case_resource_type}_ids",
-              "title" => "#{resource_type} IDs",
-              "description" => "Comma separated list of #{snake_case_resource_type.tr("_", " ")} IDs that in sum contain all MUST SUPPORT elements",
-              "default" => constants["read_ids.#{snake_case_resource_type}"] || ""
-            }
-          end
+          snake_case_resource_type = camel_to_snake(resource_type)
+
+          {
+            "input_id" => "#{snake_case_resource_type}_ids",
+            "title" => "#{resource_type} IDs",
+            "description" => "Comma separated list of #{snake_case_resource_type.tr("_",
+                                                                                    " ")} IDs that in sum contain all MUST SUPPORT elements",
+            "default" => constants["read_ids.#{snake_case_resource_type}"] || ""
+          }
         end
 
         def search_test_ids_inputs(profile_url, resource_type, param_names)
-          if first_class_search(profile_url, resource_type, param_names)
-            snake_case_resource_type = camel_to_snake(resource_type)
+          return unless first_class_search(profile_url, resource_type, param_names)
 
-            {
-              "input_id" => "#{snake_case_resource_type}_ids",
-              "title" => "#{resource_type} IDs",
-              "description" => "Comma separated list of #{snake_case_resource_type.tr("_", " ")} IDs that in sum contain all MUST SUPPORT elements",
-              "default" => constants["read_ids.#{snake_case_resource_type}"] || ""
-            }
-          end
+          snake_case_resource_type = camel_to_snake(resource_type)
+
+          {
+            "input_id" => "#{snake_case_resource_type}_ids",
+            "title" => "#{resource_type} IDs",
+            "description" => "Comma separated list of #{snake_case_resource_type.tr("_",
+                                                                                    " ")} IDs that in sum contain all MUST SUPPORT elements",
+            "default" => constants["read_ids.#{snake_case_resource_type}"] || ""
+          }
         end
 
         def test_medication_inclusion?(profile_url, resource_type)
