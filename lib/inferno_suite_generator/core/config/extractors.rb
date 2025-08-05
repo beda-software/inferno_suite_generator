@@ -11,24 +11,21 @@ module InfernoSuiteGenerator
         def multiple_and_expectation(profile_url, resource_type, param_id)
           resolve_profile_resource_value(
             "configs&.profiles&.#{profile_url}&.search_param&.#{param_id}&.multiple_and_expectation",
-            "configs&.resources&.#{resource_type}&.search_param&.#{param_id}&.multiple_and_expectation",
-            nil
+            "configs&.resources&.#{resource_type}&.search_param&.#{param_id}&.multiple_and_expectation"
           )
         end
 
         def multiple_or_expectation(profile_url, resource_type, param_id)
           resolve_profile_resource_value(
             "configs&.profiles&.#{profile_url}&.search_param&.#{param_id}&.multiple_or_expectation",
-            "configs&.resources&.#{resource_type}&.search_param&.#{param_id}&.multiple_or_expectation",
-            nil
+            "configs&.resources&.#{resource_type}&.search_param&.#{param_id}&.multiple_or_expectation"
           )
         end
 
         def override_search_expectation(profile_url, resource_type, param_id)
           resolve_profile_resource_value(
             "configs&.profiles&.#{profile_url}&.search_param&.#{param_id}&.expectation_change",
-            "configs&.resources&.#{resource_type}&.search_param&.#{param_id}&.expectation_change",
-            nil
+            "configs&.resources&.#{resource_type}&.search_param&.#{param_id}&.expectation_change"
           )
         end
 

@@ -29,10 +29,8 @@ module InfernoSuiteGenerator
         end
 
         def exclude_resource?(profile_url, resource_type)
-          profile_path = "configs&.profiles&.#{profile_url}&.skip"
-          resource_path = "configs&.resources&.#{resource_type}&.skip"
-
-          resolve_profile_resource_value(profile_path, resource_path, nil)
+          resolve_profile_resource_value("configs&.profiles&.#{profile_url}&.skip",
+                                         "configs&.resources&.#{resource_type}&.skip", nil)
         end
 
         def specific_identifiers(profile_url, resource_type, param_id)
@@ -104,8 +102,7 @@ module InfernoSuiteGenerator
 
           resolve_profile_resource_value(
             profile_path,
-            resource_path,
-            nil
+            resource_path
           )
         end
 
@@ -118,7 +115,6 @@ module InfernoSuiteGenerator
           }
         end
 
-        # Get special include cases from configuration
         def special_includes_cases(profile_url, resource)
           result = {}
           extra_searches = resolve_profile_resource_value(

@@ -77,7 +77,7 @@ module InfernoSuiteGenerator
       end
 
       # Resolve configuration value from profile or resource path with fallback to default
-      def resolve_profile_resource_value(profile_path, resource_path, default_value)
+      def resolve_profile_resource_value(profile_path, resource_path, default_value = nil)
         profile_value = get_new(profile_path, default_value)
         resolved_profile_value = resolve_from_constants(profile_value)
 
