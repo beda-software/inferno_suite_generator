@@ -5,8 +5,13 @@ module InfernoSuiteGenerator
     class GeneratorConfigKeeper
       # Defines constant values used across the configuration system
       module GeneratorConfigKeeperConstants
-        EMPTY_ARRAY = [].freeze
-        EMPTY_HASH = {}.freeze
+        # @type var empty_array: Array[untyped]
+        empty_array = []
+        EMPTY_ARRAY = empty_array.freeze
+        
+        # @type var empty_hash: Hash[untyped, untyped]
+        empty_hash = {}
+        EMPTY_HASH = empty_hash.freeze
       end
     end
   end
