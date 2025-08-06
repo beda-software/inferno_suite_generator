@@ -5,6 +5,7 @@ require_relative "config/getters"
 require_relative "config/extractors"
 require_relative "config/generators"
 require_relative "config/constants"
+require_relative "config/utils"
 
 module InfernoSuiteGenerator
   class Generator
@@ -17,6 +18,7 @@ module InfernoSuiteGenerator
       include GeneratorConfigKeeperExtractors
       include GeneratorConfigKeeperGenerators
       include GeneratorConfigKeeperConstants
+      include GeneratorConfigKeeperUtils
 
       attr_reader :config, :version, :config_file_path
 
@@ -66,18 +68,6 @@ module InfernoSuiteGenerator
         "lib/#{module_directory}.rb"
       end
 
-      def simple_type?(value)
-        value.is_a?(String) || value.is_a?(TrueClass) || value.is_a?(FalseClass)
-      end
-
-      def collection_with_elements?(value)
-        value.respond_to?(:any?) && value.any?
-      end
-
-      def resolve_from_constants(value)
-        constants[value] || value
-      end
-
       # Resolve configuration value from the profile or resource path with fallback to default
       def resolve_profile_resource_value(profile_path, resource_path, default_value = nil)
         profile_value = get_new(profile_path, default_value)
@@ -92,14 +82,6 @@ module InfernoSuiteGenerator
 
       def camel_to_snake(str)
         str.gsub(/([a-z0-9])([A-Z])/, '\1_\2').downcase
-      end
-
-      def first_class_read(profile_url, resource_type)
-        resolve_profile_resource_value(
-          "configs&.profiles&.#{profile_url}&.first_class_profile",
-          "configs&.resources&.#{resource_type}&.first_class_profile",
-          ""
-        ) == "read"
       end
 
       private

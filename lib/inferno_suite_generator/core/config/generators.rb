@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 require_relative "constants"
+require_relative "utils"
+require_relative "getters"
 
 module InfernoSuiteGenerator
   class Generator
@@ -11,6 +13,8 @@ module InfernoSuiteGenerator
       # for various test types, including search tests, read tests, and special cases.
       module GeneratorConfigKeeperGenerators
         include GeneratorConfigKeeperConstants
+        include GeneratorConfigKeeperUtils
+        include GeneratorConfigKeeperGetters
 
         def resources_to_exclude(profile_url, resource_type)
           resolve_profile_resource_value(

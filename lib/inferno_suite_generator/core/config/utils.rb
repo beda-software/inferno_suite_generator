@@ -1,0 +1,49 @@
+# frozen_string_literal: true
+
+require_relative "getters"
+
+module InfernoSuiteGenerator
+  class Generator
+    class GeneratorConfigKeeper
+      # Provides utility methods for handling configuration values in the generator
+      module GeneratorConfigKeeperUtils
+        include GeneratorConfigKeeperGetters
+
+        def resolve_profile_resource_value(profile_path, resource_path, default_value = nil)
+          profile_value = get_new(profile_path, default_value)
+          resolved_profile_value = resolve_from_constants(profile_value)
+
+          return resolved_profile_value || default_value if simple_type?(default_value)
+          return resolved_profile_value if collection_with_elements?(resolved_profile_value)
+
+          resource_value = get_new(resource_path, default_value)
+          resolve_from_constants(resource_value)
+        end
+
+        def camel_to_snake(str)
+          str.gsub(/([a-z0-9])([A-Z])/, '\1_\2').downcase
+        end
+
+        def resolve_from_constants(value)
+          constants[value] || value
+        end
+
+        def simple_type?(value)
+          value.is_a?(String) || value.is_a?(TrueClass) || value.is_a?(FalseClass)
+        end
+
+        def collection_with_elements?(value)
+          value.respond_to?(:any?) && value.any?
+        end
+
+        def first_class_read(profile_url, resource_type)
+          resolve_profile_resource_value(
+            "configs&.profiles&.#{profile_url}&.first_class_profile",
+            "configs&.resources&.#{resource_type}&.first_class_profile",
+            ""
+          ) == "read"
+        end
+      end
+    end
+  end
+end

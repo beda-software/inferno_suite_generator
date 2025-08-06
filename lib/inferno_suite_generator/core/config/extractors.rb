@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative "constants"
+require_relative "utils"
 
 module InfernoSuiteGenerator
   class Generator
@@ -11,6 +12,7 @@ module InfernoSuiteGenerator
       # related to search parameters, expectations, and other test-specific settings.
       module GeneratorConfigKeeperExtractors
         include GeneratorConfigKeeperConstants
+        include GeneratorConfigKeeperUtils
 
         def multiple_and_expectation(profile_url, resource_type, param_id)
           resolve_profile_resource_value(
