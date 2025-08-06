@@ -8,7 +8,7 @@ module InfernoSuiteGenerator
         # @type var empty_array: Array[untyped]
         empty_array = []
         EMPTY_ARRAY = empty_array.freeze
-        
+
         # @type var empty_hash: Hash[untyped, untyped]
         empty_hash = {}
         EMPTY_HASH = empty_hash.freeze
