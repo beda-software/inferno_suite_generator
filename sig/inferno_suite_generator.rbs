@@ -3,7 +3,7 @@ module InfernoSuiteGenerator
   EMPTY_ARRAY: Array[String]
   EMPTY_HASH: Hash[String, untyped]
 
-  module Generator
+  class Generator
     class GeneratorConfigKeeper
       include GeneratorConfigKeeperGetters
       include GeneratorConfigKeeperExtractors
@@ -13,8 +13,12 @@ module InfernoSuiteGenerator
       attr_reader config: Hash[String, untyped]
       attr_reader version: Array[untyped]
       attr_reader config_file_path: String
+      
+      @cache: Hash[untyped, untyped]
 
       def initialize: (String config_file_path) -> void
+      def load_config: () -> void
+      def validate_config: () -> void
       def reload: () -> Hash[String, untyped]
       def suite_module_name: () -> String
       def module_directory: () -> String
