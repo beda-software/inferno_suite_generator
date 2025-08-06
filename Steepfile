@@ -6,6 +6,7 @@ target :lib do
   check "lib/inferno_suite_generator/core/generator_config_keeper.rb"
   check "lib/inferno_suite_generator/core/config/"
 
+  library "json"  # Add standard library for JSON
 end
 #   ignore_signature "sig/test"
 #

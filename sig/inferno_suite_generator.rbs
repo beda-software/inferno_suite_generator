@@ -57,6 +57,7 @@ module InfernoSuiteGenerator
       end
 
       module GeneratorConfigKeeperExtractors
+        def resolve_profile_resource_value: (String profile_path, String resource_path, ?untyped default_value) -> untyped
         def multiple_and_expectation: (String profile_url, String resource_type, String param_id) -> ("SHALL" | "SHOULD" | "MAY" | nil)
         def multiple_or_expectation: (String profile_url, String resource_type, String param_id) -> ("SHALL" | "SHOULD" | "MAY" | nil)
         def override_search_expectation: (String profile_url, String resource_type, String param_id) -> ({ from: "SHALL" | "SHOULD" | "MAY", to: "SHALL" | "SHOULD" | "MAY" } | nil)
@@ -70,6 +71,11 @@ module InfernoSuiteGenerator
       end
 
       module GeneratorConfigKeeperGenerators
+        def resolve_profile_resource_value: (String profile_path, String resource_path, ?untyped default_value) -> untyped
+        def camel_to_snake: (String str) -> String
+        def first_class_read: (String profile_url, String resource_type) -> bool
+        def resources_configs: () -> Hash[String, untyped]
+        def constants: () -> Hash[String, untyped]
         def resources_to_exclude: (String profile_url, String resource_type) -> bool
         def add_extra_searches?: (String profile_url, String resource_type, Array[String] search_names) -> bool
         def exclude_resource_old?: (String resource_type) -> bool
@@ -81,7 +87,7 @@ module InfernoSuiteGenerator
         def read_test_ids_inputs: (String profile_url, String resource_type) -> (Hash[String, String] | nil)
         def search_test_ids_inputs: (String profile_url, String resource_type, Array[String] param_names) -> (Hash[String, String] | nil)
         def test_medication_inclusion?: (String profile_url, String resource_type) -> untyped
-        def process_include_search: (Hash[String, untyped] result, String resource, Hash[String, untyped] search) -> nil
+        def process_include_search: (Hash[String, untyped] result, String resource, Hash[String, untyped] search) -> Hash[String, untyped]
         def special_includes_cases: (String profile_url, String resource) -> Hash[String, untyped]
       end
 

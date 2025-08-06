@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative "constants"
+
 module InfernoSuiteGenerator
   class Generator
     class GeneratorConfigKeeper
@@ -8,6 +10,8 @@ module InfernoSuiteGenerator
       # This module contains methods that generate configuration values and inputs
       # for various test types, including search tests, read tests, and special cases.
       module GeneratorConfigKeeperGenerators
+        include GeneratorConfigKeeperConstants
+
         def resources_to_exclude(profile_url, resource_type)
           resolve_profile_resource_value(
             "configs&.profiles&.#{profile_url}&.skip",
@@ -20,7 +24,7 @@ module InfernoSuiteGenerator
           resolve_profile_resource_value(
             "configs&.profiles&.#{profile_url}&.extra_searches",
             "configs&.resources&.#{resource_type}&.extra_searches",
-            []
+            EMPTY_ARRAY
           ).select { |search| search["type"] == "search" }.map { |search| search["params"] }.include?(search_names)
         end
 
@@ -37,7 +41,7 @@ module InfernoSuiteGenerator
           resolve_profile_resource_value(
             "configs&.profiles&.#{profile_url}&.search_param&.#{param_id}&.extra_tests_with",
             "configs&.resources&.#{resource_type}&.search_param&.#{param_id}&.extra_tests_with",
-            []
+            EMPTY_ARRAY
           )
         end
 
@@ -53,7 +57,7 @@ module InfernoSuiteGenerator
           resolve_profile_resource_value(
             "configs&.profiles&.#{profile_url}&.search_multiple_or_and_by_target_resource",
             "configs&.resources&.#{resource_type}&.search_multiple_or_and_by_target_resource",
-            []
+            EMPTY_ARRAY
           ) == params
         end
 
@@ -113,14 +117,15 @@ module InfernoSuiteGenerator
             "target_resource" => search["target_resource"],
             "paths" => search["paths"]
           }
+          result
         end
 
         def special_includes_cases(profile_url, resource)
-          result = {}
+          result = EMPTY_HASH.dup
           extra_searches = resolve_profile_resource_value(
             "configs&.profiles&.#{profile_url}&.extra_searches",
             "configs&.resources&.#{resource}&.extra_searches",
-            []
+            EMPTY_ARRAY
           )
 
           extra_searches.select { |search| search["type"] == "include" }
