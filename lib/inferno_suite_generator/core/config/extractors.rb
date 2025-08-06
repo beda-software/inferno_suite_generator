@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative "constants"
+
 module InfernoSuiteGenerator
   class Generator
     class GeneratorConfigKeeper
@@ -8,6 +10,8 @@ module InfernoSuiteGenerator
       # This module contains methods that extract and process configuration values
       # related to search parameters, expectations, and other test-specific settings.
       module GeneratorConfigKeeperExtractors
+        include GeneratorConfigKeeperConstants
+
         def multiple_and_expectation(profile_url, resource_type, param_id)
           resolve_profile_resource_value(
             "configs&.profiles&.#{profile_url}&.search_param&.#{param_id}&.multiple_and_expectation",
@@ -32,7 +36,7 @@ module InfernoSuiteGenerator
         def fixed_search_values(profile_url, resource_type, param_id)
           resolve_profile_resource_value(
             "configs&.profiles&.#{profile_url}&.search_param&.#{param_id}&.default_values",
-            "configs&.resources&.#{resource_type}&.search_param&.#{param_id}&.default_values", []
+            "configs&.resources&.#{resource_type}&.search_param&.#{param_id}&.default_values", EMPTY_ARRAY
           )
         end
 
@@ -48,14 +52,14 @@ module InfernoSuiteGenerator
           resolve_profile_resource_value(
             "configs&.profiles&.#{profile_url}&.must_support&.remove_elements",
             "configs&.resources&.#{resource}&.must_support&.remove_elements",
-            []
+            EMPTY_ARRAY
           )
         end
 
         def get_comparators(profile_url, resource_type, param_id)
           resolve_profile_resource_value(
             "configs&.profiles&.#{profile_url}&.search_param&.#{param_id}&.comparators",
-            "configs&.resources&.#{resource_type}&.search_param&.#{param_id}&.comparators", []
+            "configs&.resources&.#{resource_type}&.search_param&.#{param_id}&.comparators", EMPTY_ARRAY
           )
         end
 
@@ -71,7 +75,7 @@ module InfernoSuiteGenerator
           resolve_profile_resource_value(
             "configs&.profiles&.#{profile_url}&.forced_initial_search",
             "configs&.resources&.#{resource}&.forced_initial_search",
-            []
+            EMPTY_ARRAY
           )
         end
 

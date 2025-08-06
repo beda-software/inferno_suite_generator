@@ -1,4 +1,90 @@
 module InfernoSuiteGenerator
   VERSION: String
-  # See the writing guide of rbs: https://github.com/ruby/rbs#guides
+  EMPTY_ARRAY: Array[String]
+  EMPTY_HASH: Hash[String, untyped]
+
+  module Generator
+    class GeneratorConfigKeeper
+      include GeneratorConfigKeeperGetters
+      include GeneratorConfigKeeperExtractors
+      include GeneratorConfigKeeperGenerators
+      include GeneratorConfigKeeperConstants
+
+      attr_reader config: Hash[String, untyped]
+      attr_reader version: Array[untyped]
+      attr_reader config_file_path: String
+
+      def initialize: (String config_file_path) -> void
+      def reload: () -> Hash[String, untyped]
+      def suite_module_name: () -> String
+      def module_directory: () -> String
+      def module_name_prefix: () -> String
+      def test_id_prefix: () -> String
+      def result_folder: () -> String
+      def related_result_folder: () -> String
+      def ig_deps_path: () -> String
+      def main_file_path: () -> String
+      def simple_type?: (untyped value) -> bool
+      def collection_with_elements?: (untyped value) -> bool
+      def resolve_from_constants: (untyped value) -> untyped
+      def resolve_profile_resource_value: (String profile_path, String resource_path, ?untyped default_value) -> untyped
+      def camel_to_snake: (String str) -> String
+      def first_class_read: (String profile_url, String resource_type) -> bool
+
+      module GeneratorConfigKeeperGetters
+        def get: (String path, ?untyped default) -> untyped
+        def get_new: (String path, ?untyped default) -> untyped
+        def tx_server_url: () -> String
+        def resources_configs: () -> Hash[String, untyped]
+        def ig_link: () -> String
+        def ig_name: () -> String
+        def cs_profile_url: () -> String
+        def cs_version_specific_url: () -> String
+        def id: () -> String
+        def title: () -> String
+        def default_fhir_server: () -> String
+        def links: () -> (Array[Hash[String, untyped]] | Array[untyped])
+        def package_archive_path: () -> String
+        def extra_json_paths: () -> Array[String]
+        def search_params_to_ignore: () -> Array[String]
+        def search_params_expectation: () -> (Array["SHOULD" | "SHALL" | "MAY"] | Array[untyped])
+        def constants: () -> Hash[String, untyped]
+        def outer_groups: () -> (Array[Hash[String, untyped]] | Array[untyped])
+      end
+
+      module GeneratorConfigKeeperExtractors
+        def multiple_and_expectation: (String profile_url, String resource_type, String param_id) -> ("SHALL" | "SHOULD" | "MAY" | nil)
+        def multiple_or_expectation: (String profile_url, String resource_type, String param_id) -> ("SHALL" | "SHOULD" | "MAY" | nil)
+        def override_search_expectation: (String profile_url, String resource_type, String param_id) -> ({ from: "SHALL" | "SHOULD" | "MAY", to: "SHALL" | "SHOULD" | "MAY" } | nil)
+        def fixed_search_values: (String profile_url, String resource_type, String param_id) -> Array[String]
+        def skip_metadata_extraction?: (String profile_url, String resource_type) -> bool
+        def must_support_remove_elements: (String profile_url, String resource) -> Array[untyped]
+        def get_comparators: (String profile_url, String resource_type, String param_id) -> Array[String]
+        def get_first_class_status: (String profile_url, String resource) -> bool
+        def get_forced_initial_search: (String profile_url, String resource) -> Array[String]
+        def first_search_params: (String profile_url, String resource) -> Array[String]
+      end
+
+      module GeneratorConfigKeeperGenerators
+        def resources_to_exclude: (String profile_url, String resource_type) -> bool
+        def add_extra_searches?: (String profile_url, String resource_type, Array[String] search_names) -> bool
+        def exclude_resource_old?: (String resource_type) -> bool
+        def exclude_resource?: (String profile_url, String resource_type) -> (bool | nil)
+        def specific_identifiers: (String profile_url, String resource_type, String param_id) -> Array[untyped]
+        def get_executor: (String profile_url, String resource, String param_id) -> String
+        def multiple_or_and_search_by_target_resource: (String profile_url, String resource_type, Array[String] params) -> bool
+        def first_class_search: (String profile_url, String resource_type, Array[String] search_params) -> bool
+        def read_test_ids_inputs: (String profile_url, String resource_type) -> (Hash[String, String] | nil)
+        def search_test_ids_inputs: (String profile_url, String resource_type, Array[String] param_names) -> (Hash[String, String] | nil)
+        def test_medication_inclusion?: (String profile_url, String resource_type) -> untyped
+        def process_include_search: (Hash[String, untyped] result, String resource, Hash[String, untyped] search) -> nil
+        def special_includes_cases: (String profile_url, String resource) -> Hash[String, untyped]
+      end
+
+      module GeneratorConfigKeeperConstants
+        EMPTY_ARRAY: Array[untyped]
+        EMPTY_HASH: Hash[untyped, untyped]
+      end
+    end
+  end
 end

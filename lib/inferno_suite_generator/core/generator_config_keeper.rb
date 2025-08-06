@@ -4,6 +4,7 @@ require "json"
 require_relative "config/getters"
 require_relative "config/extractors"
 require_relative "config/generators"
+require_relative "config/constants"
 
 module InfernoSuiteGenerator
   class Generator
@@ -15,6 +16,7 @@ module InfernoSuiteGenerator
       include GeneratorConfigKeeperGetters
       include GeneratorConfigKeeperExtractors
       include GeneratorConfigKeeperGenerators
+      include GeneratorConfigKeeperConstants
 
       attr_reader :config, :version, :config_file_path
 
@@ -45,7 +47,7 @@ module InfernoSuiteGenerator
       end
 
       def test_id_prefix
-        title&.downcase&.tr(" ", "_")
+        title.downcase.tr(" ", "_")
       end
 
       def result_folder
@@ -76,7 +78,7 @@ module InfernoSuiteGenerator
         constants[value] || value
       end
 
-      # Resolve configuration value from profile or resource path with fallback to default
+      # Resolve configuration value from the profile or resource path with fallback to default
       def resolve_profile_resource_value(profile_path, resource_path, default_value = nil)
         profile_value = get_new(profile_path, default_value)
         resolved_profile_value = resolve_from_constants(profile_value)

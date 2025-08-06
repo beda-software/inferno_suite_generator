@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative "constants"
+
 module InfernoSuiteGenerator
   class Generator
     class GeneratorConfigKeeper
@@ -8,6 +10,8 @@ module InfernoSuiteGenerator
       # This module contains methods for retrieving various configuration settings
       # from the GeneratorConfigKeeper's configuration object.
       module GeneratorConfigKeeperGetters
+        include GeneratorConfigKeeperConstants
+
         def get(path, default = nil)
           # TODO: Remove
           @config.dig(*path.split(".")) || default
@@ -21,12 +25,8 @@ module InfernoSuiteGenerator
           get("suite.tx_server_url")
         end
 
-        def paths
-          get("suite.paths", {})
-        end
-
         def resources_configs
-          get("configs.resources", {})
+          get("configs.resources", EMPTY_HASH)
         end
 
         def ig_link
@@ -58,7 +58,7 @@ module InfernoSuiteGenerator
         end
 
         def links
-          get("suite.links", [])
+          get("suite.links", EMPTY_ARRAY)
         end
 
         def package_archive_path
@@ -66,23 +66,23 @@ module InfernoSuiteGenerator
         end
 
         def extra_json_paths
-          get("suite.extra_json_paths", [])
+          get("suite.extra_json_paths", EMPTY_ARRAY)
         end
 
         def search_params_to_ignore
-          get("configs.generic.search_params_to_ignore", [])
+          get("configs.generic.search_params_to_ignore", EMPTY_ARRAY)
         end
 
         def search_params_expectation
-          get("configs.generic.expectation", [])
+          get("configs.generic.expectation", EMPTY_ARRAY)
         end
 
         def constants
-          get("constants", {})
+          get("constants", EMPTY_HASH)
         end
 
         def outer_groups
-          get("suite.outer_groups", [])
+          get("suite.outer_groups", EMPTY_ARRAY)
         end
       end
     end
