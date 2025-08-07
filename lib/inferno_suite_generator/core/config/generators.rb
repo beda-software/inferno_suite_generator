@@ -15,6 +15,10 @@ module InfernoSuiteGenerator
         include GeneratorConfigKeeperConstants
         include GeneratorConfigKeeperUtils
         include GeneratorConfigKeeperGetters
+        
+        def custom_generators
+          get_new("configs&.generic&.register_generators", EMPTY_ARRAY)
+        end
 
         def resources_to_exclude(profile_url, resource_type)
           resolve_profile_resource_value(

@@ -16,7 +16,6 @@ require_relative "inferno_suite_generator/generators/validation_test_generator"
 require_relative "inferno_suite_generator/generators/multiple_or_search_test_generator"
 require_relative "inferno_suite_generator/generators/multiple_and_search_test_generator"
 require_relative "inferno_suite_generator/generators/chain_search_test_generator"
-require_relative "inferno_suite_generator/generators/special_identifier_search_test_generator"
 require_relative "inferno_suite_generator/generators/special_identifiers_chain_search_test_generator"
 require_relative "inferno_suite_generator/generators/include_search_test_generator"
 require_relative "inferno_suite_generator/core/generator_config_keeper"
@@ -84,6 +83,7 @@ module InfernoSuiteGenerator
 
     def generate_read_tests
       ReadTestGenerator.generate(ig_metadata, base_output_dir)
+      generate_custom_tests_with_type("read")
     end
 
     def generate_search_tests
@@ -91,8 +91,37 @@ module InfernoSuiteGenerator
       generate_multiple_or_search_tests
       generate_multiple_and_search_tests
       generate_chain_search_tests
-      generate_special_identifier_search_tests
       generate_special_identifiers_chain_search_tests
+      generate_custom_tests_with_type("search")
+    end
+
+    def generate_custom_tests_with_type(test_type)
+      custom_generators = Registry.get(:config_keeper).custom_generators.select { |generator_config| generator_config["test_type"] == test_type }
+
+      custom_generators.each do |generator_config|
+        use_custom_generator(generator_config)
+      end
+    end
+
+    def use_custom_generator(generator_config)
+      generator_path = generator_config["path_to_generator"]
+      generator_class = generator_config["generator_class"]
+      template_path = generator_config["path_to_template"]
+
+      begin
+        absolute_generator_path = File.expand_path(generator_path, Dir.pwd)
+        absolute_template_path = File.expand_path(template_path, Dir.pwd)
+
+        require absolute_generator_path
+
+        generator_class = Object.const_get(generator_class)
+
+        puts "Loading custom generator: #{generator_class}"
+        generator_class.generate(ig_metadata, base_output_dir, absolute_template_path)
+      rescue => e
+        puts "Error loading custom generator: #{e.message}"
+        puts e.backtrace.join("\n")
+      end
     end
 
     def generate_include_search_tests
