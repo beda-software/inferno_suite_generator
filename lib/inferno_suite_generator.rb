@@ -16,7 +16,6 @@ require_relative "inferno_suite_generator/generators/validation_test_generator"
 require_relative "inferno_suite_generator/generators/multiple_or_search_test_generator"
 require_relative "inferno_suite_generator/generators/multiple_and_search_test_generator"
 require_relative "inferno_suite_generator/generators/chain_search_test_generator"
-require_relative "inferno_suite_generator/generators/special_identifiers_chain_search_test_generator"
 require_relative "inferno_suite_generator/generators/include_search_test_generator"
 require_relative "inferno_suite_generator/core/generator_config_keeper"
 require_relative "inferno_suite_generator/utils/registry"
@@ -91,7 +90,6 @@ module InfernoSuiteGenerator
       generate_multiple_or_search_tests
       generate_multiple_and_search_tests
       generate_chain_search_tests
-      generate_special_identifiers_chain_search_tests
       generate_custom_tests_with_type("search")
     end
 
@@ -142,14 +140,6 @@ module InfernoSuiteGenerator
 
     def generate_chain_search_tests
       ChainSearchTestGenerator.generate(ig_metadata, base_output_dir)
-    end
-
-    def generate_special_identifier_search_tests
-      SpecialIdentifierSearchTestGenerator.generate(ig_metadata, base_output_dir)
-    end
-
-    def generate_special_identifiers_chain_search_tests
-      SpecialIdentifiersChainSearchTestGenerator.generate(ig_metadata, base_output_dir)
     end
 
     def generate_groups
