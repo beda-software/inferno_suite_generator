@@ -3,8 +3,9 @@
 require_relative '../utils/generic'
 
 module InfernoSuiteGenerator
-  include GenericUtils
   module ReadTest
+    include GenericUtils
+
     def all_scratch_resources
       scratch_resources[:all] ||= []
     end

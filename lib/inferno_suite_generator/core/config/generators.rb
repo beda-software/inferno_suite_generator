@@ -6,7 +6,6 @@ require_relative "getters"
 require_relative "../../utils/generic"
 
 module InfernoSuiteGenerator
-  include GenericUtils
   class Generator
     class GeneratorConfigKeeper
       # Provides methods for generating test-specific configuration and inputs
@@ -17,6 +16,7 @@ module InfernoSuiteGenerator
         include GeneratorConfigKeeperConstants
         include GeneratorConfigKeeperUtils
         include GeneratorConfigKeeperGetters
+        include GenericUtils
 
         def custom_generators
           get_new("configs&.generic&.register_generators", EMPTY_ARRAY)
