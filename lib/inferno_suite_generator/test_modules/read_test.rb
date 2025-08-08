@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
+require_relative '../utils/generic'
+
 module InfernoSuiteGenerator
+  include GenericUtils
   module ReadTest
     def all_scratch_resources
       scratch_resources[:all] ||= []
@@ -27,20 +30,7 @@ module InfernoSuiteGenerator
     end
 
     def fetch_resource_ids(resource_type)
-      case resource_type
-      when "Location"
-        location_ids
-      when "Organization"
-        organization_ids
-      when "Practitioner"
-        practitioner_ids
-      when "PractitionerRole"
-        practitioner_role_ids
-      when "HealthcareService"
-        healthcare_service_ids
-      else
-        ""
-      end
+      "#{GenericUtils::camel_to_snake(resource_type)}_ids".to_sym
     end
 
     def resource_ids_str_to_arr(resource_ids_str)
