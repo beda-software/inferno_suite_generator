@@ -82,7 +82,7 @@ module InfernoSuiteGenerator
         def read_test_ids_inputs(profile_url, resource_type)
           return unless first_class_read(profile_url, resource_type)
 
-          snake_case_resource_type = GenericUtils::camel_to_snake(resource_type)
+          snake_case_resource_type = camel_to_snake(resource_type)
           resource_display_name = snake_case_resource_type.tr("_", " ")
 
           {

@@ -30,7 +30,7 @@ module InfernoSuiteGenerator
     end
 
     def fetch_resource_ids(resource_type)
-      "#{GenericUtils::camel_to_snake(resource_type)}_ids".to_sym
+      "#{camel_to_snake(resource_type)}_ids".to_sym
     end
 
     def resource_ids_str_to_arr(resource_ids_str)
