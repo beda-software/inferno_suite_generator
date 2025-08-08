@@ -259,8 +259,13 @@ module InfernoSuiteGenerator
       end
 
       def must_supports
-        @must_supports ||=
-          must_support_metadata_extractor.must_supports
+        ms_extractors = custom_extractors_by_type("must_support")
+        if ms_extractors.any?
+          ms_extractor_config = ms_extractors.first
+          @must_supports ||= use_custom_extractor(ms_extractor_config).must_supports
+        else
+          @must_supports ||= must_support_metadata_extractor.must_supports
+        end
       end
 
       def mandatory_elements
@@ -281,6 +286,29 @@ module InfernoSuiteGenerator
               profiles: reference_definition.type.first.targetProfile
             }
           end
+      end
+
+      def custom_extractors_by_type(extractor_type)
+        config_keeper.custom_extractors(profile_url, resource).select { |extractor| extractor["extractor_type"] == extractor_type }
+      end
+
+      def use_custom_extractor(extractor_config)
+        extractor_path = extractor_config["path_to_extractor"]
+        extractor_class = extractor_config["extractor_class"]
+
+        begin
+          absolute_extractor_path = File.expand_path(extractor_path, Dir.pwd)
+
+          require absolute_extractor_path
+
+          extractor_class = Object.const_get(extractor_class)
+
+          puts "Loading custom extractor: #{extractor_class} for the #{resource} with profile #{profile_url}"
+          extractor_class.new(profile_elements, profile, resource, ig_resources)
+        rescue => e
+          puts "Error loading custom extractor: #{e.message}"
+          puts e.backtrace.join("\n")
+        end
       end
     end
   end

@@ -91,6 +91,14 @@ module InfernoSuiteGenerator
 
           default_value
         end
+
+        def custom_extractors(profile_url, resource)
+          resolve_profile_resource_value(
+            "configs&.profiles&.#{profile_url}&.register_extractors",
+            "configs&.resources&.#{resource}&.register_extractors",
+            EMPTY_ARRAY
+          )
+        end
       end
     end
   end

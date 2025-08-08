@@ -23,8 +23,6 @@ module InfernoSuiteGenerator
           elements: must_support_elements
         }
 
-        handle_special_cases
-
         @must_supports
       end
 
@@ -321,36 +319,6 @@ module InfernoSuiteGenerator
             end
           end
         end.uniq
-      end
-
-      #### SPECIAL CASE ####
-
-      def handle_special_cases
-        remove_elements
-      end
-
-      def remove_elements
-        config.must_support_remove_elements(profile.url, resource).each do |remove_elements_config|
-          element_key = remove_elements_config["element_key"]
-          condition = remove_elements_config["condition"]
-          value = remove_elements_config["value"]
-
-          @must_supports[:elements].delete_if do |element|
-            case condition
-            when "equal"
-              element[element_key.to_sym] == value
-            when "start_with?"
-              element[element_key.to_sym].start_with?(value)
-            when "pattern_match?"
-              pattern = Regexp.new(value)
-              pattern.match?(element[element_key.to_sym])
-            when "value_include?"
-              value.include? element[element_key.to_sym]
-            else
-              # do nothing
-            end
-          end
-        end
       end
     end
   end
