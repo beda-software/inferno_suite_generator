@@ -97,7 +97,7 @@ module InfernoSuiteGenerator
         def search_test_ids_inputs(profile_url, resource_type, param_names)
           return unless first_class_search(profile_url, resource_type, param_names)
 
-          snake_case_resource_type = GenericUtils::camel_to_snake(resource_type)
+          snake_case_resource_type = GenericUtils.camel_to_snake(resource_type)
           resource_display_name = snake_case_resource_type.tr("_", " ")
 
           {

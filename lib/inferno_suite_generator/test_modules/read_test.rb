@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative '../utils/generic'
+require_relative "../utils/generic"
 
 module InfernoSuiteGenerator
   module ReadTest
@@ -31,11 +31,9 @@ module InfernoSuiteGenerator
     end
 
     def fetch_resource_ids(resource_type)
-      begin
-        send("#{camel_to_snake(resource_type)}_ids")
-      rescue NoMethodError
-        ''
-      end
+      send("#{camel_to_snake(resource_type)}_ids")
+    rescue NoMethodError
+      ""
     end
 
     def resource_ids_str_to_arr(resource_ids_str)

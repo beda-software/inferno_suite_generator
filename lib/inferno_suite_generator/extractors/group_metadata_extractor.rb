@@ -289,7 +289,9 @@ module InfernoSuiteGenerator
       end
 
       def custom_extractors_by_type(extractor_type)
-        config_keeper.custom_extractors(profile_url, resource).select { |extractor| extractor["extractor_type"] == extractor_type }
+        config_keeper.custom_extractors(profile_url, resource).select do |extractor|
+          extractor["extractor_type"] == extractor_type
+        end
       end
 
       def use_custom_extractor(extractor_config)
@@ -305,7 +307,7 @@ module InfernoSuiteGenerator
 
           puts "Loading custom extractor: #{extractor_class} for the #{resource} with profile #{profile_url}"
           extractor_class.new(profile_elements, profile, resource, ig_resources)
-        rescue => e
+        rescue StandardError => e
           puts "Error loading custom extractor: #{e.message}"
           puts e.backtrace.join("\n")
         end

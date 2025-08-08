@@ -94,7 +94,9 @@ module InfernoSuiteGenerator
     end
 
     def generate_custom_tests_with_type(test_type)
-      custom_generators = Registry.get(:config_keeper).custom_generators.select { |generator_config| generator_config["test_type"] == test_type }
+      custom_generators = Registry.get(:config_keeper).custom_generators.select do |generator_config|
+        generator_config["test_type"] == test_type
+      end
 
       custom_generators.each do |generator_config|
         use_custom_generator(generator_config)
@@ -116,7 +118,7 @@ module InfernoSuiteGenerator
 
         puts "Loading custom generator: #{generator_class}"
         generator_class.generate(ig_metadata, base_output_dir, absolute_template_path)
-      rescue => e
+      rescue StandardError => e
         puts "Error loading custom generator: #{e.message}"
         puts e.backtrace.join("\n")
       end
