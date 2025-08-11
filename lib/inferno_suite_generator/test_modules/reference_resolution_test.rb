@@ -176,16 +176,11 @@ module InfernoSuiteGenerator
       validator = find_validator(:default)
 
       target_profile_with_version = target_profile == "http://hl7.org.au/fhir/StructureDefinition/au-specimen" ? target_profile : "#{target_profile}|#{metadata.profile_version}"
-      puts "Target profile: #{target_profile_with_version}"
-      puts "Resource: #{resource}"
       begin
         validator_response = validator.validate(resource, target_profile_with_version)
-        puts "Validator response: #{validator_response}"
         outcome = validator.operation_outcome_from_hl7_wrapped_response(validator_response)
-        puts "Outcome: #{outcome}"
 
         message_hashes = outcome.issue&.map { |issue| validator.message_hash_from_issue(issue, resource) } || []
-        puts "Message hashes: #{message_hashes}"
 
         message_hashes.concat(validator.additional_validation_messages(resource, target_profile_with_version))
 
@@ -193,9 +188,9 @@ module InfernoSuiteGenerator
 
         message_hashes.none? { |message_hash| message_hash[:type] == "error" }
       rescue StandardError => e
-        info "Can't validate resource #{resource.resourceType} with profile #{target_profile}. Got error #{e.message}"
+        error_message = "Can't validate resource #{resource.resourceType} with profile #{target_profile}. Got error #{e.message}"
 
-        assert false
+        assert false, error_message
       end
 
     end
