@@ -176,7 +176,8 @@ module InfernoSuiteGenerator
       validator = find_validator(:default)
 
       target_profile_with_version = target_profile == "http://hl7.org.au/fhir/StructureDefinition/au-specimen" ? target_profile : "#{target_profile}|#{metadata.profile_version}"
-
+      puts "Target profile: #{target_profile_with_version}"
+      puts "Resource: #{resource}"
       validator_response = validator.validate(resource, target_profile_with_version)
       puts "Validator response: #{validator_response}"
       outcome = validator.operation_outcome_from_hl7_wrapped_response(validator_response)
