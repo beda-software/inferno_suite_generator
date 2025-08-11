@@ -165,35 +165,9 @@ module InfernoSuiteGenerator
         when "type"
           case discriminator[:code]
           when "Date"
-            begin
-              if element.is_a?(Date)
-                true
-              else
-                value = if element.is_a?(String)
-                          element
-                        elsif element.respond_to?(:value) && element.value.is_a?(String)
-                          element.value
-                        end
-                value ? !Date.parse(value).nil? : false
-              end
-            rescue ArgumentError, TypeError
-              false
-            end
+            date_like_slice?(element, "Date")
           when "DateTime"
-            begin
-              if element.is_a?(DateTime) || element.is_a?(Time)
-                true
-              else
-                value = if element.is_a?(String)
-                          element
-                        elsif element.respond_to?(:value) && element.value.is_a?(String)
-                          element.value
-                        end
-                value ? !DateTime.parse(value).nil? : false
-              end
-            rescue ArgumentError, TypeError
-              false
-            end
+            date_like_slice?(element, "DateTime")
           when "String"
             element.is_a? String
           else
