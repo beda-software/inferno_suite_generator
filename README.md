@@ -87,7 +87,7 @@ The generator follows these steps:
 
 ## Configuration
 
-The configuration file (`config.json`) controls how the generator works. Here's an example configuration with explanations:
+The configuration file (`config.json`) controls how the generator works. For a complete and up-to-date schema, see `config-user-guide.md` and `config.example.json` at the project root. Here's an example configuration with explanations:
 
 ```json
 {
@@ -101,16 +101,16 @@ The configuration file (`config.json`) controls how the generator works. Here's 
   },
   "suite": {
     "title": "Your IG Title",
-    "suite_module_name": "YourIGTestKit",
-    "module_name_prefix": "YourIG",
-    "test_id_prefix": "your_ig",
-    "paths": {
-      "ig_deps": "path/to/ig/package",
-      "result_folder": "./lib/your_ig_test_kit/generated/",
-      "related_result_folder": "/lib/your_ig_test_kit/generated/",
-      "main_file": "lib/your_ig_test_kit.rb",
-      "extra_json_paths": ["extra-config.json"]
-    },
+    "extra_json_paths": ["extra-config.json"],
+    "tx_server_url": "https://tx.fhir.org/r4",
+    "outer_groups": [
+      {
+        "import_type": "relative",
+        "import_path": "../../custom_groups/capability_statement/capability_statement_group",
+        "group_position": "before",
+        "group_id": "your_capability_statement_group"
+      }
+    ],
     "links": [
       {
         "label": "Report Issue",
@@ -122,61 +122,87 @@ The configuration file (`config.json`) controls how the generator works. Here's 
       }
     ]
   },
+  "constants": {
+    "default_fhir_server": "https://example.com/fhir",
+    "read_ids.patient": "patient1, patient2",
+    "search_default_values.diagnostic_result": ["251739003", "24701-5"],
+    "search_default_values.date": ["ge1950-01-01", "le2050-01-01", "gt1950-01-01", "lt2050-01-01"],
+    "search_default_values.datetime": [
+      "ge1950-01-01T00:00:00.000Z",
+      "le2050-01-01T23:59:59.999Z",
+      "gt1950-01-01T00:00:00.000Z",
+      "lt2050-01-01T23:59:59.999Z"
+    ],
+    "search.comparators": ["gt", "lt", "ge", "le"]
+  },
   "configs": {
-    "generators": {
-      "all": {
-        "default_fhir_server": "https://example.com/fhir",
-        "tx_server_url": "https://tx.fhir.org/r4",
-        "skip_resources": {
-          "resources": ["Medication", "DiagnosticReport"]
-        },
-        "skip_profiles": {
-          "profiles": [
-            "http://example.com/fhir/StructureDefinition/your-profile"
-          ]
+    "generic": {
+      "expectation": ["SHALL", "SHOULD", "MAY"],
+      "search_params_to_ignore": ["count", "_sort", "_include"],
+      "register_generators": [
+        {
+          "path_to_generator": "lib/your_test_kit/generators/custom_identifier_search/generator.rb",
+          "generator_class": "InfernoSuiteGenerator::Generator::SpecialIdentifierSearchTestGenerator",
+          "path_to_template": "lib/your_test_kit/generators/custom_identifier_search/template.rb.erb",
+          "test_type": "search"
         }
-      },
-      "read": {
-        "test_ids_inputs": {
-          "Patient": {
-            "input_id": "patient_ids",
-            "title": "Patient IDs",
-            "description": "Comma separated list of patient IDs that in sum contain all MUST SUPPORT elements",
-            "default": "patient1, patient2"
-          }
-        }
-      },
-      "search": {
-        "first_search_parameter_by": {
-          "profile": {
-            "http://example.com/fhir/StructureDefinition/your-profile": ["patient", "category"]
-          },
-          "resource": {
-            "Observation": ["patient", "code"]
-          }
-        }
-      }
+      ]
     },
-    "extractors": {
-      "search": {
-        "fixed_search_values": {
-          "values": {
-            "date": ["ge2020-01-01", "le2023-12-31"]
+    "profiles": {
+      "http://example.com/fhir/StructureDefinition/your-profile": {
+        "first_class_profile": "search",
+        "override_executor": {
+          "search": {
+            "identifier": "run_search_test_with_system"
           }
         },
-        "params_to_ignore": ["count", "_sort"],
-        "expectation": ["SHALL", "SHOULD", "MAY"]
-      },
-      "must_support": {
-        "remove_elements": [
+        "register_extractors": [
           {
-            "profiles": ["http://example.com/fhir/StructureDefinition/your-profile"],
-            "element_key": "path",
-            "condition": "equal",
-            "value": "method"
+            "path_to_extractor": "lib/your_test_kit/extractors/ms_delete/extractor.rb",
+            "extractor_class": "InfernoSuiteGenerator::Generator::MustSupportDeleteExtractor",
+            "extractor_type": "must_support"
+          }
+        ],
+        "extra_searches": [
+          { "type": "search", "params": ["_id"] },
+          {
+            "type": "include",
+            "param": "medication",
+            "target_resource": "Medication",
+            "paths": ["medicationReference"]
           }
         ]
       }
+    },
+    "resources": {
+      "Observation": {
+        "forced_initial_search": ["patient", "code"],
+        "search_param": {
+          "clinical-date": {
+            "default_values": "search_default_values.datetime",
+            "multiple_and_expectation": "SHOULD",
+            "comparators": "search.comparators"
+          },
+          "Observation-status": {
+            "multiple_or_expectation": "SHALL"
+          },
+          "clinical-code": {
+            "multiple_or_expectation": "SHOULD"
+          }
+        }
+      },
+      "MedicationRequest": {
+        "search": { "test_medication_inclusion": true },
+        "search_param": {
+          "MedicationRequest-authoredon": {
+            "default_values": "search_default_values.datetime",
+            "multiple_and_expectation": "SHOULD",
+            "comparators": "search.comparators"
+          },
+          "MedicationRequest-intent": { "multiple_or_expectation": "SHOULD" }
+        }
+      },
+      "Medication": { "skip": true }
     }
   }
 }
@@ -193,31 +219,50 @@ The configuration file (`config.json`) controls how the generator works. Here's 
 - `cs_version_specific_url`: The URL to the version-specific CapabilityStatement
 
 #### Suite Section
-- `title`: The title of the test suite
-- `suite_module_name`: The name of the Ruby module for the test suite
-- `module_name_prefix`: The prefix for module names
-- `test_id_prefix`: The prefix for test IDs
-- `paths`: Paths for various files and directories
-  - `ig_deps`: Path to the IG package
-  - `result_folder`: Path where generated files will be stored
-  - `related_result_folder`: Related path for imports
-  - `main_file`: Path to the main file of the Inferno application
-  - `extra_json_paths`: Additional JSON configuration files
-- `links`: Links to be included in the test suite
-- `outer_groups`: Additional groups to include in the test suite
+- `title`: The title of the test suite (also used to derive module name and paths automatically)
+- `extra_json_paths`: Additional JSON configuration files to merge
+- `tx_server_url`: Terminology server URL used by generated tests
+- `links`: Links to be included in the test suite UI
+- `outer_groups`: Additional groups to include before/after generated groups
+  - `import_type`: How to import the group (e.g., `relative`)
+  - `import_path`: Path to the external group file
+  - `group_position`: Where to place it (`before` or `after`)
+  - `group_id`: The group ID to reference
+
+Note: Module names and paths are derived from `suite.title`; you do not need to set `suite_module_name`, `module_name_prefix`, `test_id_prefix`, or explicit paths.
+
+#### Constants Section
+- `default_fhir_server`: Default FHIR server URL used for inputs
+- `read_ids.<resource>`: Default IDs for first-class read/search tests (e.g., `read_ids.patient`)
+- `search_default_values.*`: Named sets of default values used in search tests
+- `search.comparators`: Allowed comparators for date/datetime searches
 
 #### Configs Section
-- `generators`: Configuration for test generators
-  - `all`: Configuration for all generators
-    - `default_fhir_server`: Default FHIR server URL
-    - `tx_server_url`: Terminology server URL
-    - `skip_resources`: Resources to skip during generation
-    - `skip_profiles`: Profiles to skip during generation
-  - `read`: Configuration for read tests
-  - `search`: Configuration for search tests
-- `extractors`: Configuration for metadata extractors
-  - `search`: Configuration for search metadata
-  - `must_support`: Configuration for must support metadata
+- `generic`: Global settings
+  - `expectation`: Allowed expectation levels (e.g., `SHALL`, `SHOULD`, `MAY`)
+  - `search_params_to_ignore`: Search params to ignore when generating tests
+  - `register_generators`: Custom generators to load
+    - `path_to_generator`, `generator_class`, `path_to_template`, `test_type`
+- `profiles`: Per-profile overrides (keyed by profile URL)
+  - `skip`: Skip generating tests for this profile
+  - `first_class_profile`: Mark as first-class `read` or `search`
+  - `override_executor.search.<param>`: Override executor for specific search param
+  - `forced_initial_search`: Force initial search params (e.g., `["patient", "code"]`)
+  - `register_extractors`: Register custom extractors
+    - `path_to_extractor`, `extractor_class`, `extractor_type`
+  - `extra_searches`: Additional searches to generate
+    - `{ "type": "search", "params": ["_id"] }`
+    - `{ "type": "include", "param": "medication", "target_resource": "Medication", "paths": ["medicationReference"] }`
+  - `search_param.<id>`: Per-search-parameter options
+    - `default_values`: Named constant key or explicit list
+    - `multiple_and_expectation` / `multiple_or_expectation`
+    - `comparators`: Allowed comparators for that param
+    - `expectation_change`: `{ from: "SHALL", to: "SHOULD" }`
+  - `must_support.remove_elements`: Optional removal rules for must support
+- `resources`: Per-resource overrides (keyed by resource type)
+  - All the same options as `profiles` (without profile URL)
+  - `search_multiple_or_and_by_target_resource`: Configure multi-OR/AND behavior for target resource params
+  - `search.test_medication_inclusion`: Enable special include tests for Medication where applicable
 
 ## Development
 
