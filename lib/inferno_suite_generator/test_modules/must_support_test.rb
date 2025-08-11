@@ -145,52 +145,68 @@ module InfernoSuiteGenerator
     end
 
     def find_slice(resource, path, discriminator)
-      begin
-        find_a_value_at(resource, path) do |element|
-          case discriminator[:type]
-          when "patternCodeableConcept"
-            coding_path = discriminator[:path].present? ? "#{discriminator[:path]}.coding" : "coding"
-            find_a_value_at(element, coding_path) do |coding|
-              coding.code == discriminator[:code] && coding.system == discriminator[:system]
-            end
-          when "patternCoding"
-            coding_path = discriminator[:path].present? ? discriminator[:path] : ""
-            find_a_value_at(element, coding_path) do |coding|
-              coding.code == discriminator[:code] && coding.system == discriminator[:system]
-            end
-          when "patternIdentifier"
-            find_a_value_at(element, discriminator[:path]) { |identifier| identifier.system == discriminator[:system] }
-          when "value"
-            values = discriminator[:values].map { |value| value.merge(path: value[:path].split(".")) }
-            find_slice_by_values(element, values)
-          when "type"
-            case discriminator[:code]
-            when "Date"
-              begin
-                Date.parse(element)
-              rescue ArgumentError
-                false
-              end
-            when "DateTime"
-              begin
-                DateTime.parse(element)
-              rescue ArgumentError
-                false
-              end
-            when "String"
-              element.is_a? String
-            else
-              element.is_a? FHIR.const_get(discriminator[:code])
-            end
-          when "requiredBinding"
-            coding_path = discriminator[:path].present? ? "#{discriminator[:path]}.coding" : "coding"
-            find_a_value_at(element, coding_path) { |coding| discriminator[:values].include?(coding.code) }
+      find_a_value_at(resource, path) do |element|
+        case discriminator[:type]
+        when "patternCodeableConcept"
+          coding_path = discriminator[:path].present? ? "#{discriminator[:path]}.coding" : "coding"
+          find_a_value_at(element, coding_path) do |coding|
+            coding.code == discriminator[:code] && coding.system == discriminator[:system]
           end
+        when "patternCoding"
+          coding_path = discriminator[:path].present? ? discriminator[:path] : ""
+          find_a_value_at(element, coding_path) do |coding|
+            coding.code == discriminator[:code] && coding.system == discriminator[:system]
+          end
+        when "patternIdentifier"
+          find_a_value_at(element, discriminator[:path]) { |identifier| identifier.system == discriminator[:system] }
+        when "value"
+          values = discriminator[:values].map { |value| value.merge(path: value[:path].split(".")) }
+          find_slice_by_values(element, values)
+        when "type"
+          case discriminator[:code]
+          when "Date"
+            begin
+              if element.is_a?(Date)
+                true
+              else
+                value = if element.is_a?(String)
+                          element
+                        elsif element.respond_to?(:value) && element.value.is_a?(String)
+                          element.value
+                        end
+                value ? !Date.parse(value).nil? : false
+              end
+            rescue ArgumentError, TypeError
+              false
+            end
+          when "DateTime"
+            begin
+              if element.is_a?(DateTime) || element.is_a?(Time)
+                true
+              else
+                value = if element.is_a?(String)
+                          element
+                        elsif element.respond_to?(:value) && element.value.is_a?(String)
+                          element.value
+                        end
+                value ? !DateTime.parse(value).nil? : false
+              end
+            rescue ArgumentError, TypeError
+              false
+            end
+          when "String"
+            element.is_a? String
+          else
+            element.is_a? FHIR.const_get(discriminator[:code])
+          end
+        when "requiredBinding"
+          coding_path = discriminator[:path].present? ? "#{discriminator[:path]}.coding" : "coding"
+          find_a_value_at(element, coding_path) { |coding| discriminator[:values].include?(coding.code) }
         end
-      rescue StandardError => e
-        error_message = "Error finding slice for the resource #{resource.class.name} with path #{path} and discriminator #{discriminator}. Got error #{e.message}"
-        raise error_message
       end
+    rescue StandardError => e
+      error_message = "Error finding slice for the resource #{resource.class.name} with path #{path} and discriminator #{discriminator}. Got error #{e.message}"
+      raise error_message
     end
 
     def find_slice_by_values(element, value_definitions)

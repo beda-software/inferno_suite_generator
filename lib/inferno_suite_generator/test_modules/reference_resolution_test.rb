@@ -192,7 +192,6 @@ module InfernoSuiteGenerator
 
         assert false, error_message
       end
-
     end
   end
 end

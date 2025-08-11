@@ -122,17 +122,9 @@ module InfernoSuiteGenerator
           when "type"
             case discriminator[:code]
             when "Date"
-              begin
-                Date.parse(slice)
-              rescue ArgumentError
-                false
-              end
+              date_like_slice?(slice, "Date")
             when "DateTime"
-              begin
-                DateTime.parse(slice)
-              rescue ArgumentError
-                false
-              end
+              date_like_slice?(slice, "DateTime")
             when "String"
               slice.is_a? String
             else
@@ -146,6 +138,38 @@ module InfernoSuiteGenerator
       else
         # TODO: Error handling for if this file doesn't have access to metadata for some reason (begin/rescue with StandardError?)
       end
+    end
+
+    # Checks if a slice matches a Date or DateTime type by examining its type and attempting to parse string values
+    # @param slice [Object] The slice to check
+    # @param value_type [String] Either "Date" or "DateTime" to determine the type to check for 
+    # @return [Boolean] Returns true if the slice matches the specified date/time type, false otherwise
+    def date_like_slice?(slice, value_type)
+      if value_type == "Date" ? slice.is_a?(Date) : (slice.is_a?(DateTime) || slice.is_a?(Time))
+        true
+      else
+        value = get_slice_value(slice)
+        value.present? ? parse_date(value, value_type) : false
+      end
+    end
+
+    # Gets the string value from a slice object
+    # @param slice [Object] The slice to extract the value from
+    # @return [String, nil] The string value of the slice, or nil if no value could be extracted
+    def get_slice_value(slice)
+      if slice.is_a?(String)
+        slice
+      elsif slice.respond_to?(:value) && slice.value.is_a?(String)
+        slice.value
+      end
+    end
+
+    # Attempts to parse a string value as either a Date or DateTime
+    # @param value [String] The string value to parse
+    # @param value_type [String] Either "Date" or "DateTime" to determine how to parse
+    # @return [Boolean] Returns true if parsing was successful, false otherwise
+    def parse_date(value, value_type)
+      value_type == "Date" ? !Date.parse(value).nil? : !DateTime.parse(value).nil?
     end
 
     def verify_slice_by_values(element, value_definitions)
