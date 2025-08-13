@@ -6,12 +6,9 @@ ruby "3.3.6"
 
 gemspec
 
-gem "factory_bot", "~> 6.1"
 gem "inferno_core", ">= 0.6.1"
 gem "minitest", "~> 5.22"
 gem "rake", "~> 13.0"
-gem "rspec", "~> 3.10"
-gem "steep", "~> 1.9"
 
 group :rubocop do
   gem "rubocop", "~> 1.21"
@@ -21,4 +18,8 @@ group :rubocop do
   gem "rubocop-packaging", require: false
   gem "rubocop-performance", require: false
   gem "rubocop-rake", require: false
+end
+
+group :development do
+  gem "steep", "~> 1.9"
 end
