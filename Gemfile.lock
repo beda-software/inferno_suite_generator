@@ -350,6 +350,7 @@ DEPENDENCIES
   factory_bot (~> 6.1)
   inferno_core (>= 0.6.1)
   inferno_suite_generator!
+  minitest (~> 5.22)
   rake (~> 13.0)
   rspec (~> 3.10)
   rubocop (~> 1.21)

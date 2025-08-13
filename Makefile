@@ -6,3 +6,6 @@ lint:
 
 lint-fixes:
 	rubocop . -A
+
+tests:
+	bundle exec rake test
