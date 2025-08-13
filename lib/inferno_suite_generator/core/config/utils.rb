@@ -32,7 +32,7 @@ module InfernoSuiteGenerator
           value.respond_to?(:any?) && value.any?
         end
 
-        def first_class_read(profile_url, resource_type)
+        def first_class_read?(profile_url, resource_type)
           resolve_profile_resource_value(
             "configs&.profiles&.#{profile_url}&.first_class_profile",
             "configs&.resources&.#{resource_type}&.first_class_profile",

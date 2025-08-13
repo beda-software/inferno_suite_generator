@@ -36,7 +36,7 @@ module InfernoSuiteGenerator
         def resolve_from_constants: (untyped value) -> untyped
         def simple_type?: (untyped value) -> bool
         def collection_with_elements?: (untyped value) -> bool
-        def first_class_read: (String profile_url, String resource_type) -> bool
+        def first_class_read?: (String profile_url, String resource_type) -> bool
       end
 
       module GeneratorConfigKeeperGetters
@@ -89,8 +89,8 @@ module InfernoSuiteGenerator
         def exclude_resource?: (String profile_url, String resource_type) -> (bool | nil)
         def specific_identifiers: (String profile_url, String resource_type, String param_id) -> Array[untyped]
         def get_executor: (String profile_url, String resource, String param_id) -> String
-        def multiple_or_and_search_by_target_resource: (String profile_url, String resource_type, Array[String] params) -> bool
-        def first_class_search: (String profile_url, String resource_type, Array[String] search_params) -> bool
+        def multiple_or_and_search_by_target_resource?: (String profile_url, String resource_type, Array[String] params) -> bool
+        def first_class_search?: (String profile_url, String resource_type, Array[String] search_params) -> bool
         def read_test_ids_inputs: (String profile_url, String resource_type) -> (Hash[String, String] | nil)
         def search_test_ids_inputs: (String profile_url, String resource_type, Array[String] param_names) -> (Hash[String, String] | nil)
         def test_medication_inclusion?: (String profile_url, String resource_type) -> untyped

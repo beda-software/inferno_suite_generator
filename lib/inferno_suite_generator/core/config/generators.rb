@@ -31,11 +31,10 @@ module InfernoSuiteGenerator
         end
 
         def add_extra_searches?(profile_url, resource_type, search_names)
-          resolve_profile_resource_value(
-            "configs&.profiles&.#{profile_url}&.extra_searches",
-            "configs&.resources&.#{resource_type}&.extra_searches",
-            EMPTY_ARRAY
-          ).select { |search| search["type"] == "search" }.map { |search| search["params"] }.include?(search_names)
+          filtered_extra_searches = extra_searches(profile_url, resource_type).select do |search|
+            search["type"] == "search"
+          end
+          filtered_extra_searches.map { |search| search["params"] }.include?(search_names)
         end
 
         def exclude_resource_old?(resource_type)
@@ -63,7 +62,7 @@ module InfernoSuiteGenerator
           )
         end
 
-        def multiple_or_and_search_by_target_resource(profile_url, resource_type, params)
+        def multiple_or_and_search_by_target_resource?(profile_url, resource_type, params)
           resolve_profile_resource_value(
             "configs&.profiles&.#{profile_url}&.search_multiple_or_and_by_target_resource",
             "configs&.resources&.#{resource_type}&.search_multiple_or_and_by_target_resource",
@@ -71,7 +70,7 @@ module InfernoSuiteGenerator
           ) == params
         end
 
-        def first_class_search(profile_url, resource_type, search_params)
+        def first_class_search?(profile_url, resource_type, search_params)
           resolve_profile_resource_value(
             "configs&.profiles&.#{profile_url}&.first_class_profile",
             "configs&.resources&.#{resource_type}&.first_class_profile",
@@ -80,22 +79,21 @@ module InfernoSuiteGenerator
         end
 
         def read_test_ids_inputs(profile_url, resource_type)
-          return unless first_class_read(profile_url, resource_type)
+          return unless first_class_read?(profile_url, resource_type)
 
           snake_case_resource_type = camel_to_snake(resource_type)
-          resource_display_name = snake_case_resource_type.tr("_", " ")
 
           {
             "input_id" => "#{snake_case_resource_type}_ids",
             "title" => "#{resource_type} IDs",
-            "description" => "Comma separated list of #{resource_display_name} " \
+            "description" => "Comma separated list of #{snake_case_resource_type.tr("_", " ")} " \
                              "IDs that in sum contain all MUST SUPPORT elements",
             "default" => constants["read_ids.#{snake_case_resource_type}"] || ""
           }
         end
 
         def search_test_ids_inputs(profile_url, resource_type, param_names)
-          return unless first_class_search(profile_url, resource_type, param_names)
+          return unless first_class_search?(profile_url, resource_type, param_names)
 
           snake_case_resource_type = GenericUtils.camel_to_snake(resource_type)
           resource_display_name = snake_case_resource_type.tr("_", " ")
@@ -111,12 +109,9 @@ module InfernoSuiteGenerator
 
         def test_medication_inclusion?(profile_url, resource_type)
           # NOTE: This attribute of the config should be changed for something generic
-          profile_path = "configs&.profiles&.#{profile_url}&.search&.test_medication_inclusion"
-          resource_path = "configs&.resources&.#{resource_type}&.search&.test_medication_inclusion"
-
           resolve_profile_resource_value(
-            profile_path,
-            resource_path
+            "configs&.profiles&.#{profile_url}&.search&.test_medication_inclusion",
+            "configs&.resources&.#{resource_type}&.search&.test_medication_inclusion"
           )
         end
 
@@ -132,14 +127,9 @@ module InfernoSuiteGenerator
 
         def special_includes_cases(profile_url, resource)
           result = EMPTY_HASH.dup
-          extra_searches = resolve_profile_resource_value(
-            "configs&.profiles&.#{profile_url}&.extra_searches",
-            "configs&.resources&.#{resource}&.extra_searches",
-            EMPTY_ARRAY
-          )
 
-          extra_searches.select { |search| search["type"] == "include" }
-                        .each { |search| process_include_search(result, resource, search) }
+          extra_searches(profile_url, resource).select { |search| search["type"] == "include" }
+                                               .each { |search| process_include_search(result, resource, search) }
 
           result
         end

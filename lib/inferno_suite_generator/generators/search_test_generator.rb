@@ -328,7 +328,7 @@ module InfernoSuiteGenerator
       private
 
       def needs_ids_input?
-        Registry.get(:config_keeper).first_class_search(group_metadata.profile_url, resource_type, search_param_names)
+        Registry.get(:config_keeper).first_class_search?(group_metadata.profile_url, resource_type, search_param_names)
       end
     end
   end

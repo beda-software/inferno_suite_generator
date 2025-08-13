@@ -84,6 +84,14 @@ module InfernoSuiteGenerator
         def outer_groups
           get("suite.outer_groups", EMPTY_ARRAY)
         end
+
+        def extra_searches(profile_url, resource_type)
+          resolve_profile_resource_value(
+            "configs&.profiles&.#{profile_url}&.extra_searches",
+            "configs&.resources&.#{resource_type}&.extra_searches",
+            EMPTY_ARRAY
+          )
+        end
       end
     end
   end
