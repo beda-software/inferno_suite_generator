@@ -8,10 +8,10 @@ gemspec
 
 gem "factory_bot", "~> 6.1"
 gem "inferno_core", ">= 0.6.1"
+gem "minitest", "~> 5.22"
 gem "rake", "~> 13.0"
 gem "rspec", "~> 3.10"
-gem "minitest", "~> 5.22"
-gem 'steep', '~> 1.9'
+gem "steep", "~> 1.9"
 
 group :rubocop do
   gem "rubocop", "~> 1.21"

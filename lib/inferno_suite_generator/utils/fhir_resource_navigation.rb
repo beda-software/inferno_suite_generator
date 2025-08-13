@@ -142,7 +142,7 @@ module InfernoSuiteGenerator
 
     # Checks if a slice matches a Date or DateTime type by examining its type and attempting to parse string values
     # @param slice [Object] The slice to check
-    # @param value_type [String] Either "Date" or "DateTime" to determine the type to check for 
+    # @param value_type [String] Either "Date" or "DateTime" to determine the type to check for
     # @return [Boolean] Returns true if the slice matches the specified date/time type, false otherwise
     def date_like_slice?(slice, value_type)
       if value_type == "Date" ? slice.is_a?(Date) : (slice.is_a?(DateTime) || slice.is_a?(Time))
