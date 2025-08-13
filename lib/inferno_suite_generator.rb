@@ -54,9 +54,7 @@ module InfernoSuiteGenerator
       self.ig_metadata = IGMetadataExtractor.new(ig_resources).extract
 
       FileUtils.mkdir_p(base_output_dir)
-      File.open(File.join(base_output_dir, "metadata.yml"), "w") do |file|
-        file.write(YAML.dump(ig_metadata.to_hash))
-      end
+      File.write(File.join(base_output_dir, "metadata.yml"), YAML.dump(ig_metadata.to_hash))
     end
 
     def base_output_dir
@@ -64,7 +62,7 @@ module InfernoSuiteGenerator
     end
 
     def load_ig_package
-      FHIR.logger = Logger.new("/dev/null")
+      FHIR.logger = Logger.new(File::NULL)
       self.ig_resources = IGLoader.new(ig_deps_path).load
     end
 
