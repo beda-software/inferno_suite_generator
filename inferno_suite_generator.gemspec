@@ -40,6 +40,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "rspec", "~> 3.10"
   spec.add_development_dependency "minitest", "~> 5.22"
   spec.add_development_dependency "rubocop", "~> 1.21"
+  spec.add_development_dependency "steep", "~> 1.9"
 
   # For more information and examples about making a new gem, check out our
   # guide at: https://bundler.io/guides/creating_gem.html
