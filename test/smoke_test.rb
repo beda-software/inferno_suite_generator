@@ -8,6 +8,6 @@ class SmokeTest < Minitest::Test
   end
 
   def test_true_is_true
-    assert_equal true, true
+    assert true
   end
 end

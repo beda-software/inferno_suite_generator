@@ -9,10 +9,11 @@ Gem::Specification.new do |spec|
   spec.email = %w[prozskov@gmail.com pavel.r@beda.software ir4y.ix@gmail.com ilya@beda.software]
 
   spec.summary = "A Ruby gem for automatically generating test suites for FHIR Implementation Guides"
-  spec.description = "InfernoSuiteGenerator is a tool that simplifies the creation of test suites for validating FHIR resources against Implementation Guides. It analyzes FHIR Implementation Guide packages and generates Ruby test classes for the Inferno testing framework."
+  spec.description = "Simplifies creating test suites to validate FHIR resources against Implementation Guides. " \
+    "Analyzes IG packages and generates Ruby test classes for the Inferno testing framework."
   spec.homepage = "https://github.com/beda-software/inferno_suite_generator"
   spec.license = "MIT"
-  spec.required_ruby_version = ">= 3.1.0"
+  spec.required_ruby_version = "= 3.3.6"
 
   spec.metadata["homepage_uri"] = spec.homepage
   spec.metadata["source_code_uri"] = "https://github.com/beda-software/inferno_suite_generator"
