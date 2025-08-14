@@ -1,0 +1,28 @@
+require 'inferno_suite_generator/test_modules/create_test'
+
+module <%= suite_module_name %>
+  module <%= module_name %>
+    class <%= class_name %> < Inferno::Test
+      include InfernoSuiteGenerator::CreateTest
+
+      title '(<%= conformance_expectation %>) Server returns correct <%= resource_type %> resource from <%= resource_type %> create interaction'
+      description 'A server <%= conformance_expectation %> support the <%= resource_type %> create interaction.'
+
+      input :<%= create_input_data[:id] %>,
+            title: '<%= create_input_data[:title] %>',
+            description: '<%= create_input_data[:description] %>',
+            default: '<%= create_input_data[:default] %>',
+            optional: <%= create_input_data[:optional] %>
+
+      id :<%= test_id %>
+
+        def resource_type
+          '<%= resource_type %>'
+        end
+
+      run do
+        perform_create_test
+      end
+    end
+  end
+end

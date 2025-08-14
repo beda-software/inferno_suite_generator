@@ -78,6 +78,17 @@ module InfernoSuiteGenerator
           ) == "search" && search_params == ["_id"]
         end
 
+        def create_test_input_data(group_name, profile_name, default_value)
+          snake_case_group_name = camel_to_snake(group_name)
+
+          {
+            "input_id" => "#{snake_case_group_name}_ids",
+            "title" => "#{profile_name} resource in JSON format",
+            "description" => "#{profile_name} in JSON format to be sent to the server.",
+            "default" => default_value
+          }
+        end
+
         def read_test_ids_inputs(profile_url, resource_type)
           return unless first_class_read?(profile_url, resource_type)
 

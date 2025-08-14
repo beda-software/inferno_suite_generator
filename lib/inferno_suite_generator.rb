@@ -17,6 +17,7 @@ require_relative "inferno_suite_generator/generators/multiple_or_search_test_gen
 require_relative "inferno_suite_generator/generators/multiple_and_search_test_generator"
 require_relative "inferno_suite_generator/generators/chain_search_test_generator"
 require_relative "inferno_suite_generator/generators/include_search_test_generator"
+require_relative "inferno_suite_generator/generators/create_test_generator"
 require_relative "inferno_suite_generator/core/generator_config_keeper"
 require_relative "inferno_suite_generator/utils/registry"
 require_relative "inferno_suite_generator/utils/helpers"
@@ -45,6 +46,7 @@ module InfernoSuiteGenerator
       generate_validation_tests
       generate_must_support_tests
       generate_reference_resolution_tests
+      generate_create_tests
       generate_groups
       generate_suites
       use_tests
@@ -140,6 +142,10 @@ module InfernoSuiteGenerator
 
     def generate_chain_search_tests
       ChainSearchTestGenerator.generate(ig_metadata, base_output_dir)
+    end
+
+    def generate_create_tests
+      CreateTestGenerator.generate(ig_metadata, base_output_dir, ig_resources)
     end
 
     def generate_groups
