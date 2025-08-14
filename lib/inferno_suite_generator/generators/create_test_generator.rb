@@ -51,7 +51,7 @@ module InfernoSuiteGenerator
           id: data["input_id"].to_sym,
           title: data["title"],
           description: data["description"],
-          default: data["default"].length > 0 ? data["default"].first : "",
+          default: data["default"].length.positive? ? data["default"].first : "",
           optional: create_interaction[:expectation] != "SHALL"
         }
       end
