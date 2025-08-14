@@ -82,7 +82,7 @@ module InfernoSuiteGenerator
           snake_case_group_name = camel_to_snake(group_name)
 
           {
-            "input_id" => "#{snake_case_group_name}_ids",
+            "input_id" => "#{snake_case_group_name}_data",
             "title" => "#{profile_name} resource in JSON format",
             "description" => "#{profile_name} in JSON format to be sent to the server.",
             "default" => default_value
