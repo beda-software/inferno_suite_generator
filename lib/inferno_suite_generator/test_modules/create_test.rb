@@ -33,7 +33,9 @@ module InfernoSuiteGenerator
     end
 
     def register_teardown_candidate
-      scratch[:teardown_candidates] << resource
+      existing_candidates = scratch[:teardown_candidates] || []
+      existing_candidates << resource
+      scratch[:teardown_candidates] << existing_candidates
     end
 
     def blank?(value)
