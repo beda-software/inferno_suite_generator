@@ -12,7 +12,8 @@ module <%= suite_module_name %>
             title: '<%= create_input_data[:title] %>',
             description: '<%= create_input_data[:description] %>',
             default: '<%= create_input_data[:default] %>',
-            optional: <%= create_input_data[:optional] %>
+            optional: <%= create_input_data[:optional] %>,
+            type: textarea
 
       id :<%= test_id %>
 
