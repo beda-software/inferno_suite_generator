@@ -1,20 +1,57 @@
 # frozen_string_literal: true
-require "json"
 
 module InfernoSuiteGenerator
   module CreateTest
+    EXPECTED_CREATE_STATUS = 201
 
     def perform_create_test
-      data_str = send(input_data)
-      puts "data_str: #{data_str}"
-      skip "No #{resource_type} resource provided for create test" if data_str.nil? || data_str.to_s.strip.empty?
+      resource_payload = resource_payload_for_input
+      resource_instance = parse_fhir_resource(resource_payload)
 
-      resource_instance = FHIR.from_contents(data_str)
       fhir_create(resource_instance)
 
-      assert_response_status(201)
+      assert_create_success
+      ensure_id_present(resource_type)
+      register_teardown_candidate
+    end
+
+    private
+
+    def resource_payload_for_input
+      payload = send(input_data)
+      skip skip_message(resource_type) if blank?(payload)
+      payload
+    end
+
+    def assert_create_success
+      assert_response_status(EXPECTED_CREATE_STATUS)
       assert_resource_type(resource_type)
-      assert resource.id.present?, "Expected server to return an id for created #{resource_type}."
+    end
+
+    def ensure_id_present(type)
+      assert resource.id.present?, missing_id_message(type)
+    end
+
+    def register_teardown_candidate
+      scratch[:teardown_candidates] << resource
+    end
+
+    def blank?(value)
+      value.nil? || value.to_s.strip.empty?
+    end
+
+    def parse_fhir_resource(payload)
+      FHIR.from_contents(payload)
+    rescue StandardError => e
+      skip "Can't create resource from provided data: #{e.message}"
+    end
+
+    def skip_message(resource_type)
+      "No #{resource_type} resource provided for create test"
+    end
+
+    def missing_id_message(resource_type)
+      "Expected server to return an id for created #{resource_type}."
     end
   end
 end
