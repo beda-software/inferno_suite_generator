@@ -1,3 +1,7 @@
+detectors:
+  UncommunicativeVariableName:
+    accept:
+      - e
 exclude_paths:
   - 'lib/inferno_suite_generator/core/ig_resources.rb'
   - 'lib/inferno_suite_generator/core/group_metadata.rb'

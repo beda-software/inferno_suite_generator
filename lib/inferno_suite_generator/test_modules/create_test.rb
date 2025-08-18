@@ -12,11 +12,7 @@ module InfernoSuiteGenerator
     EXPECTED_CREATE_STATUS = 201
 
     def perform_create_test
-      resource_payload = resource_payload_for_input
-      resource_instance = parse_fhir_resource(resource_payload)
-
-      fhir_create(resource_instance)
-
+      fhir_create(parse_fhir_resource(resource_payload_for_input))
       assert_create_success
       ensure_id_present(resource_type)
       register_teardown_candidate
@@ -26,7 +22,7 @@ module InfernoSuiteGenerator
 
     def resource_payload_for_input
       payload = send(input_data)
-      skip skip_message(resource_type) if blank?(payload)
+      skip skip_message(resource_type) if payload.to_s.strip.empty?
       payload
     end
 
@@ -40,12 +36,9 @@ module InfernoSuiteGenerator
     end
 
     def register_teardown_candidate
-      scratch[:teardown_candidates] ||= []
-      scratch[:teardown_candidates] << resource
-    end
+      return unless resource
 
-    def blank?(value)
-      value.nil? || value.to_s.strip.empty?
+      teardown_candidates << resource
     end
 
     def parse_fhir_resource(payload)
@@ -60,6 +53,10 @@ module InfernoSuiteGenerator
 
     def missing_id_message(resource_type)
       "Expected server to return an id for created #{resource_type}."
+    end
+
+    def teardown_candidates
+      scratch[:teardown_candidates] ||= []
     end
   end
 end

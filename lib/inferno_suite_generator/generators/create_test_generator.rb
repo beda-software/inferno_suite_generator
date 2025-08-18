@@ -44,7 +44,7 @@ module InfernoSuiteGenerator
       end
 
       def create_input_data
-        build_input_data(read_input_data)
+        build_input_data
       end
 
       private
@@ -55,17 +55,17 @@ module InfernoSuiteGenerator
                                       ig_resources.get_resources_by_type(group_metadata.resource) || [])
       end
 
-      def build_input_data(data)
-        return unless data.present?
-
-        default_data = data["default"]
+      def build_input_data
+        input_id, title, description, default_data = read_input_data&.values_at("input_id", "title", "description",
+                                                                                "default")
+        return unless input_id
 
         {
-          id: data["input_id"].to_sym,
-          title: data["title"],
-          description: data["description"],
-          default: default_data.length.positive? ? default_data.first : "",
-          optional: create_interaction[:expectation] != "SHALL"
+          id: input_id.to_sym,
+          title: title,
+          description: description,
+          default: default_data&.first || "",
+          optional: conformance_expectation != "SHALL"
         }
       end
     end
