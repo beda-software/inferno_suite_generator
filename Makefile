@@ -1,3 +1,5 @@
+.PHONY: typecheck lint lint-fixes tests check
+
 typecheck:
 	steep check
 
@@ -9,3 +11,8 @@ lint-fixes:
 
 tests:
 	bundle exec rake test
+
+check:
+	$(MAKE) lint
+	$(MAKE) typecheck
+	$(MAKE) tests
