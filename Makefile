@@ -2,6 +2,9 @@
 
 # Local commands
 
+fasterer:
+	fasterer
+
 typecheck:
 	steep check
 
@@ -16,6 +19,7 @@ tests:
 
 check:
 	$(MAKE) lint
+	$(MAKE) fasterer
 	$(MAKE) typecheck
 	$(MAKE) tests
 
@@ -36,7 +40,11 @@ docker-lint: docker-build
 docker-tests: docker-build
 	$(DOCKER_RUN) bundle exec rake test
 
+docker-fasterer: docker-build
+	$(DOCKER_RUN) fasterer .
+
 docker-check: docker-build
 	$(MAKE) docker-lint
+	$(MAKE) docker-fasterer
 	$(MAKE) docker-typecheck
 	$(MAKE) docker-tests

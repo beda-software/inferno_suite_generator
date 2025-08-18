@@ -20,5 +20,6 @@ group :rubocop do
 end
 
 group :development do
+  gem "fasterer", "~> 0.11.0"
   gem "steep", "~> 1.9"
 end

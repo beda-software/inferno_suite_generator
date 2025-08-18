@@ -90,6 +90,8 @@ GEM
     faraday-retry (1.0.3)
     faraday_middleware (1.2.1)
       faraday (~> 1.0)
+    fasterer (0.11.0)
+      ruby_parser (>= 3.19.1)
     ffi (1.17.2-aarch64-linux-gnu)
     ffi (1.17.2-aarch64-linux-musl)
     ffi (1.17.2-arm-linux-gnu)
@@ -314,9 +316,13 @@ GEM
       rubocop (>= 1.72.1)
     ruby-progressbar (1.13.0)
     ruby2_keywords (0.0.5)
+    ruby_parser (3.21.1)
+      racc (~> 1.5)
+      sexp_processor (~> 4.16)
     rubyzip (2.4.1)
     securerandom (0.4.1)
     sequel (5.42.0)
+    sexp_processor (4.17.3)
     sidekiq (7.2.4)
       concurrent-ruby (< 2)
       connection_pool (>= 2.3.0)
@@ -386,6 +392,7 @@ PLATFORMS
   x86_64-linux-musl
 
 DEPENDENCIES
+  fasterer (~> 0.11.0)
   inferno_core (>= 0.6.1)
   inferno_suite_generator!
   minitest (~> 5.22)
