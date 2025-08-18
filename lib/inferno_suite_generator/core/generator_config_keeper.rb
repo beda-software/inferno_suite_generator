@@ -14,11 +14,11 @@ module InfernoSuiteGenerator
     # This class is responsible for loading, validating, and providing access to
     # configuration settings used throughout the test suite generation process.
     class GeneratorConfigKeeper
-      include GeneratorConfigKeeperGetters
-      include GeneratorConfigKeeperExtractors
-      include GeneratorConfigKeeperGenerators
-      include GeneratorConfigKeeperConstants
-      include GeneratorConfigKeeperUtils
+      include Getters
+      include Extractors
+      include Generators
+      include Constants
+      include Utils
 
       attr_reader :config, :version, :config_file_path
 

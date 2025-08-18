@@ -10,9 +10,9 @@ module InfernoSuiteGenerator
       #
       # This module contains methods for retrieving various configuration settings
       # from the GeneratorConfigKeeper's configuration object.
-      module GeneratorConfigKeeperGetters
-        include GeneratorConfigKeeperConstants
-        include GeneratorConfigKeeperUtils
+      module Getters
+        include Constants
+        include Utils
 
         def tx_server_url
           get("suite.tx_server_url")

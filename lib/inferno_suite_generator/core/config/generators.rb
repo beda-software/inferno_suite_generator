@@ -12,10 +12,10 @@ module InfernoSuiteGenerator
       #
       # This module contains methods that generate configuration values and inputs
       # for various test types, including search tests, read tests, and special cases.
-      module GeneratorConfigKeeperGenerators
-        include GeneratorConfigKeeperConstants
-        include GeneratorConfigKeeperUtils
-        include GeneratorConfigKeeperGetters
+      module Generators
+        include Constants
+        include Utils
+        include Getters
         include GenericUtils
 
         def custom_generators

@@ -7,11 +7,11 @@ module InfernoSuiteGenerator
 
   class Generator
     class GeneratorConfigKeeper
-      include GeneratorConfigKeeperGetters
-      include GeneratorConfigKeeperExtractors
-      include GeneratorConfigKeeperGenerators
-      include GeneratorConfigKeeperConstants
-      include GeneratorConfigKeeperUtils
+      include Getters
+      include Extractors
+      include Generators
+      include Constants
+      include Utils
       include GenericUtils
 
       attr_reader config: Hash[String, untyped]
@@ -33,7 +33,7 @@ module InfernoSuiteGenerator
       def ig_deps_path: () -> String
       def main_file_path: () -> String
 
-      module GeneratorConfigKeeperUtils
+      module Utils
         def get: (String path, ?untyped default) -> untyped
         def get_new: (String path, ?untyped default) -> untyped
         def resolve_profile_resource_value: (String profile_path, String resource_path, ?untyped default_value) -> untyped
@@ -45,9 +45,9 @@ module InfernoSuiteGenerator
         def constants: () -> Hash[String, untyped]
       end
 
-      module GeneratorConfigKeeperGetters
-        include GeneratorConfigKeeperConstants
-        include GeneratorConfigKeeperUtils
+      module Getters
+        include Constants
+        include Utils
 
         def tx_server_url: () -> String
         def resources_configs: () -> Hash[String, untyped]
@@ -67,9 +67,9 @@ module InfernoSuiteGenerator
         def extra_searches: (String profile_url, String resource_type) -> (Array[Hash[String, untyped]] | Array[untyped])
       end
 
-      module GeneratorConfigKeeperExtractors
-        include GeneratorConfigKeeperConstants
-        include GeneratorConfigKeeperUtils
+      module Extractors
+        include Constants
+        include Utils
 
         def multiple_and_expectation: (String profile_url, String resource_type, String param_id) -> ("SHALL" | "SHOULD" | "MAY" | nil)
         def multiple_or_expectation: (String profile_url, String resource_type, String param_id) -> ("SHALL" | "SHOULD" | "MAY" | nil)
@@ -84,10 +84,10 @@ module InfernoSuiteGenerator
         def custom_extractors: (String profile_url, String resource) -> (Array[Hash[String, untyped]] | Array[untyped])
       end
 
-      module GeneratorConfigKeeperGenerators
-        include GeneratorConfigKeeperConstants
-        include GeneratorConfigKeeperUtils
-        include GeneratorConfigKeeperGetters
+      module Generators
+        include Constants
+        include Utils
+        include Getters
         include GenericUtils
 
         def resources_to_exclude: (String profile_url, String resource_type) -> bool
@@ -107,7 +107,7 @@ module InfernoSuiteGenerator
         def create_test_input_data: (String group_name, String profile_name, untyped default_value) -> Hash[String, untyped]
       end
 
-      module GeneratorConfigKeeperConstants
+      module Constants
         EMPTY_ARRAY: Array[untyped]
         EMPTY_HASH: Hash[untyped, untyped]
       end

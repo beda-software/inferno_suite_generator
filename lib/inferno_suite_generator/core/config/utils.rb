@@ -6,8 +6,8 @@ module InfernoSuiteGenerator
   class Generator
     class GeneratorConfigKeeper
       # Provides utility methods for handling configuration values in the generator
-      module GeneratorConfigKeeperUtils
-        include GeneratorConfigKeeperConstants
+      module Utils
+        include Constants
 
         def get(path, default = nil)
           # TODO: Remove
@@ -34,7 +34,7 @@ module InfernoSuiteGenerator
         end
 
         def constants
-          get("constants", GeneratorConfigKeeperConstants::EMPTY_HASH)
+          get("constants", Constants::EMPTY_HASH)
         end
 
         def simple_type?(value)

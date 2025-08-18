@@ -10,9 +10,9 @@ module InfernoSuiteGenerator
       #
       # This module contains methods that extract and process configuration values
       # related to search parameters, expectations, and other test-specific settings.
-      module GeneratorConfigKeeperExtractors
-        include GeneratorConfigKeeperConstants
-        include GeneratorConfigKeeperUtils
+      module Extractors
+        include Constants
+        include Utils
 
         def multiple_and_expectation(profile_url, resource_type, param_id)
           resolve_profile_resource_value(

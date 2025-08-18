@@ -4,7 +4,7 @@ module InfernoSuiteGenerator
   class Generator
     class GeneratorConfigKeeper
       # Defines constant values used across the configuration system
-      module GeneratorConfigKeeperConstants
+      module Constants
         # @type var empty_array: Array[untyped]
         empty_array = []
         EMPTY_ARRAY = empty_array.freeze
