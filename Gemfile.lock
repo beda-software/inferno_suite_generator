@@ -302,10 +302,6 @@ GEM
     rubocop-md (2.0.1)
       lint_roller (~> 1.1)
       rubocop (>= 1.72.1)
-    rubocop-minitest (0.38.1)
-      lint_roller (~> 1.1)
-      rubocop (>= 1.75.0, < 2.0)
-      rubocop-ast (>= 1.38.0, < 2.0)
     rubocop-packaging (0.6.0)
       lint_roller (~> 1.1.0)
       rubocop (>= 1.72.1, < 2.0)
@@ -397,7 +393,6 @@ DEPENDENCIES
   rubocop (~> 1.21)
   rubocop-erb
   rubocop-md
-  rubocop-minitest
   rubocop-packaging
   rubocop-performance
   rubocop-rake

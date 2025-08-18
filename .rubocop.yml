@@ -4,7 +4,6 @@ plugins:
   - rubocop-md
   - rubocop-erb
   - rubocop-rake
-  - rubocop-minitest
 
 AllCops:
   NewCops: enable

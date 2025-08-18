@@ -79,43 +79,30 @@ module InfernoSuiteGenerator
         end
 
         def create_test_input_data(group_name, profile_name, default_value)
-          snake_case_group_name = camel_to_snake(group_name)
-
-          {
-            "input_id" => "#{snake_case_group_name}_data",
-            "title" => "#{profile_name} resource in JSON format",
-            "description" => "#{profile_name} in JSON format to be sent to the server.",
-            "default" => default_value
-          }
+          test_input_builder("#{camel_to_snake(group_name)}_data", "#{profile_name} resource in JSON format",
+                             "#{profile_name} in JSON format to be sent to the server.", default_value)
         end
 
         def read_test_ids_inputs(profile_url, resource_type)
           return unless first_class_read?(profile_url, resource_type)
 
           snake_case_resource_type = camel_to_snake(resource_type)
-
-          {
-            "input_id" => "#{snake_case_resource_type}_ids",
-            "title" => "#{resource_type} IDs",
-            "description" => "Comma separated list of #{snake_case_resource_type.tr("_", " ")} " \
-                             "IDs that in sum contain all MUST SUPPORT elements",
-            "default" => constants["read_ids.#{snake_case_resource_type}"] || ""
-          }
+          description = "Comma separated list of #{snake_case_resource_type.tr("_", " ")} " \
+                        "IDs that in sum contain all MUST SUPPORT elements"
+          test_input_builder(
+            "#{snake_case_resource_type}_ids", "#{resource_type} IDs",
+            description, constants["read_ids.#{snake_case_resource_type}"] || ""
+          )
         end
 
         def search_test_ids_inputs(profile_url, resource_type, param_names)
           return unless first_class_search?(profile_url, resource_type, param_names)
 
           snake_case_resource_type = GenericUtils.camel_to_snake(resource_type)
-          resource_display_name = snake_case_resource_type.tr("_", " ")
-
-          {
-            "input_id" => "#{snake_case_resource_type}_ids",
-            "title" => "#{resource_type} IDs",
-            "description" => "Comma separated list of #{resource_display_name} " \
+          test_input_builder("#{snake_case_resource_type}_ids", "#{resource_type} IDs",
+                             "Comma separated list of #{snake_case_resource_type.tr("_", " ")} " \
                              "IDs that in sum contain all MUST SUPPORT elements",
-            "default" => constants["read_ids.#{snake_case_resource_type}"] || ""
-          }
+                             constants["read_ids.#{snake_case_resource_type}"] || "")
         end
 
         def test_medication_inclusion?(profile_url, resource_type)

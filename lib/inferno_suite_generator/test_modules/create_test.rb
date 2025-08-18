@@ -1,6 +1,13 @@
 # frozen_string_literal: true
 
 module InfernoSuiteGenerator
+  # Module handles sending FHIR resource instances
+  # to a server via the create operation and validating the response. It supports:
+  #
+  # - Converting input data into FHIR resource instances
+  # - Sending create requests to FHIR servers
+  # - Validating response status codes and resource types
+  # - Verifying server-assigned resource IDs
   module CreateTest
     EXPECTED_CREATE_STATUS = 201
 

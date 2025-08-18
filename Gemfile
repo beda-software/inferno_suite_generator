@@ -14,7 +14,6 @@ group :rubocop do
   gem "rubocop", "~> 1.21"
   gem "rubocop-erb", require: false
   gem "rubocop-md", require: false
-  gem "rubocop-minitest", require: false
   gem "rubocop-packaging", require: false
   gem "rubocop-performance", require: false
   gem "rubocop-rake", require: false
