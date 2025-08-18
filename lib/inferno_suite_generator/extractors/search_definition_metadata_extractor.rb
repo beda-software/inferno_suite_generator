@@ -122,12 +122,15 @@ module InfernoSuiteGenerator
 
       def comparators
         {}.tap do |comparators|
-          param.comparator&.each_with_index do |comparator, index|
+          index = 0
+          while index < param.comparator.to_a.length
+            comparator = param.comparator[index]
             resource_profile_comparators = Registry.get(:config_keeper).get_comparators(group_metadata[:url],
                                                                                         group_metadata[:resource], param_hash["id"])
             is_special_case = resource_profile_comparators.any? && resource_profile_comparators.include?(comparator)
             value = is_special_case ? "SHALL" : comparator_expectation(comparator_expectation_extensions[index])
             comparators[comparator.to_sym] = value
+            index += 1
           end
         end
       end

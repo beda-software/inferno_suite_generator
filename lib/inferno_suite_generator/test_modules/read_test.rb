@@ -31,9 +31,9 @@ module InfernoSuiteGenerator
     end
 
     def fetch_resource_ids(resource_type)
-      send("#{camel_to_snake(resource_type)}_ids")
-    rescue NoMethodError
-      ""
+      method_name = "#{camel_to_snake(resource_type)}_ids"
+      return "" unless respond_to?(method_name)
+      send(method_name)
     end
 
     def resource_ids_str_to_arr(resource_ids_str)

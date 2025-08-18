@@ -91,12 +91,10 @@ module InfernoSuiteGenerator
         element.url == extension_url ? element : nil
       elsif property.to_s.include?(":") && !property.to_s.include?("url")
         find_slice_via_discriminator(element, property)
-
       else
+        return nil unless element.respond_to?(property)
         element.send(property)
       end
-    rescue NoMethodError
-      nil
     end
 
     def find_slice_via_discriminator(element, property)

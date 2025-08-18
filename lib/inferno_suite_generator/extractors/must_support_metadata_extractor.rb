@@ -261,11 +261,14 @@ module InfernoSuiteGenerator
         if type.targetProfile&.length == 1
           target_profiles << type.targetProfile.first
         else
-          type.source_hash["_targetProfile"]&.each_with_index do |hash, index|
+          i = 0
+          while i < type.source_hash["_targetProfile"]&.length.to_i
+            hash = type.source_hash["_targetProfile"][i]
             if hash.present?
               element = FHIR::Element.new(hash)
-              target_profiles << type.targetProfile[index] if type_must_support_extension?(element.extension)
+              target_profiles << type.targetProfile[i] if type_must_support_extension?(element.extension)
             end
+            i += 1
           end
         end
 
