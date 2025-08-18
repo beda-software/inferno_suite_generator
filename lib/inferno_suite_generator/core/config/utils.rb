@@ -1,13 +1,22 @@
 # frozen_string_literal: true
 
-require_relative "getters"
+require_relative "constants"
 
 module InfernoSuiteGenerator
   class Generator
     class GeneratorConfigKeeper
       # Provides utility methods for handling configuration values in the generator
       module GeneratorConfigKeeperUtils
-        include GeneratorConfigKeeperGetters
+        include GeneratorConfigKeeperConstants
+
+        def get(path, default = nil)
+          # TODO: Remove
+          @config.dig(*path.split(".")) || default
+        end
+
+        def get_new(path, default = nil)
+          @config.dig(*path.split("&.")) || default
+        end
 
         def resolve_profile_resource_value(profile_path, resource_path, default_value = nil)
           profile_value = get_new(profile_path, default_value)
@@ -22,6 +31,10 @@ module InfernoSuiteGenerator
 
         def resolve_from_constants(value)
           constants[value] || value
+        end
+
+        def constants
+          get("constants", GeneratorConfigKeeperConstants::EMPTY_HASH)
         end
 
         def simple_type?(value)

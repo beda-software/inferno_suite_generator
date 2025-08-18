@@ -98,7 +98,7 @@ module InfernoSuiteGenerator
         def search_test_ids_inputs(profile_url, resource_type, param_names)
           return unless first_class_search?(profile_url, resource_type, param_names)
 
-          snake_case_resource_type = GenericUtils.camel_to_snake(resource_type)
+          snake_case_resource_type = camel_to_snake(resource_type)
           test_input_builder("#{snake_case_resource_type}_ids", "#{resource_type} IDs",
                              "Comma separated list of #{snake_case_resource_type.tr("_", " ")} " \
                              "IDs that in sum contain all MUST SUPPORT elements",

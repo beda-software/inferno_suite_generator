@@ -1,3 +1,7 @@
+module GenericUtils
+    def test_input_builder: (String id, String title, String description, String default_value) -> Hash[String, String]
+end
+
 module InfernoSuiteGenerator
   VERSION: String
 
@@ -8,6 +12,7 @@ module InfernoSuiteGenerator
       include GeneratorConfigKeeperGenerators
       include GeneratorConfigKeeperConstants
       include GeneratorConfigKeeperUtils
+      include GenericUtils
 
       attr_reader config: Hash[String, untyped]
       attr_reader version: Array[untyped]
@@ -29,21 +34,21 @@ module InfernoSuiteGenerator
       def main_file_path: () -> String
 
       module GeneratorConfigKeeperUtils
-        include GeneratorConfigKeeperGetters
-
+        def get: (String path, ?untyped default) -> untyped
+        def get_new: (String path, ?untyped default) -> untyped
         def resolve_profile_resource_value: (String profile_path, String resource_path, ?untyped default_value) -> untyped
         def camel_to_snake: (String str) -> String
         def resolve_from_constants: (untyped value) -> untyped
         def simple_type?: (untyped value) -> bool
         def collection_with_elements?: (untyped value) -> bool
         def first_class_read?: (String profile_url, String resource_type) -> bool
+        def constants: () -> Hash[String, untyped]
       end
 
       module GeneratorConfigKeeperGetters
         include GeneratorConfigKeeperConstants
+        include GeneratorConfigKeeperUtils
 
-        def get: (String path, ?untyped default) -> untyped
-        def get_new: (String path, ?untyped default) -> untyped
         def tx_server_url: () -> String
         def resources_configs: () -> Hash[String, untyped]
         def ig_link: () -> String
@@ -58,8 +63,8 @@ module InfernoSuiteGenerator
         def extra_json_paths: () -> Array[String]
         def search_params_to_ignore: () -> Array[String]
         def search_params_expectation: () -> (Array["SHOULD" | "SHALL" | "MAY"] | Array[untyped])
-        def constants: () -> Hash[String, untyped]
         def outer_groups: () -> (Array[Hash[String, untyped]] | Array[untyped])
+        def extra_searches: (String profile_url, String resource_type) -> (Array[Hash[String, untyped]] | Array[untyped])
       end
 
       module GeneratorConfigKeeperExtractors
@@ -76,12 +81,14 @@ module InfernoSuiteGenerator
         def get_first_class_status: (String profile_url, String resource) -> bool
         def get_forced_initial_search: (String profile_url, String resource) -> Array[String]
         def first_search_params: (String profile_url, String resource) -> Array[String]
+        def custom_extractors: (String profile_url, String resource) -> (Array[Hash[String, untyped]] | Array[untyped])
       end
 
       module GeneratorConfigKeeperGenerators
         include GeneratorConfigKeeperConstants
         include GeneratorConfigKeeperUtils
         include GeneratorConfigKeeperGetters
+        include GenericUtils
 
         def resources_to_exclude: (String profile_url, String resource_type) -> bool
         def add_extra_searches?: (String profile_url, String resource_type, Array[String] search_names) -> bool
@@ -96,6 +103,8 @@ module InfernoSuiteGenerator
         def test_medication_inclusion?: (String profile_url, String resource_type) -> untyped
         def process_include_search: (Hash[String, untyped] result, String resource, Hash[String, untyped] search) -> Hash[String, untyped]
         def special_includes_cases: (String profile_url, String resource) -> Hash[String, untyped]
+        def custom_generators: () -> (Array[Hash[String, untyped]] | Array[untyped])
+        def create_test_input_data: (String group_name, String profile_name, untyped default_value) -> Hash[String, untyped]
       end
 
       module GeneratorConfigKeeperConstants

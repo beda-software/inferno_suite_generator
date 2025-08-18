@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative "constants"
+require_relative "utils"
 
 module InfernoSuiteGenerator
   class Generator
@@ -11,15 +12,7 @@ module InfernoSuiteGenerator
       # from the GeneratorConfigKeeper's configuration object.
       module GeneratorConfigKeeperGetters
         include GeneratorConfigKeeperConstants
-
-        def get(path, default = nil)
-          # TODO: Remove
-          @config.dig(*path.split(".")) || default
-        end
-
-        def get_new(path, default = nil)
-          @config.dig(*path.split("&.")) || default
-        end
+        include GeneratorConfigKeeperUtils
 
         def tx_server_url
           get("suite.tx_server_url")
@@ -75,10 +68,6 @@ module InfernoSuiteGenerator
 
         def search_params_expectation
           get("configs.generic.expectation", EMPTY_ARRAY)
-        end
-
-        def constants
-          get("constants", EMPTY_HASH)
         end
 
         def outer_groups
