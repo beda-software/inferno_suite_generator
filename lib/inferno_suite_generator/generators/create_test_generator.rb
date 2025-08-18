@@ -25,14 +25,14 @@ module InfernoSuiteGenerator
         end
       end
 
-      attr_accessor :ig_resources, :config
+      attr_reader :ig_resources, :config
 
       self.template_type = TEMPLATE_TYPES[:CREATE]
 
       def initialize(group_metadata, base_output_dir, ig_metadata, ig_resources = nil)
         super(group_metadata, base_output_dir, ig_metadata)
-        self.ig_resources = ig_resources
-        self.config = Registry.get(:config_keeper)
+        @ig_resources = ig_resources
+        @config = Registry.get(:config_keeper)
       end
 
       def create_interaction
