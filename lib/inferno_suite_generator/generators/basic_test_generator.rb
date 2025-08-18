@@ -9,11 +9,13 @@ module InfernoSuiteGenerator
     class BasicTestGenerator
       include GeneratorConstants
 
+      attr_reader :group_metadata, :base_output_dir, :ig_metadata
+
       class_attribute :template_type
       def initialize(group_metadata, base_output_dir, ig_metadata)
-        self.group_metadata = group_metadata
-        self.base_output_dir = base_output_dir
-        self.ig_metadata = ig_metadata
+        @group_metadata = group_metadata
+        @base_output_dir = base_output_dir
+        @ig_metadata = ig_metadata
       end
 
       def suite_module_name

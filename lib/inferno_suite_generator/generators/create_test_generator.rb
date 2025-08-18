@@ -25,7 +25,7 @@ module InfernoSuiteGenerator
         end
       end
 
-      attr_accessor :group_metadata, :base_output_dir, :ig_metadata, :ig_resources, :config
+      attr_accessor :ig_resources, :config
 
       self.template_type = TEMPLATE_TYPES[:CREATE]
 
@@ -56,11 +56,15 @@ module InfernoSuiteGenerator
       end
 
       def build_input_data(data)
+        return unless data.present?
+
+        default_data = data["default"]
+
         {
           id: data["input_id"].to_sym,
           title: data["title"],
           description: data["description"],
-          default: data["default"].length.positive? ? data["default"].first : "",
+          default: default_data.length.positive? ? default_data.first : "",
           optional: create_interaction[:expectation] != "SHALL"
         }
       end
