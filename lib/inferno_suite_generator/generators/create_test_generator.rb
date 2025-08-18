@@ -62,8 +62,8 @@ module InfernoSuiteGenerator
 
         {
           id: input_id.to_sym,
-          title: title,
-          description: description,
+          title:,
+          description:,
           default: default_data&.first || "",
           optional: conformance_expectation != "SHALL"
         }

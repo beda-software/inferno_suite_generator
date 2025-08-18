@@ -36,19 +36,19 @@ docker-build:
 	docker build -t $(DOCKER_IMAGE) .
 
 docker-typecheck: docker-build
-	$(DOCKER_RUN) steep check
+	$(DOCKER_RUN) bundle exec steep check
 
 docker-lint: docker-build
-	$(DOCKER_RUN) rubocop .
+	$(DOCKER_RUN) bundle exec rubocop .
 
 docker-tests: docker-build
 	$(DOCKER_RUN) bundle exec rake test
 
 docker-fasterer: docker-build
-	$(DOCKER_RUN) fasterer .
+	$(DOCKER_RUN) bundle exec fasterer .
 
 docker-reek: docker-build
-	$(DOCKER_RUN) reek .
+	$(DOCKER_RUN) bundle exec reek .
 
 docker-check: docker-build
 	$(MAKE) docker-lint
