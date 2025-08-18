@@ -5,6 +5,9 @@
 fasterer:
 	fasterer
 
+reek:
+	reek
+
 typecheck:
 	steep check
 
@@ -20,6 +23,7 @@ tests:
 check:
 	$(MAKE) lint
 	$(MAKE) fasterer
+	$(MAKE) reek
 	$(MAKE) typecheck
 	$(MAKE) tests
 
@@ -43,8 +47,12 @@ docker-tests: docker-build
 docker-fasterer: docker-build
 	$(DOCKER_RUN) fasterer .
 
+docker-reek: docker-build
+	$(DOCKER_RUN) reek .
+
 docker-check: docker-build
 	$(MAKE) docker-lint
 	$(MAKE) docker-fasterer
+	$(MAKE) docker-reek
 	$(MAKE) docker-typecheck
 	$(MAKE) docker-tests
