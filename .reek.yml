@@ -36,7 +36,6 @@ exclude_paths:
   - 'lib/inferno_suite_generator/extractors/search_metadata_extractor.rb'
   - 'lib/inferno_suite_generator/extractors/ig_metadata_extractor.rb'
   - 'lib/inferno_suite_generator/extractors/must_support_metadata_extractor.rb'
-  - 'lib/inferno_suite_generator/test_modules/validation_test.rb'
   - 'lib/inferno_suite_generator/test_modules/chained_search_test.rb'
   - 'lib/inferno_suite_generator/test_modules/must_support_test.rb'
   - 'lib/inferno_suite_generator/test_modules/search_test.rb'
