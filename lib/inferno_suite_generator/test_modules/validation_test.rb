@@ -15,9 +15,9 @@ module InfernoSuiteGenerator
     def perform_validation_test(resources,
                                 profile_url,
                                 profile_version,
-                                validation_behavior: :skip_if_empty)
+                                validation_behavior)
       config = ValidationConfig.new(resources: resources, profile_url: profile_url)
-      validate_resource_conditions(config, validation_behavior == :skip_if_empty)
+      validate_resource_conditions(config, validation_behavior)
       process_resources(config, profile_version)
     end
 
