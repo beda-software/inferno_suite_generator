@@ -10,28 +10,31 @@ module InfernoSuiteGenerator
     DAR_CODE_SYSTEM_URL = "http://terminology.hl7.org/CodeSystem/data-absent-reason"
     DAR_EXTENSION_URL = "http://hl7.org/fhir/StructureDefinition/data-absent-reason"
 
+    ValidationConfig = Struct.new(:resources, :profile_url, keyword_init: true)
+
     def perform_validation_test(resources,
                                 profile_url,
                                 profile_version,
                                 validation_behavior: :skip_if_empty)
-      validate_resource_conditions(resources, profile_url, validation_behavior == :skip_if_empty)
-      process_resources(resources, profile_url, profile_version)
+      config = ValidationConfig.new(resources: resources, profile_url: profile_url)
+      validate_resource_conditions(config, validation_behavior == :skip_if_empty)
+      process_resources(config, profile_version)
     end
 
     private
 
-    def validate_resource_conditions(resources, profile_url, skip_if_empty)
-      resources_blank = resources.blank?
+    def validate_resource_conditions(config, skip_if_empty)
+      resources_blank = config.resources.blank?
       conditional_skip_with_msg skip_if_empty && resources_blank,
-                                "No #{resource_type} resources conforming to the #{profile_url} profile were returned"
+                                "No #{resource_type} resources conforming to the #{config.profile_url} profile were returned"
 
       omit_if resources_blank,
-              "No #{resource_type} resources provided so the #{profile_url} profile does not apply"
+              "No #{resource_type} resources provided so the #{config.profile_url} profile does not apply"
     end
 
-    def process_resources(resources, profile_url, profile_version)
-      profile_with_version = "#{profile_url}|#{profile_version}"
-      filtered_resources = resources.select { |resource| resource.meta&.profile&.include?(profile_url) }
+    def process_resources(config, profile_version)
+      profile_with_version = "#{config.profile_url}|#{profile_version}"
+      filtered_resources = config.resources.select { |resource| resource.meta&.profile&.include?(config.profile_url) }
 
       filtered_resources.each do |resource|
         resource_is_valid?(resource:, profile_url: profile_with_version)
