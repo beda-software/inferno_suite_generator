@@ -6,26 +6,28 @@ require_relative "../utils/registry"
 
 module InfernoSuiteGenerator
   class Generator
+    # Generator that creates tests to validate reference resolution in FHIR resources.
+    # It generates tests to verify that references marked as MustSupport can be properly
+    # resolved to their target resources. This includes checking that referenced
+    # resources exist and are accessible via the FHIR server's RESTful API.
     class ReferenceResolutionTestGenerator < BasicTestGenerator
       class << self
         def generate(ig_metadata, base_output_dir)
-          ig_metadata.groups
-                     .reject do |group|
-                       Registry.get(:config_keeper).exclude_resource?(group.profile_url, group.resource)
-                     end
-                     .each { |group| new(group, base_output_dir, ig_metadata).generate }
+          ig_metadata.groups.each do |group|
+            next if Registry.get(:config_keeper).exclude_resource?(group.profile_url, group.resource)
+
+            new(group, base_output_dir, ig_metadata).generate
+          end
         end
       end
 
-      attr_accessor :group_metadata, :base_output_dir, :ig_metadata
+      attr_reader :config
 
       self.template_type = TEMPLATE_TYPES[:REFERENCE_RESOLUTION]
 
       def initialize(group_metadata, base_output_dir, ig_metadata)
-        self.group_metadata = group_metadata
-        self.base_output_dir = base_output_dir
-        self.ig_metadata = ig_metadata
-        self.config = Registry.get(:config_keeper)
+        super
+        @config = Registry.get(:config_keeper)
       end
 
       def resource_collection_string
@@ -57,7 +59,7 @@ module InfernoSuiteGenerator
         return if must_support_references.empty?
 
         FileUtils.mkdir_p(output_file_directory)
-        File.open(output_file_name, "w") { |f| f.write(output) }
+        File.write(output_file_name, output)
 
         group_metadata.add_test(
           id: test_id,

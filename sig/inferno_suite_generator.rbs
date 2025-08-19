@@ -65,6 +65,7 @@ module InfernoSuiteGenerator
         def search_params_expectation: () -> (Array["SHOULD" | "SHALL" | "MAY"] | Array[untyped])
         def outer_groups: () -> (Array[Hash[String, untyped]] | Array[untyped])
         def extra_searches: (String profile_url, String resource_type) -> (Array[Hash[String, untyped]] | Array[untyped])
+        def rewrite_profile_url: () -> Hash[String, untyped]
       end
 
       module Extractors

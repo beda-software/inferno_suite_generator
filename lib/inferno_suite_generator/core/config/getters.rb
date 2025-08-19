@@ -75,7 +75,7 @@ module InfernoSuiteGenerator
         end
 
         def rewrite_profile_url
-          get("configs.genetic.rewrite_profile_url", EMPTY_HASH)
+          get("configs.generic.rewrite_profile_url", EMPTY_HASH)
         end
 
         def extra_searches(profile_url, resource_type)
