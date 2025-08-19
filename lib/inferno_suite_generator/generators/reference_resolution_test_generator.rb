@@ -25,6 +25,7 @@ module InfernoSuiteGenerator
         self.group_metadata = group_metadata
         self.base_output_dir = base_output_dir
         self.ig_metadata = ig_metadata
+        self.config = Registry.get(:config_keeper)
       end
 
       def resource_collection_string
@@ -37,7 +38,7 @@ module InfernoSuiteGenerator
       end
 
       def title
-        Registry.get(:config_keeper).title
+        config.title
       end
 
       def must_support_reference_list_string
@@ -46,6 +47,10 @@ module InfernoSuiteGenerator
           .uniq
           .sort
           .join("\n")
+      end
+
+      def rewrite_profile_url_hash
+        config.rewrite_profile_url
       end
 
       def generate

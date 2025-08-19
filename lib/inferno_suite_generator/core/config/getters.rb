@@ -74,6 +74,10 @@ module InfernoSuiteGenerator
           get("suite.outer_groups", EMPTY_ARRAY)
         end
 
+        def rewrite_profile_url
+          get("configs.genetic.rewrite_profile_url", EMPTY_HASH)
+        end
+
         def extra_searches(profile_url, resource_type)
           resolve_profile_resource_value(
             "configs&.profiles&.#{profile_url}&.extra_searches",

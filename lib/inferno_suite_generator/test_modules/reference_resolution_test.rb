@@ -11,10 +11,10 @@ module InfernoSuiteGenerator
 
     def_delegators "self.class", :metadata
 
-    def perform_reference_resolution_test(resources)
+    def perform_reference_resolution_test(resources, rewrite_profile_url = {})
       conditional_skip_with_msg resources.blank?, no_resources_skip_message
 
-      pass if unresolved_references(resources).empty?
+      pass if unresolved_references(resources, rewrite_profile_url).empty?
 
       skip_with_msg "Could not resolve and validate any Must Support references for #{unresolved_references_strings.join(", ")}"
     end
@@ -83,7 +83,7 @@ module InfernoSuiteGenerator
       end.flatten
     end
 
-    def unresolved_references(resources = [])
+    def unresolved_references(resources = [], rewrite_profile_url)
       @unresolved_references ||=
         must_support_references_with_target_profile.select do |reference_path_profile_pair|
           path = reference_path_profile_pair[:path]
@@ -98,7 +98,7 @@ module InfernoSuiteGenerator
             found_one_reference = true
 
             value_found.any? do |reference|
-              validate_reference_resolution(resource, reference, target_profile)
+              validate_reference_resolution(resource, reference, target_profile, rewrite_profile_url)
             end
           end
 
@@ -123,7 +123,7 @@ module InfernoSuiteGenerator
       @unresolved_references
     end
 
-    def validate_reference_resolution(resource, reference, target_profile)
+    def validate_reference_resolution(resource, reference, target_profile, rewrite_profile_url)
       return true if is_reference_resolved?(reference, target_profile)
 
       if reference.contained?
@@ -132,7 +132,7 @@ module InfernoSuiteGenerator
 
         return resource.contained.any? do |contained_resource|
                  contained_resource&.id == reference.reference_id &&
-                 resource_is_valid_with_target_profile?(contained_resource, target_profile)
+                 resource_is_valid_with_target_profile?(contained_resource, target_profile, rewrite_profile_url)
                end
       end
 
@@ -168,14 +168,22 @@ module InfernoSuiteGenerator
       true
     end
 
-    def resource_is_valid_with_target_profile?(resource, target_profile)
+    def get_target_profile_with_version(target_profile, rewrite_profile_url)
+      if rewrite_profile_url.key?(target_profile)
+        rewrite_profile_url[target_profile]
+      else
+        "#{target_profile}|#{metadata.profile_version}"
+      end
+    end
+
+    def resource_is_valid_with_target_profile?(resource, target_profile, rewrite_profile_url)
       return true if target_profile.blank?
 
       # Only need to know if the resource is valid.
       # Calling resource_is_valid? causes validation errors to be logged.
       validator = find_validator(:default)
 
-      target_profile_with_version = target_profile == "http://hl7.org.au/fhir/StructureDefinition/au-specimen" ? target_profile : "#{target_profile}|#{metadata.profile_version}"
+      target_profile_with_version = get_target_profile_with_version(target_profile, rewrite_profile_url)
       begin
         validator_response = validator.validate(resource, target_profile_with_version)
         outcome = validator.operation_outcome_from_hl7_wrapped_response(validator_response)
