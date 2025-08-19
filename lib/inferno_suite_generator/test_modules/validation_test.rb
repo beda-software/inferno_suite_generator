@@ -21,6 +21,8 @@ module InfernoSuiteGenerator
 
       profile_with_version = "#{profile_url}|#{profile_version}"
       resources.each do |resource|
+        next unless resource&.meta&.profile&.include?(profile_url)
+
         resource_is_valid?(resource:, profile_url: profile_with_version)
         check_for_dar(resource)
       end
