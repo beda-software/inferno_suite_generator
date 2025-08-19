@@ -3,6 +3,7 @@
 require_relative "../utils/assert_helpers"
 
 module InfernoSuiteGenerator
+  # Module for validating FHIR resources against profiles and checking for data absent reason codes/extensions.
   module ValidationTest
     include AssertHelpers
 
