@@ -767,6 +767,10 @@ module InfernoSuiteGenerator
 
         break if next_bundle_link.blank?
 
+        if next_bundle_link.include?("http://localhost:8080/fhir")
+          next_bundle_link = next_bundle_link.gsub("http://localhost:8080/fhir", url)
+        end
+
         reply = fhir_client.raw_read_url(next_bundle_link)
 
         store_request("outgoing") { reply }
