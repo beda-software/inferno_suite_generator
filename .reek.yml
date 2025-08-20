@@ -41,6 +41,7 @@ exclude_paths:
   - 'lib/inferno_suite_generator/test_modules/search_test.rb'
   - 'lib/inferno_suite_generator/test_modules/reference_resolution_test.rb'
   - 'lib/inferno_suite_generator/test_modules/read_test.rb'
+  - 'lib/inferno_suite_generator/test_modules/validation_test.rb'
   - 'lib/inferno_suite_generator.rb'
   - 'test/smoke_test.rb'
   - 'lib/inferno_suite_generator/core/config/extractors.rb'
