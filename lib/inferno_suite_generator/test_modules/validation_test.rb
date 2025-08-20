@@ -10,6 +10,7 @@ module InfernoSuiteGenerator
     DAR_CODE_SYSTEM_URL = "http://terminology.hl7.org/CodeSystem/data-absent-reason"
     DAR_EXTENSION_URL = "http://hl7.org/fhir/StructureDefinition/data-absent-reason"
 
+    # Configuration structure for validation tests that holds resources and profile URL
     ValidationConfig = Struct.new(:resources, :profile_url, keyword_init: true)
 
     def perform_validation_test(resources,
@@ -34,6 +35,7 @@ module InfernoSuiteGenerator
     def process_resources(config, profile_version)
       profile_with_version = "#{config.profile_url}|#{profile_version}"
       filtered_resources = filtered_resources(config)
+      skip_if filtered_resources.blank?, message_no_resource_with_profile(profile_with_version)
 
       filtered_resources.each do |resource|
         resource_is_valid?(resource:, profile_url: profile_with_version)
@@ -42,17 +44,11 @@ module InfernoSuiteGenerator
 
       errors_found = messages.any? { |message| message[:type] == "error" }
 
-      skip_if invalid_state?(filtered_resources, errors_found),
-              "There is no resources with the profile #{profile_with_version}"
       assert !errors_found, "Resource does not conform to the profile #{profile_with_version}"
     end
 
     def filtered_resources(config)
       config.resources.select { |resource| resource.meta&.profile&.include?(config.profile_url) }
-    end
-
-    def invalid_state?(filtered_resources, errors_found)
-      !errors_found && filtered_resources.blank?
     end
 
     def check_for_dar(resource)
@@ -85,6 +81,10 @@ module InfernoSuiteGenerator
 
     def message_no_resources(resource_type, config)
       "No #{resource_type} resources conforming to the #{config.profile_url} profile were returned"
+    end
+
+    def message_no_resource_with_profile(profile_with_version)
+      "There is no resources with the profile #{profile_with_version}"
     end
   end
 end
