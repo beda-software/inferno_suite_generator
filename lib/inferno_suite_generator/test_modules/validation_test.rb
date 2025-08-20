@@ -25,8 +25,7 @@ module InfernoSuiteGenerator
 
     def validate_resource_conditions(config, skip_if_empty)
       resources_blank = config.resources.blank?
-      conditional_skip_with_msg skip_if_empty && resources_blank,
-                                "No #{resource_type} resources conforming to the #{config.profile_url} profile were returned"
+      conditional_skip_with_msg skip_if_empty && resources_blank, message_no_resources(resource_type, config)
 
       omit_if resources_blank,
               "No #{resource_type} resources provided so the #{config.profile_url} profile does not apply"
@@ -34,7 +33,7 @@ module InfernoSuiteGenerator
 
     def process_resources(config, profile_version)
       profile_with_version = "#{config.profile_url}|#{profile_version}"
-      filtered_resources = config.resources.select { |resource| resource.meta&.profile&.include?(config.profile_url) }
+      filtered_resources = filtered_resources(config)
 
       filtered_resources.each do |resource|
         resource_is_valid?(resource:, profile_url: profile_with_version)
@@ -46,6 +45,10 @@ module InfernoSuiteGenerator
       skip_if invalid_state?(filtered_resources, errors_found),
               "There is no resources with the profile #{profile_with_version}"
       assert !errors_found, "Resource does not conform to the profile #{profile_with_version}"
+    end
+
+    def filtered_resources(config)
+      config.resources.select { |resource| resource.meta&.profile&.include?(config.profile_url) }
     end
 
     def invalid_state?(filtered_resources, errors_found)
@@ -78,6 +81,10 @@ module InfernoSuiteGenerator
 
       scratch[:dar_extension_found] = true
       output dar_extension_found: "true"
+    end
+
+    def message_no_resources(resource_type, config)
+      "No #{resource_type} resources conforming to the #{config.profile_url} profile were returned"
     end
   end
 end
