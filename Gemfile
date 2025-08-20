@@ -10,6 +10,10 @@ gem "inferno_core", ">= 0.6.1"
 gem "minitest", "~> 5.22"
 gem "rake", "~> 13.0"
 
+group :test do
+  gem "simplecov", require: false
+end
+
 group :development do
   gem "fasterer", "~> 0.11.0"
   gem "reek", "~> 6.1.0"
