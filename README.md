@@ -14,6 +14,7 @@ The generator creates various types of tests:
 - Reference resolution tests (ensuring references can be resolved)
 - Provenance revinclude search tests (searching for Provenance resources)
 - Include search tests (testing _include parameters)
+- Create tests (creating resources for testing when applicable)
 
 ## Project Structure
 
@@ -81,13 +82,14 @@ The generator follows these steps:
    - Validation tests
    - Must Support tests
    - Reference resolution tests
+   - Create tests
 4. **Generate Groups**: Organizes tests into groups by resource type
 5. **Generate Suites**: Creates a test suite that includes all the groups
 6. **Integrate with Inferno**: Adds the generated suite to the main Inferno application
 
 ## Configuration
 
-The configuration file (`config.json`) controls how the generator works. For a complete and up-to-date schema, see `config-user-guide.md` and `config.example.json` at the project root. Here's an example configuration with explanations:
+The configuration file (`config.json`) controls how the generator works. See the example configurations at the project root: `config.example.json` and `config.example2.json`. Here's an example configuration with explanations:
 
 ```json
 {
@@ -312,31 +314,15 @@ And run it:
 docker run -v $(pwd):/data inferno_suite_generator /data/config.json
 ```
 
-### CI/CD
+### CI
 
-The project uses GitHub Actions for continuous integration and delivery:
+The project uses GitHub Actions for continuous integration:
 
-1. **Code Style Checking**: RuboCop runs on all pull requests and pushes to the main branch to ensure code quality.
-2. **Docker Image Building**: When changes are pushed to the main branch, a Docker image is automatically built and pushed to GitHub Container Registry.
-3. **Manual Build and Push**: A separate workflow is available for manually triggering the build and push process without running RuboCop checks.
+- Code style: RuboCop, Reek, and Fasterer checks run on pushes and pull requests.
+- Type checking: Steep type checking.
+- Tests: The test suite runs to validate functionality.
 
-The CI/CD pipeline ensures that:
-- Code follows the style guidelines
-- The Docker image is always up-to-date with the latest changes
-- The Docker image is available for easy use without local setup
-
-#### Manual Build and Push
-
-In some cases, you may need to build and push a Docker image without running RuboCop checks. For this purpose, a manual workflow is available:
-
-1. Go to the GitHub repository
-2. Navigate to the "Actions" tab
-3. Select the "Manual Build and Push" workflow
-4. Click "Run workflow"
-5. Optionally, provide a reason for the manual build
-6. Click "Run workflow" to start the build and push process
-
-This is useful in situations where you need to quickly deploy a new image without addressing code style issues.
+These jobs use Make targets (docker-lint, docker-reek, docker-fasterer, docker-typecheck, docker-tests) to execute within consistent environments.
 
 ## Contributing
 
