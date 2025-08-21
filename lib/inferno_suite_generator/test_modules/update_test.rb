@@ -28,13 +28,19 @@ module InfernoSuiteGenerator
     end
 
     def assert_update_success
-      assert_response_status([EXPECTED_UPDATE_NEW_STATUS,
-                              EXPECTED_UPDATE_STATUS,
-                              EXPECTED_UPDATE_STATUS_WITH_NO_CONTENT])
+      response_status = response[:status]
+      assert [EXPECTED_UPDATE_NEW_STATUS, EXPECTED_UPDATE_STATUS,
+              EXPECTED_UPDATE_STATUS_WITH_NO_CONTENT].include?(response_status),
+             error_message(response_status)
     end
 
     def skip_message(resource_type)
       "No #{resource_type} resource provided for update test"
+    end
+
+    def error_message(response_status)
+      "Response status is #{response_status}. Expected #{EXPECTED_UPDATE_NEW_STATUS}, #{EXPECTED_UPDATE_STATUS} or
+              #{EXPECTED_UPDATE_STATUS_WITH_NO_CONTENT}"
     end
 
     def teardown_candidates
