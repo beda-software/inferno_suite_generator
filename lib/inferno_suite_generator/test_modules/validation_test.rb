@@ -17,7 +17,7 @@ module InfernoSuiteGenerator
                                 profile_url,
                                 profile_version,
                                 validation_behavior)
-      config = ValidationConfig.new(resources: resources, profile_url: profile_url)
+      config = ValidationConfig.new(resources:, profile_url:)
       validate_resource_conditions(config, validation_behavior)
       process_resources(config, profile_version)
     end
