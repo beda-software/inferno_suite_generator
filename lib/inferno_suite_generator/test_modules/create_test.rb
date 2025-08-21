@@ -21,7 +21,7 @@ module InfernoSuiteGenerator
     private
 
     def resource_payload_for_input
-      payload = send(input_data)
+      payload = input_data
       skip skip_message(resource_type) if payload.to_s.strip.empty?
       payload
     end

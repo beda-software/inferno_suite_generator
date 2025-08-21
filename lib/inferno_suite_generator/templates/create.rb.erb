@@ -8,13 +8,6 @@ module <%= suite_module_name %>
       title '(<%= conformance_expectation %>) Server returns correct <%= resource_type %> resource from <%= resource_type %> create interaction'
       description 'A server <%= conformance_expectation %> support the <%= resource_type %> create interaction.'
 
-      input :<%= create_input_data[:id] %>,
-            title: '<%= create_input_data[:title] %>',
-            description: '<%= create_input_data[:description] %>',
-            default: '<%= create_input_data[:default] %>',
-            optional: <%= create_input_data[:optional] %>,
-            type: 'textarea'
-
       id :<%= test_id %>
 
         def resource_type
@@ -22,7 +15,7 @@ module <%= suite_module_name %>
         end
 
       def input_data
-        '<%= create_input_data[:id] %>'
+        <%= create_input_data[:default] %>
       end
 
       run do
