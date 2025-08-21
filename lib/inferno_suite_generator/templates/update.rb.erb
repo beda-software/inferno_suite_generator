@@ -1,0 +1,25 @@
+require 'inferno_suite_generator/test_modules/update_test'
+
+module <%= suite_module_name %>
+  module <%= module_name %>
+    class <%= class_name %> < Inferno::Test
+      include InfernoSuiteGenerator::UpdateTest
+
+      title '(<%= conformance_expectation %>) Server returns correct <%= resource_type %> resource from <%= resource_type %> update interaction'
+      description 'A server <%= conformance_expectation %> support the <%= resource_type %> update interaction.'
+      <% if optional? %>
+      optional
+      <% end %>
+
+      id :<%= test_id %>
+
+        def resource_type
+          '<%= resource_type %>'
+        end
+
+      run do
+        perform_update_test
+      end
+    end
+  end
+end
