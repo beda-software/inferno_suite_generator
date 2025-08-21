@@ -148,7 +148,7 @@ GEM
       domain_name (~> 0.5)
     i18n (1.14.7)
       concurrent-ruby (~> 1.0)
-    inferno_core (1.0.5)
+    inferno_core (1.0.6)
       activesupport (~> 6.1.7.5)
       base62-rb (= 0.3.1)
       blueprinter (= 0.25.2)
@@ -201,7 +201,7 @@ GEM
     mime-types (3.7.0)
       logger
       mime-types-data (~> 3.2025, >= 3.2025.0507)
-    mime-types-data (3.2025.0722)
+    mime-types-data (3.2025.0819)
     minitest (5.25.5)
     multi_json (1.17.0)
     multi_xml (0.7.2)
@@ -269,13 +269,13 @@ GEM
       ffi (~> 1.0)
     rbs (3.9.4)
       logger
-    redis-client (0.25.1)
+    redis-client (0.25.2)
       connection_pool
     reek (6.1.4)
       kwalify (~> 0.7.0)
       parser (~> 3.2.0)
       rainbow (>= 2.0, < 4.0)
-    regexp_parser (2.10.0)
+    regexp_parser (2.11.2)
     rest-client (2.1.0)
       http-accept (>= 1.7.0, < 2.0)
       http-cookie (>= 1.0.2, < 2.0)
@@ -395,19 +395,19 @@ PLATFORMS
 
 DEPENDENCIES
   fasterer (~> 0.11.0)
-  inferno_core (>= 0.6.1)
+  inferno_core (~> 1.0.6)
   inferno_suite_generator!
-  minitest (~> 5.22)
-  rake (~> 13.0)
+  minitest (~> 5.25)
+  rake (~> 13.3)
   reek (~> 6.1.0)
-  rubocop (~> 1.21)
+  rubocop (~> 1.59.0)
   rubocop-erb
   rubocop-md
   rubocop-packaging
   rubocop-performance
   rubocop-rake
   simplecov
-  steep (~> 1.9)
+  steep (~> 1.10)
 
 RUBY VERSION
    ruby 3.3.6p108
