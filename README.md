@@ -15,6 +15,7 @@ The generator creates various types of tests:
 - Provenance revinclude search tests (searching for Provenance resources)
 - Include search tests (testing _include parameters)
 - Create tests (creating resources for testing when applicable)
+- Update tests (updating resources to validate server behavior)
 
 ## Project Structure
 
@@ -83,6 +84,7 @@ The generator follows these steps:
    - Must Support tests
    - Reference resolution tests
    - Create tests
+   - Update tests
 4. **Generate Groups**: Organizes tests into groups by resource type
 5. **Generate Suites**: Creates a test suite that includes all the groups
 6. **Integrate with Inferno**: Adds the generated suite to the main Inferno application
