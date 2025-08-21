@@ -9,3 +9,4 @@
 *.gem
 /.idea/
 mise.toml
+.DS_Store
