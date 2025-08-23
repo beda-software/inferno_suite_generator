@@ -44,70 +44,41 @@ module InfernoSuiteGenerator
       end
 
       def create_patch_data
-        build_create_patch_data
+        entry = patch_entry
+        return unless entry
+
+        {
+          resource_type: resource_type,
+          id: entry.request.url.split("/").last,
+          patchset: patchset_data(entry)
+        }
       end
 
       private
 
-      def transaction_bundles
-        ig_resources&.get_resources_by_type("Bundle")&.select do |bundle|
-          bundle.type == "transaction"
-        end
-      end
-
-      def patch_entries
-        entries = transaction_bundles&.flat_map { |bundle| bundle.entry || [] }
-        entries.select { |entry| entry.request.local_method == "PATCH" }
-      end
-
       def patch_entry
-        patch_entries.find do |entry|
-          entry.request.url.split("/").first == resource_type && entry.resource.resourceType == "Parameters"
+        bundles = ig_resources&.get_resources_by_type("Bundle")&.select { |bundle| bundle.type == "transaction" }
+        entries = bundles&.flat_map { |bundle| bundle.entry || [] } || []
+        entries.find do |entry|
+          entry.request.local_method == "PATCH" &&
+            entry.request.url.split("/").first == resource_type &&
+            entry.resource.resourceType == "Parameters"
         end
       end
 
-      def parameter
-        patch_entry.resource.parameter
-      end
+      def patchset_data(entry)
+        parts = entry.resource&.parameter&.first&.part || []
+        op = parts.find { |part| part.name == "type" }&.valueCode
+        path = parts.find { |part| part.name == "path" }&.valueString
+        value_hash = parts.find { |part| part.name == "value" }&.source_hash
+        value_key = value_hash&.keys&.find { |key| key != "name" }
+        value = value_key ? value_hash[value_key] : nil
 
-      def parameter_first_part
-        parameter.first.part
-      end
-
-      def operation
-        parameter_first_part.find { |part| part.name == "type" }.valueCode
-      end
-
-      def path
-        parameter_first_part.find { |part| part.name == "path" }.valueString
-      end
-
-      def value_hash
-        parameter_first_part.find { |part| part.name == "value" }.source_hash
-      end
-
-      def value
-        value_key = value_hash.keys.find { |key| key != "name" }
-
-        value_hash[value_key]
-      end
-
-      def patchset_data
         [{
-          op: operation,
-          path:,
-          value:
+          op: op,
+          path: path,
+          value: value
         }]
-      end
-
-      def build_create_patch_data
-        return unless patch_entry
-
-        {
-          resource_type:,
-          id: patch_entry.request.url.split("/").last,
-          patchset: patchset_data
-        }
       end
     end
   end
