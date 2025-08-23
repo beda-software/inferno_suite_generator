@@ -43,14 +43,14 @@ module InfernoSuiteGenerator
         patch_interaction[:expectation]
       end
 
-      def create_patch_data
+      def create_fhirpath_patch_data
         entry = patch_entry
         return unless entry
 
         {
           resource_type: resource_type,
           id: entry.request.url.split("/").last,
-          patchset: patchset_data(entry)
+          resource: entry.resource.source_hash
         }
       end
 
@@ -64,21 +64,6 @@ module InfernoSuiteGenerator
             entry.request.url.split("/").first == resource_type &&
             entry.resource.resourceType == "Parameters"
         end
-      end
-
-      def patchset_data(entry)
-        parts = entry.resource&.parameter&.first&.part || []
-        op = parts.find { |part| part.name == "type" }&.valueCode
-        path = parts.find { |part| part.name == "path" }&.valueString
-        value_hash = parts.find { |part| part.name == "value" }&.source_hash
-        value_key = value_hash&.keys&.find { |key| key != "name" }
-        value = value_key ? value_hash[value_key] : nil
-
-        [{
-          op: op,
-          path: path,
-          value: value
-        }]
       end
     end
   end
