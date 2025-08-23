@@ -66,37 +66,47 @@ module InfernoSuiteGenerator
         end
       end
 
-      def get_parameter_part_by_name(parameter, part_name)
-        parameter_part = parameter.first.part
-
-        parameter_part.find { |part| part.name == part_name }
+      def parameter
+        patch_entry.resource.parameter
       end
 
-      def get_value_data(parameter)
-        value_hash = get_parameter_part_by_name(parameter, "value").source_hash
+      def parameter_first_part
+        parameter.first.part
+      end
+
+      def operation
+        parameter_first_part.find { |part| part.name == "type" }.valueCode
+      end
+
+      def path
+        parameter_first_part.find { |part| part.name == "path" }.valueString
+      end
+
+      def value_hash
+        parameter_first_part.find { |part| part.name == "value" }.source_hash
+      end
+
+      def value
         value_key = value_hash.keys.find { |key| key != "name" }
 
         value_hash[value_key]
       end
 
-      def get_patchset_data(current_patch_entry)
-        parameter_part = current_patch_entry.resource.parameter
-
+      def patchset_data
         [{
-          op: get_parameter_part_by_name(parameter, "type").valueCode,
-          path: get_parameter_part_by_name(parameter, "path").valueString,
-          value: get_value_data(parameter_part)
+          op: operation,
+          path:,
+          value:
         }]
       end
 
       def build_create_patch_data
-        current_patch_entry = patch_entry
-        return unless current_patch_entry
+        return unless patch_entry
 
         {
           resource_type:,
-          id: current_patch_entry.request.url.split("/").last,
-          patchset: get_patchset_data(current_patch_entry)
+          id: patch_entry.request.url.split("/").last,
+          patchset: patchset_data
         }
       end
     end
