@@ -44,6 +44,7 @@ module InfernoSuiteGenerator
         end
 
         json_files.each do |file_path|
+          puts "Loading JSON file: #{file_path}"
           file_content = File.read(file_path)
 
           begin
@@ -51,6 +52,7 @@ module InfernoSuiteGenerator
             next unless json.is_a?(Hash) && json["resourceType"]
 
             bundle = FHIR.from_contents(file_content)
+            ig_resources.add(bundle)
             bundle.entry.each do |entry|
               if entry.resource.resourceType == "CapabilityStatement" && config.cs_profile_url != entry.resource.url
                 next

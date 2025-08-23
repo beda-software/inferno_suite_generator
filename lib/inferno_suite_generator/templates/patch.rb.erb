@@ -1,0 +1,22 @@
+require 'inferno_suite_generator/test_modules/patch_test'
+
+module <%= suite_module_name %>
+  module <%= module_name %>
+    class <%= class_name %> < Inferno::Test
+      include InfernoSuiteGenerator::PatchTest
+
+      title '(<%= conformance_expectation %>) Server returns correct <%= resource_type %> resource from <%= resource_type %> patch interaction'
+      description 'A server <%= conformance_expectation %> support the <%= resource_type %> patch interaction.'
+
+      id :<%= test_id %>
+
+      def patch_data
+        <%= create_patch_data %>
+      end
+
+      run do
+        perform_patch_test
+      end
+    end
+  end
+end
