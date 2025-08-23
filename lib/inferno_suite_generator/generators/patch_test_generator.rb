@@ -3,6 +3,8 @@
 require_relative "../utils/naming"
 require_relative "basic_test_generator"
 require_relative "../utils/registry"
+require_relative "../decorators/parameters_parameter_decorator"
+require_relative "../decorators/bundle_entry_decorator"
 
 module InfernoSuiteGenerator
   class Generator
@@ -44,41 +46,30 @@ module InfernoSuiteGenerator
       end
 
       def create_patch_data
-        entry = patch_entry
-        return unless entry
+        return unless patch_entry
 
         {
           resource_type: resource_type,
-          id: entry.request.url.split("/").last,
-          patchset: patchset_data(entry)
+          id: patch_entry.request.url.split("/").last,
+          patchset: ParametersParameterDecorator.new(patch_entry.resource.parameter.first).patchset_data
         }
       end
 
       private
 
-      def patch_entry
+      def transaction_bundles
         bundles = ig_resources&.get_resources_by_type("Bundle")&.select { |bundle| bundle.type == "transaction" }
-        entries = bundles&.flat_map { |bundle| bundle.entry || [] } || []
-        entries.find do |entry|
-          entry.request.local_method == "PATCH" &&
-            entry.request.url.split("/").first == resource_type &&
-            entry.resource.resourceType == "Parameters"
-        end
+        bundles || []
       end
 
-      def patchset_data(entry)
-        parts = entry.resource&.parameter&.first&.part || []
-        op = parts.find { |part| part.name == "type" }&.valueCode
-        path = parts.find { |part| part.name == "path" }&.valueString
-        value_hash = parts.find { |part| part.name == "value" }&.source_hash
-        value_key = value_hash&.keys&.find { |key| key != "name" }
-        value = value_key ? value_hash[value_key] : nil
+      def bundle_entries
+        transaction_bundles&.flat_map { |bundle| bundle.entry || [] } || []
+      end
 
-        [{
-           op: op,
-           path: path,
-           value: value
-         }]
+      def patch_entry
+        bundle_entries.find do |entry|
+          BundleEntryDecorator.new(entry).bundle_entry_patch_parameter?(resource_type)
+        end
       end
     end
   end
