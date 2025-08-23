@@ -14,12 +14,12 @@ module InfernoSuiteGenerator
 
     def perform_patch_test
       patch_data = resource_payload_for_input
-      # fhir_patch(patch_data[:resource_type], patch_data[:id], patch_data[:resource])
-      fhir_operation(
-        "#{patch_data[:resource_type]}/#{patch_data[:id]}",
-        body: patch_data[:resource],
-        operation_method: :patch
-      )
+      fhir_patch(patch_data[:resource_type], patch_data[:id], patch_data[:resource])
+      # fhir_operation(
+      #   "#{patch_data[:resource_type]}/#{patch_data[:id]}",
+      #   body: patch_data[:resource],
+      #   operation_method: :patch
+      # )
 
       assert_patch_success
     end
