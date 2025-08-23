@@ -9,8 +9,8 @@ module InfernoSuiteGenerator
   # - Validating response status codes (200, 204)
   # - Handling patch operation success scenarios
   module PatchTest
-    EXPECTED_PATCH_STATUS = 200
-    EXPECTED_PATCH_STATUS_WITH_NO_CONTENT = 204
+    SUCCESS = 200
+    SUCCESS_NO_CONTENT = 204
 
     def perform_patch_test
       patch_data = resource_payload_for_input
@@ -28,7 +28,7 @@ module InfernoSuiteGenerator
 
     def assert_patch_success
       response_status = response[:status]
-      assert [EXPECTED_PATCH_STATUS, EXPECTED_PATCH_STATUS_WITH_NO_CONTENT].include?(response_status),
+      assert [SUCCESS, SUCCESS_NO_CONTENT].include?(response_status),
              error_message(response_status)
     end
 
@@ -37,7 +37,7 @@ module InfernoSuiteGenerator
     end
 
     def error_message(response_status)
-      "Response status is #{response_status}. Expected #{EXPECTED_PATCH_STATUS} or #{EXPECTED_PATCH_STATUS_WITH_NO_CONTENT}"
+      "Response status is #{response_status}. Expected #{SUCCESS} or #{SUCCESS_NO_CONTENT}"
     end
   end
 end

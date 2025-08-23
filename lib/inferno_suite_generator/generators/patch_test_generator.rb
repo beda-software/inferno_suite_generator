@@ -49,29 +49,48 @@ module InfernoSuiteGenerator
 
       private
 
-      def get_patch_entry
-        bundles = ig_resources&.get_resources_by_type("Bundle") || []
-        transaction_bundles = bundles.select { |bundle| bundle.type == "transaction" }
-        entries = transaction_bundles.flat_map { |bundle| bundle.entry || [] }
-        patch_entries = entries.select { |entry| entry.request.local_method == "PATCH" }
+      def transaction_bundles
+        ig_resources&.get_resources_by_type("Bundle")&.select do |bundle|
+          bundle.type == "transaction"
+        end
+      end
 
-        patch_entries.find { |entry| entry.request.url.split("/").first == resource_type && entry.resource.resourceType == "Parameters" }
+      def patch_entries
+        entries = transaction_bundles&.flat_map { |bundle| bundle.entry || [] }
+        entries.select { |entry| entry.request.local_method == "PATCH" }
+      end
+
+      def patch_entry
+        patch_entries.find do |entry|
+          entry.request.url.split("/").first == resource_type && entry.resource.resourceType == "Parameters"
+        end
+      end
+
+      def get_parameter_part_by_name(parameter, part_name)
+        parameter_part = parameter.first.part
+
+        parameter_part.find { |part| part.name == part_name }
+      end
+
+      def get_value_data(parameter)
+        value_hash = get_parameter_part_by_name(parameter, "value").source_hash
+        value_key = value_hash.keys.find { |key| key != "name" }
+
+        value_hash[value_key]
       end
 
       def get_patchset_data(current_patch_entry)
-        parameter_part = current_patch_entry.resource.parameter.first.part
-        value_hash = parameter_part.find { |part| part.name == "value" }.source_hash
-        value_key = value_hash.keys.find { |key| key != "name" }
+        parameter_part = current_patch_entry.resource.parameter
 
         [{
-          op: parameter_part.find { |part| part.name == "type" }.valueCode,
-          path: parameter_part.find { |part| part.name == "path" }.valueString,
-          value: value_hash[value_key]
+          op: get_parameter_part_by_name(parameter, "type").valueCode,
+          path: get_parameter_part_by_name(parameter, "path").valueString,
+          value: get_value_data(parameter_part)
         }]
       end
 
       def build_create_patch_data
-        current_patch_entry = get_patch_entry
+        current_patch_entry = patch_entry
         return unless current_patch_entry
 
         {
