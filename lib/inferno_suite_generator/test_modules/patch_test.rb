@@ -15,10 +15,10 @@ module InfernoSuiteGenerator
     def perform_patch_test
       patch_data = resource_payload_for_input
       puts "patch_data: #{patch_data}"
-      puts "resource_type: #{patch_data["resource_type"]}"
-      puts "id: #{patch_data["id"]}"
-      puts "patchset: #{patch_data["patchset"]}"
-      fhir_patch(patch_data["resource_type"], patch_data["id"], patch_data["patchset"])
+      puts "resource_type: #{patch_data[:resource_type]}"
+      puts "id: #{patch_data[:id]}"
+      puts "patchset: #{patch_data[:patchset]}"
+      fhir_patch(patch_data[:resource_type], patch_data[:id], patch_data[:patchset])
       assert_patch_success
     end
 
