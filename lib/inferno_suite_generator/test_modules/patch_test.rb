@@ -19,18 +19,14 @@ module InfernoSuiteGenerator
       'FHIRPathPatchXML' => 'application/fhir+xml'
     }.freeze
 
-    def patch_data
-      resource_payload_for_input
+    def perform_json_patch_test
+      fhir_patch(patch_data[:resource_type], patch_data[:id], patch_data[:patchset])
+      assert_patch_success
     end
 
     def perform_xml_patch_test
       # TODO: TBI
       skip "Not implemented"
-    end
-
-    def perform_json_patch_test
-      fhir_patch(patch_data[:resource_type], patch_data[:id], patch_data[:patchset])
-      assert_patch_success
     end
 
     def perform_fhirpath_patch_json_test
@@ -44,20 +40,50 @@ module InfernoSuiteGenerator
     end
 
     private
+    def resource_ids_fn(resource_type)
+      "#{camel_to_snake(resource_type)}_ids"
+    end
 
-    def fhir_fhirpath_patch(resource_type, id, body, client: :default, name: nil, headers: {}, tags: [])
-      store_request_and_refresh_token(fhir_client(client), name, tags) do
-        tcp_exception_handler do
-          puts "BODY IS: #{body}"
-          ClientDecorator.new(fhir_client(client)).patch("#{resource_type}/#{id}", body, headers: { 'Content-Type' => 'application/fhir+json' })
+    def resource_ids_exists?(resource_type)
+      respond_to?(resource_ids_fn(resource_type))
+    end
+    def fetch_resource_ids(resource_type)
+      send(resource_ids_fn(resource_type))
+    end
+
+    def get_payload
+      patchset = patch_data
+      skip skip_message(resource_type) if patchset.empty?
+
+      payload_resource = teardown_candidates.find { |resource| resource.resourceType == resource_type }
+      if payload_resource
+        {
+          resource_type: resource_type,
+          id: payload_resource.id,
+          patchset: patchset
+        }
+      else
+        if resource_ids_exists?(resource_type)
+          {
+            resource_type: resource_type,
+            id: fetch_resource_ids(resource_type).split(",").first.strip,
+            patchset: patchset
+          }
+        else
+          skip "No resources with type #{resource_type} found for PATCH test"
         end
       end
+
     end
 
     def resource_payload_for_input
       payload = patch_data
       skip skip_message(resource_type) if payload.empty?
       payload
+    end
+
+    def teardown_candidates
+      scratch[:teardown_candidates] ||= []
     end
 
     def assert_patch_success
