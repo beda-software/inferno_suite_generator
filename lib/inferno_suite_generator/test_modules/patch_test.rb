@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative "../decorators/client_decorator"
+
 module InfernoSuiteGenerator
   # Module handles sending FHIR resource instances
   # to a server via the patch operation and validating the response. It supports:
