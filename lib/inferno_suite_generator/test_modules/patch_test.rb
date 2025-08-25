@@ -47,11 +47,11 @@ module InfernoSuiteGenerator
 
     private
 
-    def fhir_fhirpath_patch(resource_type, id, body, client: :default, name: nil, headers: {}, tags: [])
+    def fhir_fhirpath_patch(resource_type, id, body, client: :default)
       store_request_and_refresh_token(fhir_client(client), name, tags) do
         tcp_exception_handler do
           puts "BODY IS: #{body}"
-          fhir_client(client).partial_update(fhir_class_from_resource_type(resource_type), id, body)
+          ClientDecorator.new(fhir_client(client)).patch("#{resource_type}/#{id}", body, headers: { 'Content-Type' => 'application/fhir+json' })
         end
       end
     end
