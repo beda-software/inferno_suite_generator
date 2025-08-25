@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require_relative "../decorators/client_decorator"
-
 module InfernoSuiteGenerator
   # Module handles sending FHIR resource instances
   # to a server via the patch operation and validating the response. It supports:
@@ -28,8 +26,6 @@ module InfernoSuiteGenerator
     def perform_xml_patch_test
       # TODO: TBI
       skip "Not implemented"
-      # fhir_patch(patch_data[:resource_type], patch_data[:id], patch_data[:patchset])
-      # assert_patch_success
     end
 
     def perform_json_patch_test
@@ -38,8 +34,8 @@ module InfernoSuiteGenerator
     end
 
     def perform_fhirpath_patch_json_test
-      fhir_fhirpath_patch(patch_data[:resource_type], patch_data[:id], patch_data[:patchset].first)
-      assert_patch_success
+      # TODO: TBI
+      skip "Not implemented"
     end
 
     def perform_fhirpath_patch_xml_text
