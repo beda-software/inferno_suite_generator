@@ -17,8 +17,8 @@ module InfernoSuiteGenerator
           ig_metadata.groups.each do |group|
             next if Registry.get(:config_keeper).exclude_resource?(group.profile_url, group.resource)
             next unless patch_interaction(group).present?
-
-            %w[XML JSON FHIRPathXML FHIRPathJSON].each do |patch_option|
+            # [XML JSON FHIRPathXML FHIRPathJSON]
+            %w[JSON FHIRPathJSON].each do |patch_option|
               new(group, base_output_dir, ig_metadata, patch_option, ig_resources).generate
             end
           end
