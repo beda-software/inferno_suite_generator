@@ -50,9 +50,8 @@ module InfernoSuiteGenerator
     def fhir_fhirpath_patch(resource_type, id, body, client: :default, name: nil, headers: {}, tags: [])
       store_request_and_refresh_token(fhir_client(client), name, tags) do
         tcp_exception_handler do
-          path = "#{resource_type}/#{id}"
           puts "BODY IS: #{body}"
-          fhir_client(client).send(:patch, path, body)
+          fhir_client(client).partial_update(fhir_class_from_resource_type(resource_type), id, body)
         end
       end
     end
