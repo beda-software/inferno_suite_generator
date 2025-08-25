@@ -42,7 +42,9 @@ class ParametersParameterDecorator < FHIR::R4::Parameters::Parameter
   def convert_fhirpath_to_json_pointer(fhirpath_string)
     return "" unless fhirpath_string
 
-    path = fhirpath_string.gsub(/^\.+/, "")
+    parts = fhirpath_string.split(".")
+    parts = parts.drop(1) if parts.length > 1
+    path = parts.join("/")
     path = path.gsub(/\[(\d+)\]/, '/\1')
     path = path.gsub(".", "/")
     path = "/#{path}" unless path.start_with?("/")

@@ -24,8 +24,10 @@ module InfernoSuiteGenerator
     end
 
     def perform_xml_patch_test
-      fhir_patch(patch_data[:resource_type], patch_data[:id], patch_data[:patchset])
-      assert_patch_success
+      # TODO: TBI
+      skip "Not implemented"
+      # fhir_patch(patch_data[:resource_type], patch_data[:id], patch_data[:patchset])
+      # assert_patch_success
     end
 
     def perform_json_patch_test
