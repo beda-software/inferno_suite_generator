@@ -3,6 +3,7 @@
 require_relative "../utils/naming"
 require_relative "basic_test_generator"
 require_relative "../utils/registry"
+require_relative "../utils/generic"
 require_relative "../decorators/parameters_parameter_decorator"
 require_relative "../decorators/bundle_entry_decorator"
 
@@ -12,6 +13,8 @@ module InfernoSuiteGenerator
     # It extends BasicTestGenerator and handles the generation of test files specifically
     # for testing PATCH operations against a FHIR server.
     class PatchTestGenerator < BasicTestGenerator
+      include GenericUtils
+
       class << self
         def generate(ig_metadata, base_output_dir, ig_resources = nil)
           ig_metadata.groups.each do |group|
@@ -51,11 +54,7 @@ module InfernoSuiteGenerator
       def create_patch_data
         return unless patch_entry
 
-        {
-          resource_type: resource_type,
-          id: patch_entry.request.url.split("/").last,
-          patchset: [patchset]
-        }
+        [patchset]
       end
 
       def humanized_patch_option
@@ -74,8 +73,39 @@ module InfernoSuiteGenerator
         current_test_data["executor"] if current_test_data
       end
 
+      def ids_input_data
+        return unless needs_ids_input?
+
+        {
+          id: data[:id].to_sym,
+          title: data[:title],
+          description: data[:description],
+          default: data[:default]
+        }
+      end
+
       private
-      
+
+      def data
+        return unless needs_ids_input?
+
+        snake_case_resource_type = camel_to_snake(resource_type)
+        description = "Comma separated list of #{snake_case_resource_type.tr("_", " ")}"
+        constants = config.constants
+
+        {
+          id: "#{snake_case_resource_type}_ids".to_sym,
+          title: "#{resource_type} IDs",
+          description: description,
+          default: constants["patch_ids.#{snake_case_resource_type}"] || ""
+        }
+      end
+
+      def needs_ids_input?
+        !group_metadata.interactions.find {
+          |interaction| interaction[:code] == "create" && interaction[:expectation] == "SHALL" }.present?
+      end
+
       def current_test_data
         parameters_resource = patch_entry ? patch_entry.resource.to_hash : nil
         patchset = patch_entry ? ParametersParameterDecorator.new(patch_entry.resource.parameter.first).patchset_data : nil

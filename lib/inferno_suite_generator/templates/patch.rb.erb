@@ -8,7 +8,19 @@ module <%= suite_module_name %>
       title '(<%= conformance_expectation %>) Server returns correct <%= resource_type %> resource from <%= resource_type %> patch interaction (<%= humanized_patch_option %>)'
       description 'A server <%= conformance_expectation %> support the <%= resource_type %> patch interaction (<%= humanized_patch_option %>).'
 
+      <% if ids_input_data %>
+      input :<%= ids_input_data[:id] %>,
+            title: '<%= ids_input_data[:title] %>',
+            description: '<%= ids_input_data[:description] %>',
+            default: '<%= ids_input_data[:default] %>',
+            optional: false
+      <% end %>
+
       id :<%= test_id %>
+
+      def resource_type
+        '<%= resource_type %>'
+      end
 
       def patch_data
         <%= create_patch_data %>
