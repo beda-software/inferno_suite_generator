@@ -36,8 +36,8 @@ module InfernoSuiteGenerator
     end
 
     def perform_fhirpath_patch_json_test
-      # TODO: TBI
-      skip "Not implemented"
+      fhir_fhirpath_patch(patch_data[:resource_type], patch_data[:id], patch_data[:patchset].first)
+      assert_patch_success
     end
 
     def perform_fhirpath_patch_xml_text
@@ -45,29 +45,14 @@ module InfernoSuiteGenerator
       skip "Not implemented"
     end
 
-    def perform_patch_test
-      patch_data = resource_payload_for_input
-      fhir_patch(patch_data[:resource_type], patch_data[:id], patch_data[:patchset])
-      # fhir_patch(patch_data[:resource_type], patch_data[:id], patch_data[:patchset])
-      # fhir_operation(
-      #   "#{patch_data[:resource_type]}/#{patch_data[:id]}",
-      #   body: patch_data[:resource],
-      #   operation_method: :patch
-      # )
-
-      assert_patch_success
-    end
-
     private
 
-    def fhir_fhirpath_patch(resource_type, id, patchset, client: :default, name: nil, headers: {}, tags: [])
+    def fhir_fhirpath_patch(resource_type, id, body, client: :default, name: nil, headers: {}, tags: [])
       store_request_and_refresh_token(fhir_client(client), name, tags) do
         tcp_exception_handler do
-          fhir_client(client).partial_update(
-            fhir_class_from_resource_type(resource_type),
-            id,
-            patchset
-          )
+          path = "#{resource_type}/#{id}"
+          puts "BODY IS: #{body}"
+          fhir_client(client).send(:patch, path, body)
         end
       end
     end
