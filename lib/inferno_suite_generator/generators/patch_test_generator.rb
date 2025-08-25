@@ -77,35 +77,36 @@ module InfernoSuiteGenerator
       private
       
       def current_test_data
-        return unless patch_entry
+        parameters_resource = patch_entry ? patch_entry.resource.to_hash : nil
+        patchset = patch_entry ? ParametersParameterDecorator.new(patch_entry.resource.parameter.first).patchset_data : nil
 
         case patch_option
         when "XML"
           {
             'humanized_patch_option' => 'XMLPatch',
             'test_id_patch_option' => 'xml',
-            'patchset' => ParametersParameterDecorator.new(patch_entry.resource.parameter.first).patchset_data,
+            'patchset' => patchset,
             'executor' => 'perform_xml_patch_test'
           }
         when "JSON"
           {
             'humanized_patch_option' => 'JSONPatch',
             'test_id_patch_option' => 'json',
-            'patchset' => ParametersParameterDecorator.new(patch_entry.resource.parameter.first).patchset_data,
+            'patchset' => patchset,
             'executor' => 'perform_json_patch_test'
           }
         when "FHIRPathXML"
           {
             'humanized_patch_option' => 'FHIRPath Patch in XML format',
             'test_id_patch_option' => 'fhirpath_xml',
-            'patchset' => patch_entry.resource.to_hash,
+            'patchset' => parameters_resource,
             'executor' => 'perform_fhirpath_patch_xml_text'
           }
         when "FHIRPathJSON"
           {
             'humanized_patch_option' => 'FHIRPath Patch in JSON format',
             'test_id_patch_option' => 'fhirpath_json',
-            'patchset' => patch_entry.resource.to_hash,
+            'patchset' => parameters_resource,
             'executor' => 'perform_fhirpath_patch_json_test'
           }
         else
