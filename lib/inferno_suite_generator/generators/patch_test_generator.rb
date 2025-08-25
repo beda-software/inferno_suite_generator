@@ -18,7 +18,9 @@ module InfernoSuiteGenerator
             next if Registry.get(:config_keeper).exclude_resource?(group.profile_url, group.resource)
             next unless patch_interaction(group).present?
 
-            new(group, base_output_dir, ig_metadata, ig_resources).generate
+            %w[XML JSON FHIRPathXML FHIRPathJSON].each do |patch_option|
+              new(group, base_output_dir, ig_metadata, patch_option, ig_resources).generate
+            end
           end
         end
 
@@ -27,12 +29,13 @@ module InfernoSuiteGenerator
         end
       end
 
-      attr_reader :ig_resources, :config
+      attr_reader :ig_resources, :config, :patch_option
 
       self.template_type = TEMPLATE_TYPES[:PATCH]
 
-      def initialize(group_metadata, base_output_dir, ig_metadata, ig_resources = nil)
+      def initialize(group_metadata, base_output_dir, ig_metadata, patch_option, ig_resources = nil)
         super(group_metadata, base_output_dir, ig_metadata)
+        @patch_option = patch_option
         @ig_resources = ig_resources
         @config = Registry.get(:config_keeper)
       end
@@ -51,11 +54,64 @@ module InfernoSuiteGenerator
         {
           resource_type: resource_type,
           id: patch_entry.request.url.split("/").last,
-          patchset: ParametersParameterDecorator.new(patch_entry.resource.parameter.first).patchset_data
+          patchset: patchset
         }
       end
 
+      def humanized_patch_option
+        current_test_data["humanized_patch_option"] if current_test_data
+      end
+
+      def test_id_patch_option
+        current_test_data["test_id_patch_option"] if current_test_data
+      end
+
+      def patchset
+        current_test_data["patchset"] if current_test_data
+      end
+
+      def executor
+        current_test_data["executor"] if current_test_data
+      end
+
       private
+      
+      def current_test_data
+        return unless patch_entry
+
+        case patch_option
+        when "XML"
+          {
+            'humanized_patch_option' => 'XMLPatch',
+            'test_id_patch_option' => 'xml',
+            'patchset' => ParametersParameterDecorator.new(patch_entry.resource.parameter.first).patchset_data,
+            'executor' => 'perform_xml_patch_test'
+          }
+        when "JSON"
+          {
+            'humanized_patch_option' => 'JSONPatch',
+            'test_id_patch_option' => 'json',
+            'patchset' => ParametersParameterDecorator.new(patch_entry.resource.parameter.first).patchset_data,
+            'executor' => 'perform_json_patch_test'
+          }
+        when "FHIRPathXML"
+          {
+            'humanized_patch_option' => 'FHIRPath Patch in XML format',
+            'test_id_patch_option' => 'fhirpath_xml',
+            'patchset' => patch_entry.resource.to_hash,
+            'executor' => 'perform_fhirpath_patch_xml_text'
+          }
+        when "FHIRPathJSON"
+          {
+            'humanized_patch_option' => 'FHIRPath Patch in JSON format',
+            'test_id_patch_option' => 'fhirpath_json',
+            'patchset' => patch_entry.resource.to_hash,
+            'executor' => 'perform_fhirpath_patch_json_test'
+          }
+        else
+          raise "Unknown patch option: #{patch_option}"
+        end
+      end
 
       def transaction_bundles
         bundles = ig_resources&.get_resources_by_type("Bundle")&.select { |bundle| bundle.type == "transaction" }

@@ -12,9 +12,40 @@ module InfernoSuiteGenerator
     SUCCESS = 200
     SUCCESS_NO_CONTENT = 204
 
+    CONTENT_TYPE_HEADERS = {
+      'JSONPatch' => 'application/json-patch+json',
+      'XMLPatch' => 'application/xml-patch+xml',
+      'FHIRPathPatchJSON' => 'application/fhir+json',
+      'FHIRPathPatchXML' => 'application/fhir+xml'
+    }.freeze
+
+    def patch_data
+      resource_payload_for_input
+    end
+
+    def perform_xml_patch_test
+      fhir_patch(patch_data[:resource_type], patch_data[:id], patch_data[:patchset])
+      assert_patch_success
+    end
+
+    def perform_json_patch_test
+      fhir_patch(patch_data[:resource_type], patch_data[:id], patch_data[:patchset])
+      assert_patch_success
+    end
+
+    def perform_fhirpath_patch_json_test
+      # TODO: TBI
+      skip "Not implemented"
+    end
+
+    def perform_fhirpath_patch_xml_text
+      # TODO: TBI
+      skip "Not implemented"
+    end
+
     def perform_patch_test
       patch_data = resource_payload_for_input
-      fhir_fhirpath_patch(patch_data[:resource_type], patch_data[:id], patch_data[:patchset])
+      fhir_patch(patch_data[:resource_type], patch_data[:id], patch_data[:patchset])
       # fhir_patch(patch_data[:resource_type], patch_data[:id], patch_data[:patchset])
       # fhir_operation(
       #   "#{patch_data[:resource_type]}/#{patch_data[:id]}",
@@ -30,16 +61,11 @@ module InfernoSuiteGenerator
     def fhir_fhirpath_patch(resource_type, id, patchset, client: :default, name: nil, headers: {}, tags: [])
       store_request_and_refresh_token(fhir_client(client), name, tags) do
         tcp_exception_handler do
-          patch_headers = fhir_client(client).fhir_headers.dup
-          patch_headers['Content-Type'] = 'application/fhir+json'
-          patch_headers.merge!(headers) if headers && !headers.empty?
-
-          path = "#{resource_type}/#{id}"
-          body = patchset.to_json
-
-          puts "BODY IS: #{body}"
-
-          fhir_client(client).send(:patch, path, body, patch_headers)
+          fhir_client(client).partial_update(
+            fhir_class_from_resource_type(resource_type),
+            id,
+            patchset
+          )
         end
       end
     end

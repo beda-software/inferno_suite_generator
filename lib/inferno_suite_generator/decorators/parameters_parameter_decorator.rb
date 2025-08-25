@@ -11,15 +11,44 @@ class ParametersParameterDecorator < FHIR::R4::Parameters::Parameter
   end
 
   def patchset_data
-    [{
-      op: find_part_by_name("type")&.valueCode,
-      path: find_part_by_name("path")&.valueString,
+    {
+      op: normalize_operation(find_part_by_name("type")&.valueCode),
+      path: convert_fhirpath_to_json_pointer(find_part_by_name("path")&.valueString),
       value: hash_value
-    }]
+    }
   end
 
   private
 
+  def normalize_operation(fhirpath_op)
+    case fhirpath_op&.downcase
+    when "add"
+      "add"
+    when "replace"
+      "replace"
+    when "remove", "delete"
+      "remove"
+    when "test"
+      "test"
+    when "move"
+      "move"
+    when "copy"
+      "copy"
+    else
+      nil
+    end
+  end
+
+  def convert_fhirpath_to_json_pointer(fhirpath_string)
+    return "" unless fhirpath_string
+
+    path = fhirpath_string.gsub(/^\.+/, "")
+    path = path.gsub(/\[(\d+)\]/, '/\1')
+    path = path.gsub(".", "/")
+    path = "/#{path}" unless path.start_with?("/")
+
+    path
+  end
   def find_part_by_name(name)
     return nil if parameter_part_empty?
 
