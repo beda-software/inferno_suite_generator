@@ -54,7 +54,7 @@ module InfernoSuiteGenerator
 
     def get_payload
       patchset = patch_data
-      skip skip_message(resource_type) if patchset.empty?
+      skip skip_message(resource_type) if patchset.nil?
 
       payload_resource = teardown_candidates.find { |resource| resource.resourceType == resource_type }
       if payload_resource
