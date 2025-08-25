@@ -54,7 +54,7 @@ module InfernoSuiteGenerator
         {
           resource_type: resource_type,
           id: patch_entry.request.url.split("/").last,
-          patchset: patchset
+          patchset: [patchset]
         }
       end
 
