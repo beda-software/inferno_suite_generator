@@ -86,7 +86,7 @@ module InfernoSuiteGenerator
       end
 
       def get_resources_by_type(resource_type)
-        resources_by_type[resource_type]
+        resources_by_type[resource_type] || []
       end
 
       private
