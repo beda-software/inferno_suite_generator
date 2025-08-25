@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative "../utils/generic"
+
 module InfernoSuiteGenerator
   # Module handles sending FHIR resource instances
   # to a server via the patch operation and validating the response. It supports:
@@ -9,6 +11,8 @@ module InfernoSuiteGenerator
   # - Validating response status codes (200, 204)
   # - Handling patch operation success scenarios
   module PatchTest
+    include GenericUtils
+
     SUCCESS = 200
     SUCCESS_NO_CONTENT = 204
 
