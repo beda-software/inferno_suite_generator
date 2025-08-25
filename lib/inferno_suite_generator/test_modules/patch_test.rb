@@ -47,7 +47,7 @@ module InfernoSuiteGenerator
 
     private
 
-    def fhir_fhirpath_patch(resource_type, id, body, client: :default)
+    def fhir_fhirpath_patch(resource_type, id, body, client: :default, name: nil, headers: {}, tags: [])
       store_request_and_refresh_token(fhir_client(client), name, tags) do
         tcp_exception_handler do
           puts "BODY IS: #{body}"
