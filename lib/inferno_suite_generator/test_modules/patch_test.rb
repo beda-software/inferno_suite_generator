@@ -31,11 +31,13 @@ module InfernoSuiteGenerator
       store_request_and_refresh_token(fhir_client(client), name, tags) do
         tcp_exception_handler do
           patch_headers = fhir_client(client).fhir_headers.dup
-          patch_headers['Content-Type'] = 'application/fhirpatch+json'
+          patch_headers['Content-Type'] = 'application/fhir+json'
           patch_headers.merge!(headers) if headers && !headers.empty?
 
           path = "#{resource_type}/#{id}"
           body = patchset.to_json
+
+          puts "BODY IS: #{body}"
 
           fhir_client(client).send(:patch, path, body, patch_headers)
         end
