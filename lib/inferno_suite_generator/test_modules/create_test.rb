@@ -38,7 +38,16 @@ module InfernoSuiteGenerator
     def register_teardown_candidate
       return unless resource
 
+      info "Registering #{resource.resourceType} with #{resource.id} for teardown"
       teardown_candidates << resource
+    end
+
+    def register_resource_id
+      return unless resource
+
+      info "Registering #{resource.id} with #{resource.resourceType} for resource ids"
+      demo_resources[resource_type] ||= []
+      demo_resources[resource_type] << resource.id
     end
 
     def parse_fhir_resource(payload)
@@ -57,6 +66,10 @@ module InfernoSuiteGenerator
 
     def teardown_candidates
       scratch[:teardown_candidates] ||= []
+    end
+
+    def demo_resources
+      scratch[:resource_ids] ||= @demodata.resource_ids
     end
   end
 end
