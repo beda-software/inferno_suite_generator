@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative "basic_test"
+
 module InfernoSuiteGenerator
   # Module handles sending FHIR resource instances
   # to a server via the create operation and validating the response. It supports:
@@ -10,6 +12,7 @@ module InfernoSuiteGenerator
   # - Verifying server-assigned resource IDs
   module CreateTest
     extend Forwardable
+    include BasicTest
     def_delegators "self.class", :demodata
 
     EXPECTED_CREATE_STATUS = 201
