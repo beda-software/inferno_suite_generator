@@ -221,8 +221,6 @@ module InfernoSuiteGenerator
     end
 
     def perform_post_search(get_search_resources, params)
-      puts "resource_type: #{resource_type}"
-      puts "params: #{params}"
       fhir_search resource_type, params:, search_method: :post
 
       check_search_response

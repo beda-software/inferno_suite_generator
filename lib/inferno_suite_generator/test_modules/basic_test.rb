@@ -58,7 +58,6 @@ module InfernoSuiteGenerator
     end
 
     def demo_resources
-      puts "scratch[:resource_ids]: #{scratch[:resource_ids]}"
       scratch[:resource_ids] ||= demodata.resource_ids
     end
 
