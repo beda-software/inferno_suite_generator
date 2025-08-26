@@ -11,9 +11,7 @@ module InfernoSuiteGenerator
   # - Validating response status codes and resource types
   # - Verifying server-assigned resource IDs
   module CreateTest
-    extend Forwardable
     include BasicTest
-    def_delegators "self.class", :demodata
 
     EXPECTED_CREATE_STATUS = 201
 
@@ -42,21 +40,6 @@ module InfernoSuiteGenerator
       assert resource.id.present?, missing_id_message(type)
     end
 
-    def register_teardown_candidate
-      return unless resource
-
-      info "Registering #{resource.resourceType} with #{resource.id} for teardown"
-      teardown_candidates << resource
-    end
-
-    def register_resource_id
-      return unless resource
-
-      info "Registering #{resource.id} of #{resource.resourceType} for resource IDs registry"
-      demo_resources[resource_type] ||= []
-      demo_resources[resource_type] << resource.id
-    end
-
     def parse_fhir_resource(payload)
       FHIR.from_contents(payload)
     rescue StandardError => e
@@ -69,14 +52,6 @@ module InfernoSuiteGenerator
 
     def missing_id_message(resource_type)
       "Expected server to return an id for created #{resource_type}."
-    end
-
-    def teardown_candidates
-      scratch[:teardown_candidates] ||= []
-    end
-
-    def demo_resources
-      scratch[:resource_ids] ||= demodata.resource_ids
     end
   end
 end
