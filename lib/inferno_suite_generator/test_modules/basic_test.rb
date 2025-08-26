@@ -16,7 +16,7 @@ module InfernoSuiteGenerator
       payload = resource_body_by_resource_type(resource_type).first
       skip skip_message(resource_type) if payload.nil?
 
-      payload
+      payload.to_json
     end
 
     def available_resource_id
@@ -58,6 +58,7 @@ module InfernoSuiteGenerator
     end
 
     def demo_resources
+      puts "scratch[:resource_ids]: #{scratch[:resource_ids]}"
       scratch[:resource_ids] ||= demodata.resource_ids
     end
 
