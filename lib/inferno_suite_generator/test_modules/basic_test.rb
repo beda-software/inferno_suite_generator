@@ -27,6 +27,18 @@ module InfernoSuiteGenerator
       demo_resources[resource_type] << resource.id
     end
 
+    def register_resource_id_from_bundle(bundle)
+      return unless bundle
+
+      bundle.entry&.map do |entry|
+        resource = entry&.resource
+
+        info "Registering #{resource.id} of #{resource.resourceType} for resource IDs registry"
+        demo_resources[resource_type] ||= []
+        demo_resources[resource_type] << resource.id
+      end
+    end
+
     def teardown_candidates
       scratch[:teardown_candidates] ||= []
     end

@@ -1,13 +1,12 @@
 # frozen_string_literal: true
 
 require_relative "../utils/generic"
+require_relative "basic_test"
 
 module InfernoSuiteGenerator
   module ReadTest
     include GenericUtils
-    extend Forwardable
-
-    def_delegators "self.class", :demodata
+    include BasicTest
 
     def all_scratch_resources
       scratch_resources[:all] ||= []
@@ -115,18 +114,6 @@ module InfernoSuiteGenerator
 
     def resource_class
       FHIR.const_get(resource_type)
-    end
-
-    def register_resource_id
-      return unless resource
-
-      info "Registering #{resource.id} of #{resource.resourceType} for resource IDs registry"
-      demo_resources[resource_type] ||= []
-      demo_resources[resource_type] << resource.id
-    end
-
-    def demo_resources
-      scratch[:resource_ids] ||= demodata.resource_ids
     end
   end
 end

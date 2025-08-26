@@ -6,6 +6,7 @@ require_relative "../core/search_test_properties"
 require_relative "read_test"
 require_relative "../utils/assert_helpers"
 require_relative "../utils/search_test_helpers"
+require_relative "basic_test"
 
 module InfernoSuiteGenerator
   module SearchTest
@@ -14,6 +15,7 @@ module InfernoSuiteGenerator
     include FHIRResourceNavigation
     include ReadTest
     include AssertHelpers
+    include BasicTest
 
     def_delegators "self.class", :metadata, :provenance_metadata, :properties, :demodata
     def_delegators "properties",
@@ -762,7 +764,7 @@ module InfernoSuiteGenerator
 
       until bundle.nil? || page_count == max_pages
         resources += bundle&.entry&.map { |entry| entry&.resource }
-        register_resource_id(bundle)
+        register_resource_id_from_bundle(bundle)
         next_bundle_link = bundle&.link&.find { |link| link.relation == "next" }&.url
         reply_handler&.call(response)
 
@@ -1069,21 +1071,6 @@ module InfernoSuiteGenerator
 
       info "This test was run as a read test. The search functionality is missing in this test, so the test will fail. However, the obtained data will be available."
       assert false
-    end
-
-    def register_resource_id(bundle)
-      return unless bundle
-      bundle&.entry&.map do |entry|
-        resource = entry&.resource
-
-        info "Registering #{resource.id} of #{resource.resourceType} for resource IDs registry"
-        demo_resources[resource_type] ||= []
-        demo_resources[resource_type] << resource.id
-      end
-    end
-
-    def demo_resources
-      scratch[:resource_ids] ||= demodata.resource_ids
     end
   end
 end
