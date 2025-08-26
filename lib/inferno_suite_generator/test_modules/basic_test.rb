@@ -46,5 +46,13 @@ module InfernoSuiteGenerator
     def demo_resources
       scratch[:resource_ids] ||= demodata.resource_ids
     end
+
+    def resource_body_by_resource_type(resource_type)
+      resource_body_list[resource_type] || []
+    end
+
+    def resource_body_list
+      scratch[:resource_body_list] ||= demodata.resource_body_list
+    end
   end
 end

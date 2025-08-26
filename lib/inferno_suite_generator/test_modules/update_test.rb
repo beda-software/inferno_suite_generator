@@ -22,7 +22,7 @@ module InfernoSuiteGenerator
     private
 
     def resource_payload_for_input
-      payload = teardown_candidates.find { |resource| resource.resourceType == resource_type }
+      payload = resource_body_by_resource_type(resource_type).first
       skip skip_message(resource_type) if payload.to_s.strip.empty?
       payload
     end
