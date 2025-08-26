@@ -16,7 +16,7 @@ module InfernoSuiteGenerator
       payload = resource_body_by_resource_type(resource_type).first
       skip skip_message(resource_type) if payload.nil?
 
-      payload.to_json
+      parse_fhir_resource(payload.to_json)
     end
 
     def available_resource_id
@@ -68,6 +68,12 @@ module InfernoSuiteGenerator
 
     def resource_body_list
       scratch[:resource_body_list] ||= demodata.resource_body_list
+    end
+
+    def parse_fhir_resource(payload)
+      FHIR.from_contents(payload)
+    rescue StandardError => e
+      skip "Can't create resource from provided data: #{e.message}"
     end
   end
 end
