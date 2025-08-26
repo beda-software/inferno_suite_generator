@@ -9,6 +9,7 @@ module InfernoSuiteGenerator
   # - Validating response status codes and resource types
   # - Verifying server-assigned resource IDs
   module CreateTest
+    extend Forwardable
     def_delegators "self.class", :metadata, :demodata
 
     EXPECTED_CREATE_STATUS = 201
