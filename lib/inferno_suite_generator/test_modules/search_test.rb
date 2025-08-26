@@ -15,7 +15,7 @@ module InfernoSuiteGenerator
     include ReadTest
     include AssertHelpers
 
-    def_delegators "self.class", :metadata, :provenance_metadata, :properties
+    def_delegators "self.class", :metadata, :provenance_metadata, :properties, :demodata
     def_delegators "properties",
                    :resource_type,
                    :search_param_names,
@@ -1068,6 +1068,21 @@ module InfernoSuiteGenerator
 
       info "This test was run as a read test. The search functionality is missing in this test, so the test will fail. However, the obtained data will be available."
       assert false
+    end
+
+    def register_resource_id
+      return unless bundle
+      bundle&.entry&.map do |entry|
+        resource = entry&.resource
+
+        info "Registering #{resource.id} of #{resource.resourceType} for resource IDs registry"
+        demo_resources[resource_type] ||= []
+        demo_resources[resource_type] << resource.id
+      end
+    end
+
+    def demo_resources
+      scratch[:resource_ids] ||= demodata.resource_ids
     end
   end
 end

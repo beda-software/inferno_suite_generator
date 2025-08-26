@@ -6,6 +6,8 @@ module InfernoSuiteGenerator
   module ReadTest
     include GenericUtils
 
+    def_delegators "self.class", :demodata
+
     def all_scratch_resources
       scratch_resources[:all] ||= []
     end
@@ -83,6 +85,7 @@ module InfernoSuiteGenerator
       basic_read_and_validate(resource_to_read)
 
       all_scratch_resources << resource
+      register_resource_id
     end
 
     def read_and_validate_as_first(resource_to_read, patient_id)
@@ -111,6 +114,18 @@ module InfernoSuiteGenerator
 
     def resource_class
       FHIR.const_get(resource_type)
+    end
+
+    def register_resource_id
+      return unless resource
+
+      info "Registering #{resource.id} of #{resource.resourceType} for resource IDs registry"
+      demo_resources[resource_type] ||= []
+      demo_resources[resource_type] << resource.id
+    end
+
+    def demo_resources
+      scratch[:resource_ids] ||= demodata.resource_ids
     end
   end
 end

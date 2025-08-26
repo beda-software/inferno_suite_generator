@@ -10,7 +10,7 @@ module InfernoSuiteGenerator
   # - Verifying server-assigned resource IDs
   module CreateTest
     extend Forwardable
-    def_delegators "self.class", :metadata, :demodata
+    def_delegators "self.class", :demodata
 
     EXPECTED_CREATE_STATUS = 201
 
