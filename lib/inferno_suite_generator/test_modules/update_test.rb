@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative "basic_test"
+
 module InfernoSuiteGenerator
   # Module handles sending FHIR resource instances
   # to a server via the update operation and validating the response. It supports:
@@ -9,6 +11,8 @@ module InfernoSuiteGenerator
   # - Validating response status codes (200, 201, 204)
   # - Handling update operation success scenarios
   module UpdateTest
+    include BasicTest
+
     EXPECTED_UPDATE_STATUS = 200
     EXPECTED_UPDATE_NEW_STATUS = 201
     EXPECTED_UPDATE_STATUS_WITH_NO_CONTENT = 204
@@ -20,12 +24,6 @@ module InfernoSuiteGenerator
     end
 
     private
-
-    def resource_payload_for_input
-      payload = resource_body_by_resource_type(resource_type).first.to_json
-      skip skip_message(resource_type) if payload.to_s.strip.empty?
-      payload
-    end
 
     def assert_update_success
       response_status = response[:status]
@@ -41,10 +39,6 @@ module InfernoSuiteGenerator
     def error_message(response_status)
       "Response status is #{response_status}. Expected #{EXPECTED_UPDATE_NEW_STATUS}, #{EXPECTED_UPDATE_STATUS} or
               #{EXPECTED_UPDATE_STATUS_WITH_NO_CONTENT}"
-    end
-
-    def teardown_candidates
-      scratch[:teardown_candidates] ||= []
     end
   end
 end

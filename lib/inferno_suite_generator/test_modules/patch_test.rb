@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative "../utils/generic"
+require_relative "basic_test"
 
 module InfernoSuiteGenerator
   # Module handles sending FHIR resource instances
@@ -12,6 +13,7 @@ module InfernoSuiteGenerator
   # - Handling patch operation success scenarios
   module PatchTest
     include GenericUtils
+    include BasicTest
 
     SUCCESS = 200
     SUCCESS_NO_CONTENT = 204
@@ -84,10 +86,6 @@ module InfernoSuiteGenerator
       payload = patch_data
       skip skip_message(resource_type) if payload.empty?
       payload
-    end
-
-    def teardown_candidates
-      scratch[:teardown_candidates] ||= []
     end
 
     def assert_patch_success

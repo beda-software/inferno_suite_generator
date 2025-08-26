@@ -25,12 +25,6 @@ module InfernoSuiteGenerator
 
     private
 
-    def resource_payload_for_input
-      payload = resource_body_by_resource_type(resource_type).first.to_json
-      skip skip_message(resource_type) if payload.to_s.strip.empty?
-      payload
-    end
-
     def assert_create_success
       assert_response_status(EXPECTED_CREATE_STATUS)
       assert_resource_type(resource_type)
