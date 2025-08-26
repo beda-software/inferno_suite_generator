@@ -77,7 +77,7 @@ module InfernoSuiteGenerator
       puts "patch_body_list: #{patch_body_list}"
       puts "patch_type: #{patch_type}"
       puts "patch_body_list[patch_type]: #{patch_body_list[patch_type]}"
-      patch_body_list[patch_type] || {}
+      patch_body_list[patch_type.to_sym] || {}
     end
 
     def patch_body_list_by_patch_type_and_resource_type(patch_type, resource_type)
