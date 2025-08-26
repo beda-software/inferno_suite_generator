@@ -20,10 +20,6 @@ module <%= suite_module_name %>
         '<%= resource_type %>'
       end
 
-      def input_data
-        '<%= create_input_data[:default] %>'
-      end
-
       run do
         perform_create_test
       end

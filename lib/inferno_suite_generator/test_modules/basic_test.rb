@@ -70,6 +70,18 @@ module InfernoSuiteGenerator
       scratch[:resource_body_list] ||= demodata.resource_body_list
     end
 
+    def patch_body_list
+      scratch[:patch_body_list] ||= demodata.patch_body_list
+    end
+
+    def patch_body_list_by_patch_type(patch_type)
+      patch_body_list[patch_type] || {}
+    end
+
+    def patch_body_list_by_patch_type_and_resource_type(patch_type, resource_type)
+      patch_body_list_by_patch_type(patch_type)[resource_type] || []
+    end
+
     def parse_fhir_resource(payload)
       FHIR.from_contents(payload)
     rescue StandardError => e

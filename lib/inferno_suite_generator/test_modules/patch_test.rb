@@ -26,7 +26,7 @@ module InfernoSuiteGenerator
     }.freeze
 
     def perform_json_patch_test
-      payload = get_payload
+      payload = get_payload("JSONPatch")
       fhir_patch(payload[:resource_type], payload[:id], payload[:patchset])
       assert_patch_success
     end
@@ -60,15 +60,15 @@ module InfernoSuiteGenerator
       send(resource_ids_fn(resource_type))
     end
 
-    def get_payload
-      patchset = patch_data
+    def get_payload(patch_type)
+      patchset = patch_body_list_by_patch_type_and_resource_type(patch_type, resource_type)
       skip skip_message(resource_type) if patchset.nil?
 
       payload_resource = teardown_candidates.find { |resource| resource.resourceType == resource_type }
       if payload_resource
         {
           resource_type:,
-          id: payload_resource.id,
+          id: available_resource_id,
           patchset:
         }
       elsif resource_ids_exists?(resource_type)
