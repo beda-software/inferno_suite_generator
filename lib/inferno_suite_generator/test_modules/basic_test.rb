@@ -19,6 +19,13 @@ module InfernoSuiteGenerator
       payload
     end
 
+    def available_resource_id
+      available_id = demo_resources[resource_type]&.first
+      skip "Can't find ID of resource #{resource_type} for UPDATE" if available_id.nil?
+
+      available_id
+    end
+
     def register_teardown_candidate
       return unless resource
 

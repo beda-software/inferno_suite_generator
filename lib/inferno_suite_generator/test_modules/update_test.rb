@@ -19,7 +19,7 @@ module InfernoSuiteGenerator
 
     def perform_update_test
       resource_to_update = resource_payload_for_input
-      fhir_update(resource_to_update, resource_to_update.id)
+      fhir_update(resource_to_update, available_resource_id)
       assert_update_success
     end
 
