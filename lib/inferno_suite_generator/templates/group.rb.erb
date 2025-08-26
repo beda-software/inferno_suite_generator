@@ -1,3 +1,4 @@
+require 'inferno_suite_generator/core/ig_demodata'
 <% test_file_list.each do |file_name| %>require_relative '<%= file_name %>'
 <% end %>
 module <%= suite_module_name %>
@@ -16,10 +17,6 @@ module <%= suite_module_name %>
 
       def self.metadata
         @metadata ||= InfernoSuiteGenerator::Generator::GroupMetadata.new(YAML.load_file(File.join(__dir__, '<%= profile_identifier %>', 'metadata.yml'), aliases: true))
-      end
-
-      def self.demodata
-        @demodata ||= InfernoSuiteGenerator::Generator::IGDemodata.new(YAML.load_file(File.join(__dir__, 'demodata.yml'), aliases: true))
       end
   <% test_id_list.each do |id| %>
       test from: :<%= id %><% end %>

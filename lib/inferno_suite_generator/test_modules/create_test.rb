@@ -49,7 +49,7 @@ module InfernoSuiteGenerator
     def register_resource_id
       return unless resource
 
-      info "Registering #{resource.id} with #{resource.resourceType} for resource ids"
+      info "Registering #{resource.id} of #{resource.resourceType} for resource IDs registry"
       demo_resources[resource_type] ||= []
       demo_resources[resource_type] << resource.id
     end
