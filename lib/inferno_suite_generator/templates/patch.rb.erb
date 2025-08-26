@@ -18,6 +18,12 @@ module <%= suite_module_name %>
 
       id :<%= test_id %>
 
+      def self.demodata
+        @demodata ||= InfernoSuiteGenerator::Generator::IGDemodata.new(
+          YAML.load_file(File.join(File.dirname(__dir__), 'demodata.yml'), aliases: true)
+        )
+      end
+
       def resource_type
         '<%= resource_type %>'
       end
