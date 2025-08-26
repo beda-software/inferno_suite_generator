@@ -9,6 +9,8 @@ module InfernoSuiteGenerator
   # - Validating response status codes and resource types
   # - Verifying server-assigned resource IDs
   module CreateTest
+    def_delegators "self.class", :metadata, :demodata
+
     EXPECTED_CREATE_STATUS = 201
 
     def perform_create_test
