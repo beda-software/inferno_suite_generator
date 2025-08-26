@@ -16,7 +16,7 @@ module InfernoSuiteGenerator
     EXPECTED_CREATE_STATUS = 201
 
     def perform_create_test
-      fhir_create(parse_fhir_resource(resource_payload_for_input))
+      fhir_create(resource_payload_for_input)
       assert_create_success
       ensure_id_present(resource_type)
       register_teardown_candidate
@@ -32,12 +32,6 @@ module InfernoSuiteGenerator
 
     def ensure_id_present(type)
       assert resource.id.present?, missing_id_message(type)
-    end
-
-    def parse_fhir_resource(payload)
-      FHIR.from_contents(payload)
-    rescue StandardError => e
-      skip "Can't create resource from provided data: #{e.message}"
     end
 
     def skip_message(resource_type)
