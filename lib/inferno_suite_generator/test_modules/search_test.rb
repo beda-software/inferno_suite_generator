@@ -762,7 +762,7 @@ module InfernoSuiteGenerator
 
       until bundle.nil? || page_count == max_pages
         resources += bundle&.entry&.map { |entry| entry&.resource }
-        register_resource_id
+        register_resource_id(bundle)
         next_bundle_link = bundle&.link&.find { |link| link.relation == "next" }&.url
         reply_handler&.call(response)
 
@@ -1071,7 +1071,7 @@ module InfernoSuiteGenerator
       assert false
     end
 
-    def register_resource_id
+    def register_resource_id(bundle)
       return unless bundle
       bundle&.entry&.map do |entry|
         resource = entry&.resource
