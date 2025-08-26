@@ -16,6 +16,7 @@ module InfernoSuiteGenerator
       assert_create_success
       ensure_id_present(resource_type)
       register_teardown_candidate
+      register_resource_id
     end
 
     private
