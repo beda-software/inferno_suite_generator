@@ -5,6 +5,7 @@ require_relative "../utils/generic"
 module InfernoSuiteGenerator
   module ReadTest
     include GenericUtils
+    extend Forwardable
 
     def_delegators "self.class", :demodata
 
