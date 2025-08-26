@@ -10,6 +10,13 @@ class BundleEntryDecorator < FHIR::R4::Bundle::Entry
     @bundle_entry = bundle_entry
   end
 
+  def bundle_entry_patch_data?
+    request = @bundle_entry.request
+    return false if request.nil?
+
+    request.local_method == "PATCH"
+  end
+
   def bundle_entry_patch_parameter?(resource_type)
     request = @bundle_entry.request
 

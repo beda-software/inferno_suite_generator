@@ -7,6 +7,10 @@ module InfernoSuiteGenerator
         resources_by_type[resource.resourceType] << resource
       end
 
+      def available_resources
+        resources_by_type.keys
+      end
+
       def capability_statement(mode = "server")
         resources_by_type["CapabilityStatement"].find do |capability_statement_resource|
           capability_statement_resource.rest.any? { |r| r.mode == mode }
