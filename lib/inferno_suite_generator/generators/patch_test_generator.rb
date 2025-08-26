@@ -20,6 +20,7 @@ module InfernoSuiteGenerator
           ig_metadata.groups.each do |group|
             next if Registry.get(:config_keeper).exclude_resource?(group.profile_url, group.resource)
             next unless patch_interaction(group).present?
+
             # [XML JSON FHIRPathXML FHIRPathJSON]
             %w[JSON].each do |patch_option|
               new(group, base_output_dir, ig_metadata, patch_option, ig_resources).generate
@@ -94,50 +95,51 @@ module InfernoSuiteGenerator
         constants = config.constants
 
         {
-          id: "#{snake_case_resource_type}_ids".to_sym,
+          id: :"#{snake_case_resource_type}_ids",
           title: "#{resource_type} IDs",
-          description: description,
+          description:,
           default: constants["patch_ids.#{snake_case_resource_type}"] || ""
         }
       end
 
       def needs_ids_input?
-        !group_metadata.interactions.find {
-          |interaction| interaction[:code] == "create" && interaction[:expectation] == "SHALL" }.present?
+        !group_metadata.interactions.find do |interaction|
+          interaction[:code] == "create" && interaction[:expectation] == "SHALL"
+        end.present?
       end
 
       def current_test_data
-        parameters_resource = patch_entry ? patch_entry.resource.to_hash : nil
+        parameters_resource = patch_entry&.resource&.to_hash
         patchset = patch_entry ? ParametersParameterDecorator.new(patch_entry.resource.parameter.first).patchset_data : nil
 
         case patch_option
         when "XML"
           {
-            'humanized_patch_option' => 'XMLPatch',
-            'test_id_patch_option' => 'xml',
-            'patchset' => patchset,
-            'executor' => 'perform_xml_patch_test'
+            "humanized_patch_option" => "XMLPatch",
+            "test_id_patch_option" => "xml",
+            "patchset" => patchset,
+            "executor" => "perform_xml_patch_test"
           }
         when "JSON"
           {
-            'humanized_patch_option' => 'JSONPatch',
-            'test_id_patch_option' => 'json',
-            'patchset' => patchset,
-            'executor' => 'perform_json_patch_test'
+            "humanized_patch_option" => "JSONPatch",
+            "test_id_patch_option" => "json",
+            "patchset" => patchset,
+            "executor" => "perform_json_patch_test"
           }
         when "FHIRPathXML"
           {
-            'humanized_patch_option' => 'FHIRPath Patch in XML format',
-            'test_id_patch_option' => 'fhirpath_xml',
-            'patchset' => parameters_resource,
-            'executor' => 'perform_fhirpath_patch_xml_text'
+            "humanized_patch_option" => "FHIRPath Patch in XML format",
+            "test_id_patch_option" => "fhirpath_xml",
+            "patchset" => parameters_resource,
+            "executor" => "perform_fhirpath_patch_xml_text"
           }
         when "FHIRPathJSON"
           {
-            'humanized_patch_option' => 'FHIRPath Patch in JSON format',
-            'test_id_patch_option' => 'fhirpath_json',
-            'patchset' => parameters_resource,
-            'executor' => 'perform_fhirpath_patch_json_test'
+            "humanized_patch_option" => "FHIRPath Patch in JSON format",
+            "test_id_patch_option" => "fhirpath_json",
+            "patchset" => parameters_resource,
+            "executor" => "perform_fhirpath_patch_json_test"
           }
         else
           raise "Unknown patch option: #{patch_option}"

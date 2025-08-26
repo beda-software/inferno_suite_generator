@@ -34,8 +34,6 @@ class ParametersParameterDecorator < FHIR::R4::Parameters::Parameter
       "move"
     when "copy"
       "copy"
-    else
-      nil
     end
   end
 
@@ -46,11 +44,12 @@ class ParametersParameterDecorator < FHIR::R4::Parameters::Parameter
     parts = parts.drop(1) if parts.length > 1
     path = parts.join("/")
     path = path.gsub(/\[(\d+)\]/, '/\1')
-    path = path.gsub(".", "/")
+    path = path.tr(".", "/")
     path = "/#{path}" unless path.start_with?("/")
 
     path
   end
+
   def find_part_by_name(name)
     return nil if parameter_part_empty?
 

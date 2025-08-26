@@ -17,10 +17,10 @@ module InfernoSuiteGenerator
     SUCCESS_NO_CONTENT = 204
 
     CONTENT_TYPE_HEADERS = {
-      'JSONPatch' => 'application/json-patch+json',
-      'XMLPatch' => 'application/xml-patch+xml',
-      'FHIRPathPatchJSON' => 'application/fhir+json',
-      'FHIRPathPatchXML' => 'application/fhir+xml'
+      "JSONPatch" => "application/json-patch+json",
+      "XMLPatch" => "application/xml-patch+xml",
+      "FHIRPathPatchJSON" => "application/fhir+json",
+      "FHIRPathPatchXML" => "application/fhir+xml"
     }.freeze
 
     def perform_json_patch_test
@@ -45,6 +45,7 @@ module InfernoSuiteGenerator
     end
 
     private
+
     def resource_ids_fn(resource_type)
       "#{camel_to_snake(resource_type)}_ids"
     end
@@ -52,6 +53,7 @@ module InfernoSuiteGenerator
     def resource_ids_exists?(resource_type)
       respond_to?(resource_ids_fn(resource_type))
     end
+
     def fetch_resource_ids(resource_type)
       send(resource_ids_fn(resource_type))
     end
@@ -63,22 +65,19 @@ module InfernoSuiteGenerator
       payload_resource = teardown_candidates.find { |resource| resource.resourceType == resource_type }
       if payload_resource
         {
-          resource_type: resource_type,
+          resource_type:,
           id: payload_resource.id,
-          patchset: patchset
+          patchset:
+        }
+      elsif resource_ids_exists?(resource_type)
+        {
+          resource_type:,
+          id: fetch_resource_ids(resource_type).split(",").first.strip,
+          patchset:
         }
       else
-        if resource_ids_exists?(resource_type)
-          {
-            resource_type: resource_type,
-            id: fetch_resource_ids(resource_type).split(",").first.strip,
-            patchset: patchset
-          }
-        else
-          skip "No resources with type #{resource_type} found for PATCH test"
-        end
+        skip "No resources with type #{resource_type} found for PATCH test"
       end
-
     end
 
     def resource_payload_for_input

@@ -22,6 +22,4 @@ class ParametersDecorator < FHIR::R4::Parameters
 
     json_patch_operations
   end
-
-  private
 end
