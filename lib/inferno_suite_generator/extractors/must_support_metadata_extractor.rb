@@ -43,7 +43,7 @@ module InfernoSuiteGenerator
         must_support_extension_elements.map do |element|
           {
             id: element.id,
-            url: element.type.first.profile.first
+            url: element.type.first.profile.first.split('|').first
           }.tap do |metadata|
             metadata[:uscdi_only] = true if is_uscdi_requirement_element?(element)
           end
