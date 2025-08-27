@@ -652,22 +652,22 @@ module InfernoSuiteGenerator
 
     def fixed_value_search_param_values
       name = fixed_value_search_param_name.to_sym
-      info "Looking up fixed search values for parameter: #{name}"
+      puts "Looking up fixed search values for parameter: #{name}"
 
       values = metadata.search_definitions[name][:values]
-      info "Found #{values.length} fixed search values: #{values.join(', ')}"
+      puts "Found #{values.length} fixed search values: #{values.join(', ')}"
     
       values
     end
 
     def fixed_value_search_params(value, patient_id)
-      info "Creating fixed value search params with value: #{value} and patient_id: #{patient_id}"
+      puts "Creating fixed value search params with value: #{value} and patient_id: #{patient_id}"
       params = search_param_names.each_with_object({}) do |name, params|
         param_value = patient_id_param?(name) ? patient_id : value
-        info "Setting search parameter '#{name}' to value: #{param_value}"
+        puts "Setting search parameter '#{name}' to value: #{param_value}"
         params[name] = param_value
       end
-      info "Generated search params: #{params}"
+      puts "Generated search params: #{params}"
       params
     end
 
