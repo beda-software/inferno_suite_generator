@@ -63,12 +63,14 @@ module InfernoSuiteGenerator
       end
 
       def discriminators(slice)
-        slice.slicing.discriminator
+        slice.slicing&.discriminator
       end
 
       def must_support_pattern_slice_elements
         must_support_slice_elements.select do |element|
-          discriminators(sliced_element(element)).first.type == "pattern"
+          discriminator_list = discriminators(sliced_element(element))
+          next if discriminator_list.nil?
+          discriminator_list.first.type == "pattern"
         end
       end
 
@@ -135,7 +137,9 @@ module InfernoSuiteGenerator
 
       def must_support_type_slice_elements
         must_support_slice_elements.select do |element|
-          discriminators(sliced_element(element)).first.type == "type"
+          discriminator_list = discriminators(sliced_element(element))
+          next if discriminator_list.nil?
+          discriminator_list.first.type == "type"
         end
       end
 
@@ -169,7 +173,9 @@ module InfernoSuiteGenerator
 
       def must_support_value_slice_elements
         must_support_slice_elements.select do |element|
-          discriminators(sliced_element(element)).first.type == "value"
+          discriminator_list = discriminators(sliced_element(element))
+          next if discriminator_list.nil?
+          discriminator_list.first.type == "value"
         end
       end
 
