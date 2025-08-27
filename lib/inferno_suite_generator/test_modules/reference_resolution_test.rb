@@ -83,7 +83,7 @@ module InfernoSuiteGenerator
       end.flatten
     end
 
-    def unresolved_references(resources = [], rewrite_profile_url)
+    def unresolved_references(resources = [], rewrite_profile_url = {})
       @unresolved_references ||=
         must_support_references_with_target_profile.select do |reference_path_profile_pair|
           path = reference_path_profile_pair[:path]
