@@ -29,10 +29,12 @@ module InfernoSuiteGenerator
     end
 
     def available_resource_id_list
+      teardown_ids = teardown_candidates.select { |resource| resource.resourceType == resource_type }.map(&:id)
       available_ids = demo_resources[resource_type][0..9]
-      skip "Can't find ID of resource #{resource_type} for UPDATE" if available_ids.empty?
+      all_available_ids = teardown_ids + available_ids
+      skip "Can't find ID of resource #{resource_type} for UPDATE" if all_available_ids.empty?
 
-      available_ids
+      all_available_ids
     end
 
     def register_teardown_candidate

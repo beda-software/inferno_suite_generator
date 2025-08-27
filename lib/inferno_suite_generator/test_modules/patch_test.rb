@@ -68,28 +68,6 @@ module InfernoSuiteGenerator
       send(resource_ids_fn(resource_type))
     end
 
-    def get_payload(patch_type)
-      patchset = patch_body_list_by_patch_type_and_resource_type(patch_type, resource_type)
-      skip skip_message(resource_type) if patchset.nil?
-
-      payload_resource = teardown_candidates.find { |resource| resource.resourceType == resource_type }
-      if payload_resource
-        {
-          resource_type:,
-          id: available_resource_id,
-          patchset:
-        }
-      elsif resource_ids_exists?(resource_type)
-        {
-          resource_type:,
-          id: fetch_resource_ids(resource_type).split(",").first.strip,
-          patchset:
-        }
-      else
-        skip "No resources with type #{resource_type} found for PATCH test"
-      end
-    end
-
     def resource_payload_for_input
       payload = patch_data
       skip skip_message(resource_type) if payload.empty?
