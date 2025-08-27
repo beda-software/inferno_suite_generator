@@ -28,9 +28,8 @@ module InfernoSuiteGenerator
     def perform_json_patch_test
       patchset = patch_body_list_by_patch_type_and_resource_type("JSONPatch", resource_type)
       skip skip_message(resource_type) if patchset.nil?
-      resource_ids = available_resource_id_list + fetch_resource_ids(resource_type).split(",")
 
-      resource_ids.each do |resource_id|
+      available_resource_id_list.each do |resource_id|
         fhir_patch(resource_type, payload[:id], patchset)
         break unless response[:status] == NOT_FOUND_STATUS
 
