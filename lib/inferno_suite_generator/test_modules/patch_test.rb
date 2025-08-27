@@ -30,7 +30,7 @@ module InfernoSuiteGenerator
       skip skip_message(resource_type) if patchset.nil?
 
       available_resource_id_list.each do |resource_id|
-        fhir_patch(resource_type, payload[:id], patchset)
+        fhir_patch(resource_type, resource_id, patchset)
         break unless response[:status] == NOT_FOUND_STATUS
 
         info "Resource with id #{resource_id} not found. Waiting other ID..."
