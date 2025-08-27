@@ -12,6 +12,8 @@ module InfernoSuiteGenerator
     extend Forwardable
     def_delegators "self.class", :demodata
 
+    NOT_FOUND_STATUS = 404
+
     def resource_payload_for_input
       payload = resource_body_by_resource_type(resource_type).first
       skip skip_message(resource_type) if payload.nil?

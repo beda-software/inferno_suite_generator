@@ -16,7 +16,6 @@ module InfernoSuiteGenerator
     EXPECTED_UPDATE_STATUS = 200
     EXPECTED_UPDATE_NEW_STATUS = 201
     EXPECTED_UPDATE_STATUS_WITH_NO_CONTENT = 204
-    NOT_FOUND_STATUS = 404
 
     def perform_update_test
       resource_to_update = resource_payload_for_input
