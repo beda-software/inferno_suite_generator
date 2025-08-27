@@ -145,6 +145,7 @@ module InfernoSuiteGenerator
     end
 
     def is_count_available_for_resource_type?(resource_type, params)
+      # TODO: Do we need to keep this method?
       resource_sym = resource_type.to_sym
       count = scratch&.dig(:info, resource_sym, :count)
 
@@ -160,12 +161,13 @@ module InfernoSuiteGenerator
     end
 
     def perform_search(params, patient_id)
-      search_params = if is_count_available_for_resource_type?(resource_type,
-                                                               params) == false
-                        params
-                      else
-                        params.merge({ _count: 10 })
-                      end
+      # search_params = if is_count_available_for_resource_type?(resource_type,
+      #                                                          params) == false
+      #                   params
+      #                 else
+      #                   params.merge({ _count: 10 })
+      #                 end
+      search_params = params
       fhir_search(resource_type, params: search_params)
 
       if SearchTestHelpers.search_by_reference?(search_params)
@@ -176,12 +178,12 @@ module InfernoSuiteGenerator
       perform_search_with_status(params, patient_id) if response[:status] == 400 && possible_status_search?
 
       check_search_response
-      fetch_all_bundled_resources = if is_count_available_for_resource_type?(resource_type,
-                                                                             params) == false
-                                      fetch_all_bundled_resources()
-                                    else
-                                      fetch_all_bundled_resources(max_pages: 2)
-                                    end
+      # fetch_all_bundled_resources = if is_count_available_for_resource_type?(resource_type,
+      #                                                                        params) == false
+      #                                 fetch_all_bundled_resources()
+      #                               else
+      #                                 fetch_all_bundled_resources(max_pages: 2)
+      #                               end
       resources_returned =
         fetch_all_bundled_resources.select { |resource| resource.resourceType == resource_type }
 
