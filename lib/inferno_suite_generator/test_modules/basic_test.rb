@@ -26,6 +26,13 @@ module InfernoSuiteGenerator
       available_id
     end
 
+    def available_resource_id_list
+      available_ids = demo_resources[resource_type][0..9]
+      skip "Can't find ID of resource #{resource_type} for UPDATE" if available_ids.empty?
+
+      available_ids
+    end
+
     def register_teardown_candidate
       return unless resource
 

@@ -26,8 +26,17 @@ module InfernoSuiteGenerator
     }.freeze
 
     def perform_json_patch_test
-      payload = get_payload("JSONPatch")
-      fhir_patch(payload[:resource_type], payload[:id], payload[:patchset])
+      patchset = patch_body_list_by_patch_type_and_resource_type("JSONPatch", resource_type)
+      skip skip_message(resource_type) if patchset.nil?
+      resource_ids = available_resource_id_list + fetch_resource_ids(resource_type).split(",")
+
+      resource_ids.each do |resource_id|
+        fhir_patch(resource_type, payload[:id], patchset)
+        break unless response[:status] == NOT_FOUND_STATUS
+
+        info "Resource with id #{resource_id} not found. Waiting other ID..."
+        next
+      end
       assert_patch_success
     end
 

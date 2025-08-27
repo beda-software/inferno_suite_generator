@@ -16,10 +16,18 @@ module InfernoSuiteGenerator
     EXPECTED_UPDATE_STATUS = 200
     EXPECTED_UPDATE_NEW_STATUS = 201
     EXPECTED_UPDATE_STATUS_WITH_NO_CONTENT = 204
+    NOT_FOUND_STATUS = 404
 
     def perform_update_test
       resource_to_update = resource_payload_for_input
-      fhir_update(resource_to_update, available_resource_id)
+      available_resource_id_list.each do |resource_id|
+        resource_to_update.id = resource_id
+        fhir_update(resource_to_update, resource_id)
+        break unless response[:status] == NOT_FOUND_STATUS
+
+        info "Resource with id #{resource_id} not found. Waiting other ID..."
+        next
+      end
       assert_update_success
     end
 
