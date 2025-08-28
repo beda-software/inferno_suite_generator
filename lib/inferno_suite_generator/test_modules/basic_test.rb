@@ -97,8 +97,9 @@ module InfernoSuiteGenerator
 
     def patch_body_list_from_input
       info "The test suite will use the data from the provided bundle to PATCH resources"
-      InfernoSuiteGenerator::Generator::IGDemodataExtractor.new(
-        [parse_fhir_resource(extra_bundle)]).extract.patch_body_list || {}
+      ig_resources = InfernoSuiteGenerator::Generator::IGResources.new
+      ig_resources.add(parse_fhir_resource(extra_bundle))
+      InfernoSuiteGenerator::Generator::IGDemodataExtractor.new(ig_resources).extract.patch_body_list || {}
     end
 
     def patch_body_list_by_patch_type(patch_type)
