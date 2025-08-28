@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative "../extractors/ig_demodata_extractor"
+
 module InfernoSuiteGenerator
   # Module provides shared utility methods for FHIR test modules.
   # It supports resource management and cleanup operations including:
@@ -89,7 +91,12 @@ module InfernoSuiteGenerator
     end
 
     def patch_body_list
-      scratch[:patch_body_list] ||= demodata.patch_body_list
+      initial_demodata = extra_bundle.nil? ? demodata.patch_body_list : patch_body_list_from_input
+      scratch[:patch_body_list] ||= initial_demodata
+    end
+
+    def patch_body_list_from_input
+      IGDemodataExtractor.new([parse_fhir_resource(extra_bundle)]).extract.patch_body_list || {}
     end
 
     def patch_body_list_by_patch_type(patch_type)

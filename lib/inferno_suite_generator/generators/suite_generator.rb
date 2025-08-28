@@ -138,6 +138,10 @@ module InfernoSuiteGenerator
       def outer_groups_after
         prepare_outer_groups("after")
       end
+
+      def patch_interaction_exists?
+        ig_metadata.patch_interaction_exists?
+      end
     end
   end
 end

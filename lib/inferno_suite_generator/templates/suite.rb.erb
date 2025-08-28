@@ -67,6 +67,13 @@ module <%= suite_module_name %>
       input :header_value,
             title: 'Header value',
             optional: true
+      <% if patch_interaction_exists? %>
+      input :extra_bundle,
+            title: 'Extra Transaction Bundle',
+            description: 'A FHIR Bundle containing resources to be included as patch requests in the test suite.',
+            type: 'text_area',
+            optional: true
+      <% end %>
 
       fhir_client do
         url :url
