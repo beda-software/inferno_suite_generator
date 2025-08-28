@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
-require_relative "../extractors/ig_demodata_extractor"
-require_relative "../core/ig_resources"
+require_relative "../decorators/parameters_parameter_decorator"
 
 module InfernoSuiteGenerator
   # Module provides shared utility methods for FHIR test modules.
@@ -98,9 +97,33 @@ module InfernoSuiteGenerator
 
     def patch_body_list_from_input
       info "The test suite will use the data from the provided bundle to PATCH resources"
-      ig_resources = InfernoSuiteGenerator::Generator::IGResources.new
-      ig_resources.add(parse_fhir_resource(extra_bundle))
-      InfernoSuiteGenerator::Generator::IGDemodataExtractor.new(ig_resources).extract.patch_body_list || {}
+      bundle = parse_fhir_resource(extra_bundle)
+      patch_entries = bundle.entry.select do |entry|
+        request = entry.request
+        return false if request.nil?
+
+        request.local_method == "PATCH"
+      end
+      get_patch_body_list(patch_entries)
+    end
+
+    def get_patch_body_list(bundle_patch_entries)
+      result = {}
+
+      bundle_patch_entries.each do |entry|
+        resource_type = entry.request.url.split("/").first
+        result[:FHIRPATHPatchJson] ||= {}
+        result[:FHIRPATHPatchJson][resource_type] ||= []
+        result[:JSONPatch] ||= {}
+        result[:JSONPatch][resource_type] ||= []
+
+        result[:FHIRPATHPatchJson][resource_type] << entry.resource.source_hash
+        result[:JSONPatch][resource_type] << ParametersParameterDecorator.new(
+          entry.resource.parameter.first
+        ).patchset_data
+      end
+
+      result
     end
 
     def patch_body_list_by_patch_type(patch_type)
