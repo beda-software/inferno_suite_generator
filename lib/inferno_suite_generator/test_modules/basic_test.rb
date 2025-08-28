@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative "../extractors/ig_demodata_extractor"
+require_relative "../core/ig_resources"
 
 module InfernoSuiteGenerator
   # Module provides shared utility methods for FHIR test modules.
