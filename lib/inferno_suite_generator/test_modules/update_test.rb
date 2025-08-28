@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative "basic_test"
+require "securerandom"
 
 module InfernoSuiteGenerator
   # Module handles sending FHIR resource instances
@@ -30,12 +31,28 @@ module InfernoSuiteGenerator
       assert_update_success
     end
 
+    def perform_update_new_test
+      resource_to_update = resource_payload_for_input
+      resource_id = SecureRandom.uuid
+      resource_to_update.id = resource_id
+      fhir_update(resource_to_update, resource_id)
+      assert_update_new_success
+      register_teardown_candidate
+      register_resource_id
+    end
+
     private
 
     def assert_update_success
       response_status = response[:status]
-      assert [EXPECTED_UPDATE_NEW_STATUS, EXPECTED_UPDATE_STATUS,
+      assert [EXPECTED_UPDATE_STATUS,
               EXPECTED_UPDATE_STATUS_WITH_NO_CONTENT].include?(response_status),
+             error_message(response_status)
+    end
+
+    def assert_update_new_success
+      response_status = response[:status]
+      assert response_status == EXPECTED_UPDATE_NEW_STATUS,
              error_message(response_status)
     end
 

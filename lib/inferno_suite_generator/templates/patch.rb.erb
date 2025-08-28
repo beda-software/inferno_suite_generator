@@ -5,8 +5,8 @@ module <%= suite_module_name %>
     class <%= class_name %> < Inferno::Test
       include InfernoSuiteGenerator::PatchTest
 
-      title '(<%= conformance_expectation %>) Server returns correct <%= resource_type %> resource from <%= resource_type %> patch interaction (<%= humanized_patch_option %>)'
-      description 'A server <%= conformance_expectation %> support the <%= resource_type %> patch interaction (<%= humanized_patch_option %>).'
+      title '(<%= conformance_expectation %>) Server returns correct <%= resource_type %> resource from <%= resource_type %> patch interaction (<%= humanized_option %>)'
+      description 'A server <%= conformance_expectation %> support the <%= resource_type %> patch interaction (<%= humanized_option %>).'
 
       <% if ids_input_data %>
       input :<%= ids_input_data[:id] %>,

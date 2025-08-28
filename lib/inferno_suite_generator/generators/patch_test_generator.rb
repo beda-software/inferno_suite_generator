@@ -33,13 +33,13 @@ module InfernoSuiteGenerator
         end
       end
 
-      attr_reader :ig_resources, :config, :patch_option
+      attr_reader :ig_resources, :config, :test_type
 
       self.template_type = TEMPLATE_TYPES[:PATCH]
 
-      def initialize(group_metadata, base_output_dir, ig_metadata, patch_option, ig_resources = nil)
+      def initialize(group_metadata, base_output_dir, ig_metadata, test_type, ig_resources = nil)
         super(group_metadata, base_output_dir, ig_metadata)
-        @patch_option = patch_option
+        @test_type = test_type
         @ig_resources = ig_resources
         @config = Registry.get(:config_keeper)
       end
@@ -58,12 +58,12 @@ module InfernoSuiteGenerator
         [patchset]
       end
 
-      def humanized_patch_option
-        current_test_data["humanized_patch_option"] if current_test_data
+      def humanized_option
+        current_test_data["humanized_option"] if current_test_data
       end
 
-      def test_id_patch_option
-        current_test_data["test_id_patch_option"] if current_test_data
+      def test_id_option
+        current_test_data["test_id_option"] if current_test_data
       end
 
       def patchset
@@ -112,37 +112,37 @@ module InfernoSuiteGenerator
         parameters_resource = patch_entry&.resource&.to_hash
         patchset = patch_entry ? ParametersParameterDecorator.new(patch_entry.resource.parameter.first).patchset_data : nil
 
-        case patch_option
+        case test_type
         when "XML"
           {
-            "humanized_patch_option" => "XMLPatch",
-            "test_id_patch_option" => "xml",
+            "humanized_option" => "XMLPatch",
+            "test_id_option" => "xml",
             "patchset" => patchset,
             "executor" => "perform_xml_patch_test"
           }
         when "JSON"
           {
-            "humanized_patch_option" => "JSONPatch",
-            "test_id_patch_option" => "json",
+            "humanized_option" => "JSONPatch",
+            "test_id_option" => "json",
             "patchset" => patchset,
             "executor" => "perform_json_patch_test"
           }
         when "FHIRPathXML"
           {
-            "humanized_patch_option" => "FHIRPath Patch in XML format",
-            "test_id_patch_option" => "fhirpath_xml",
+            "humanized_option" => "FHIRPath Patch in XML format",
+            "test_id_option" => "fhirpath_xml",
             "patchset" => parameters_resource,
             "executor" => "perform_fhirpath_patch_xml_text"
           }
         when "FHIRPathJSON"
           {
-            "humanized_patch_option" => "FHIRPath Patch in JSON format",
-            "test_id_patch_option" => "fhirpath_json",
+            "humanized_option" => "FHIRPath Patch in JSON format",
+            "test_id_option" => "fhirpath_json",
             "patchset" => parameters_resource,
             "executor" => "perform_fhirpath_patch_json_test"
           }
         else
-          raise "Unknown patch option: #{patch_option}"
+          raise "Unknown patch option: #{test_type}"
         end
       end
 
