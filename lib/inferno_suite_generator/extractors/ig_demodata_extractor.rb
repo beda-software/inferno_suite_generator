@@ -7,6 +7,12 @@ require_relative "../decorators/bundle_entry_decorator"
 
 module InfernoSuiteGenerator
   class Generator
+    # Extracts demonstration data from Implementation Guide (IG) resources.
+    #
+    # This class processes FHIR resources from an Implementation Guide and extracts
+    # relevant demonstration data including resource IDs, resource bodies, and patch
+    # operations. The extracted data is organized and filtered to exclude certain
+    # resource types and elements that are not needed for demonstration purposes.
     class IGDemodataExtractor
       attr_accessor :ig_resources, :demodata, :config_keeper
 

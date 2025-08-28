@@ -2,6 +2,11 @@
 
 module InfernoSuiteGenerator
   class Generator
+    # Represents demo data for Inferno Suite Generator testing scenarios.
+    #
+    # This class serves as a data container for managing test resources, including
+    # resource IDs, full resource bodies, and partial resource bodies for PATCH operations.
+    # It provides a structured way to organize and access demo data used in testing workflows.
     class IGDemodata
       attr_accessor :resource_ids, :resource_body_list, :patch_body_list
 
