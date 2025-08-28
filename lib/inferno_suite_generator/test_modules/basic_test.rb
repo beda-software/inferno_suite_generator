@@ -42,6 +42,9 @@ module InfernoSuiteGenerator
       return unless resource
 
       info "Registering #{resource.resourceType} with #{resource.id} for teardown"
+      existing_teardown_candidates = teardown_candidates.map { |candidate| "#{candidate.resourceType}/#{candidate.id}" }
+      return if existing_teardown_candidates.include? "#{resource.resourceType}/#{resource.id}"
+
       teardown_candidates << resource
     end
 
@@ -50,6 +53,8 @@ module InfernoSuiteGenerator
 
       info "Registering #{resource.id} of #{resource.resourceType} for resource IDs registry"
       demo_resources[resource_type] ||= []
+      return if demo_resources[resource_type].include? resource.id
+
       demo_resources[resource_type] << resource.id
     end
 
@@ -61,6 +66,8 @@ module InfernoSuiteGenerator
 
         info "Registering #{resource.id} of #{resource.resourceType} for resource IDs registry"
         demo_resources[resource_type] ||= []
+        return if demo_resources[resource_type].include? resource.id
+
         demo_resources[resource_type] << resource.id
       end
     end
