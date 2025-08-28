@@ -8,9 +8,9 @@ module InfernoSuiteGenerator
       def initialize(data = nil)
         return unless data
 
-        @resource_ids = data.is_a?(Hash) ? (data['resource_ids'] || data[:resource_ids]) : nil
-        @resource_body_list = data.is_a?(Hash) ? (data['resource_body_list'] || data[:resource_body_list]) : nil
-        @patch_body_list = data.is_a?(Hash) ? (data['patch_body_list'] || data[:patch_body_list]) : nil
+        @resource_ids = data.is_a?(Hash) ? (data["resource_ids"] || data[:resource_ids]) : nil
+        @resource_body_list = data.is_a?(Hash) ? (data["resource_body_list"] || data[:resource_body_list]) : nil
+        @patch_body_list = data.is_a?(Hash) ? (data["patch_body_list"] || data[:patch_body_list]) : nil
       end
 
       def to_hash

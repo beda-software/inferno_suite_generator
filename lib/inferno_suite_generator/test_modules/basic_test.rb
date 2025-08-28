@@ -10,6 +10,7 @@ module InfernoSuiteGenerator
   # - Providing access to demo data configurations
   module BasicTest
     extend Forwardable
+
     def_delegators "self.class", :demodata
 
     NOT_FOUND_STATUS = 404
