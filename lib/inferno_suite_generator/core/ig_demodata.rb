@@ -20,9 +20,9 @@ module InfernoSuiteGenerator
 
       def to_hash
         {
-          resource_ids: resource_ids,
-          resource_body_list: resource_body_list,
-          patch_body_list: patch_body_list
+          resource_ids:,
+          resource_body_list:,
+          patch_body_list:
         }
       end
 
