@@ -131,7 +131,7 @@ module InfernoSuiteGenerator
     end
 
     def patch_body_list_by_patch_type_and_resource_type(patch_type, resource_type)
-      patch_body_list_by_patch_type(patch_type)[resource_type] || []
+      patch_body_list_by_patch_type(patch_type)[resource_type].reverse || []
     end
 
     def parse_fhir_resource(payload)
