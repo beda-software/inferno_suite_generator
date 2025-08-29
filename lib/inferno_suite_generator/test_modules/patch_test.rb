@@ -105,12 +105,12 @@ module InfernoSuiteGenerator
           headers = fhir_client(client).fhir_headers
           headers["Content-Type"] = CONTENT_TYPE_HEADERS["FHIRPathPatchJSON"]
           headers["Accept"] = CONTENT_TYPE_HEADERS["FHIRPathPatchJSON"]
-          path = "#{resource_type}/#{id}"
+          # path = "#{resource_type}/#{id}"
           body = parameters_resource_hash.to_json
 
           puts "BODY IS: #{body}"
 
-          fhir_client(client).send(:patch, path, body, headers)
+          fhir_client(client).partial_update(fhir_class_from_resource_type(resource_type), id, body)
         end
       end
     end
