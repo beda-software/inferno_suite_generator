@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+require_relative "basic_test"
+require "securerandom"
+
 module InfernoSuiteGenerator
   # Module handles sending FHIR resource instances
   # to a server via the update operation and validating the response. It supports:
@@ -9,28 +12,47 @@ module InfernoSuiteGenerator
   # - Validating response status codes (200, 201, 204)
   # - Handling update operation success scenarios
   module UpdateTest
+    include BasicTest
+
     EXPECTED_UPDATE_STATUS = 200
     EXPECTED_UPDATE_NEW_STATUS = 201
     EXPECTED_UPDATE_STATUS_WITH_NO_CONTENT = 204
 
     def perform_update_test
       resource_to_update = resource_payload_for_input
-      fhir_update(resource_to_update, resource_to_update.id)
+      available_resource_id_list.each do |resource_id|
+        resource_to_update.id = resource_id
+        fhir_update(resource_to_update, resource_id)
+        break unless response[:status] == NOT_FOUND_STATUS
+
+        info "Resource with id #{resource_id} not found. Waiting other ID..."
+        next
+      end
       assert_update_success
+    end
+
+    def perform_update_new_test
+      resource_to_update = resource_payload_for_input
+      resource_id = SecureRandom.uuid
+      resource_to_update.id = resource_id
+      fhir_update(resource_to_update, resource_id)
+      assert_update_new_success
+      register_teardown_candidate
+      register_resource_id
     end
 
     private
 
-    def resource_payload_for_input
-      payload = teardown_candidates.find { |resource| resource.resourceType == resource_type }
-      skip skip_message(resource_type) if payload.to_s.strip.empty?
-      payload
-    end
-
     def assert_update_success
       response_status = response[:status]
-      assert [EXPECTED_UPDATE_NEW_STATUS, EXPECTED_UPDATE_STATUS,
+      assert [EXPECTED_UPDATE_STATUS,
               EXPECTED_UPDATE_STATUS_WITH_NO_CONTENT].include?(response_status),
+             error_message(response_status)
+    end
+
+    def assert_update_new_success
+      response_status = response[:status]
+      assert response_status == EXPECTED_UPDATE_NEW_STATUS,
              error_message(response_status)
     end
 
@@ -41,10 +63,6 @@ module InfernoSuiteGenerator
     def error_message(response_status)
       "Response status is #{response_status}. Expected #{EXPECTED_UPDATE_NEW_STATUS}, #{EXPECTED_UPDATE_STATUS} or
               #{EXPECTED_UPDATE_STATUS_WITH_NO_CONTENT}"
-    end
-
-    def teardown_candidates
-      scratch[:teardown_candidates] ||= []
     end
   end
 end

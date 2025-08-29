@@ -5,6 +5,7 @@ require "inferno/ext/fhir_models"
 
 require_relative "inferno_suite_generator/core/ig_loader"
 require_relative "inferno_suite_generator/extractors/ig_metadata_extractor"
+require_relative "inferno_suite_generator/extractors/ig_demodata_extractor"
 require_relative "inferno_suite_generator/generators/group_generator"
 require_relative "inferno_suite_generator/generators/must_support_test_generator"
 require_relative "inferno_suite_generator/generators/provenance_revinclude_search_test_generator"
@@ -19,6 +20,7 @@ require_relative "inferno_suite_generator/generators/chain_search_test_generator
 require_relative "inferno_suite_generator/generators/include_search_test_generator"
 require_relative "inferno_suite_generator/generators/create_test_generator"
 require_relative "inferno_suite_generator/generators/update_test_generator"
+require_relative "inferno_suite_generator/generators/patch_test_generator"
 require_relative "inferno_suite_generator/core/generator_config_keeper"
 require_relative "inferno_suite_generator/utils/registry"
 require_relative "inferno_suite_generator/utils/helpers"
@@ -31,7 +33,7 @@ module InfernoSuiteGenerator
       new(config.ig_deps_path).generate
     end
 
-    attr_accessor :ig_resources, :ig_metadata, :ig_deps_path
+    attr_accessor :ig_resources, :ig_metadata, :ig_deps_path, :ig_demodata
 
     def initialize(ig_deps_path)
       self.ig_deps_path = ig_deps_path
@@ -40,6 +42,7 @@ module InfernoSuiteGenerator
     def generate
       load_ig_package
       extract_metadata
+      extract_demodata
       generate_search_tests
       generate_read_tests
       generate_provenance_revinclude_search_tests
@@ -49,6 +52,7 @@ module InfernoSuiteGenerator
       generate_reference_resolution_tests
       generate_create_tests
       generate_update_tests
+      generate_patch_tests
       generate_groups
       generate_suites
       use_tests
@@ -59,6 +63,13 @@ module InfernoSuiteGenerator
 
       FileUtils.mkdir_p(base_output_dir)
       File.write(File.join(base_output_dir, "metadata.yml"), YAML.dump(ig_metadata.to_hash))
+    end
+
+    def extract_demodata
+      self.ig_demodata = IGDemodataExtractor.new(ig_resources).extract
+
+      FileUtils.mkdir_p(base_output_dir)
+      File.write(File.join(base_output_dir, "demodata.yml"), YAML.dump(ig_demodata.to_hash))
     end
 
     def base_output_dir
@@ -152,6 +163,10 @@ module InfernoSuiteGenerator
 
     def generate_update_tests
       UpdateTestGenerator.generate(ig_metadata, base_output_dir)
+    end
+
+    def generate_patch_tests
+      PatchTestGenerator.generate(ig_metadata, base_output_dir, ig_resources)
     end
 
     def generate_groups

@@ -10,12 +10,14 @@ module <%= suite_module_name %>
 
       id :<%= test_id %>
 
-        def resource_type
-          '<%= resource_type %>'
-        end
+      def self.demodata
+        @demodata ||= InfernoSuiteGenerator::Generator::IGDemodata.new(
+          YAML.load_file(File.join(File.dirname(__dir__), 'demodata.yml'), aliases: true)
+        )
+      end
 
-      def input_data
-        '<%= create_input_data[:default] %>'
+      def resource_type
+        '<%= resource_type %>'
       end
 
       run do

@@ -1,10 +1,12 @@
 # frozen_string_literal: true
 
 require_relative "../utils/generic"
+require_relative "basic_test"
 
 module InfernoSuiteGenerator
   module ReadTest
     include GenericUtils
+    include BasicTest
 
     def all_scratch_resources
       scratch_resources[:all] ||= []
@@ -83,6 +85,7 @@ module InfernoSuiteGenerator
       basic_read_and_validate(resource_to_read)
 
       all_scratch_resources << resource
+      register_resource_id
     end
 
     def read_and_validate_as_first(resource_to_read, patient_id)

@@ -40,6 +40,10 @@ module InfernoSuiteGenerator
         end
       end
 
+      def patch_interaction_exists?
+        groups.any? { |group| group.interactions.find { |interaction| interaction[:code] == "patch" }.present? }
+      end
+
       def to_hash
         {
           ig_id:,

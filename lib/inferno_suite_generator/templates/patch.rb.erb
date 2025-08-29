@@ -1,19 +1,19 @@
-require 'inferno_suite_generator/test_modules/read_test'
+require 'inferno_suite_generator/test_modules/patch_test'
 
 module <%= suite_module_name %>
   module <%= module_name %>
     class <%= class_name %> < Inferno::Test
-      include InfernoSuiteGenerator::ReadTest
+      include InfernoSuiteGenerator::PatchTest
 
-      title '(<%= conformance_expectation %>) Server returns correct <%= resource_type %> resource from <%= resource_type %> read interaction'
-      description 'A server <%= conformance_expectation %> support the <%= resource_type %> read interaction.'
+      title '(<%= conformance_expectation %>) Server returns correct <%= resource_type %> resource from <%= resource_type %> patch interaction (<%= humanized_option %>)'
+      description 'A server <%= conformance_expectation %> support the <%= resource_type %> patch interaction (<%= humanized_option %>).'
 
       <% if ids_input_data %>
       input :<%= ids_input_data[:id] %>,
             title: '<%= ids_input_data[:title] %>',
             description: '<%= ids_input_data[:description] %>',
             default: '<%= ids_input_data[:default] %>',
-            optional: true
+            optional: false
       <% end %>
 
       id :<%= test_id %>
@@ -28,12 +28,8 @@ module <%= suite_module_name %>
         '<%= resource_type %>'
       end
 
-      def scratch_resources
-        scratch[:<%= profile_identifier %>_resources] ||= {}
-      end
-
       run do
-        perform_read_test(<%= resource_collection_string %>)
+        <%= executor %>
       end
     end
   end

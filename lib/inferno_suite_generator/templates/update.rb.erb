@@ -5,8 +5,8 @@ module <%= suite_module_name %>
     class <%= class_name %> < Inferno::Test
       include InfernoSuiteGenerator::UpdateTest
 
-      title '(<%= conformance_expectation %>) Server returns correct <%= resource_type %> resource from <%= resource_type %> update interaction'
-      description 'A server <%= conformance_expectation %> support the <%= resource_type %> update interaction.'
+      title '(<%= conformance_expectation %>) Server returns correct <%= resource_type %> resource from <%= resource_type %> update interaction (<%= humanized_option %>).'
+      description 'A server <%= conformance_expectation %> support the <%= resource_type %> update interaction (<%= humanized_option %>).'
       <% if optional? %>
       optional
       <% end %>
@@ -18,7 +18,7 @@ module <%= suite_module_name %>
         end
 
       run do
-        perform_update_test
+        <%= executor %>
       end
     end
   end
