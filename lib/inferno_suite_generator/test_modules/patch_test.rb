@@ -45,8 +45,19 @@ module InfernoSuiteGenerator
     end
 
     def perform_fhirpath_patch_json_test
-      # TODO: TBI
-      skip "Not implemented"
+      patchsets = patch_body_list_by_patch_type_and_resource_type("FHIRPATHPatchJson", resource_type)
+      skip skip_message(resource_type) if patchsets.nil? || patchsets.empty?
+
+      parameters_resource_hash = patchsets.first
+
+      available_resource_id_list.each do |resource_id|
+        fhir_fhirpath_patch_json(resource_type, resource_id, parameters_resource_hash)
+        break unless response[:status] == NOT_FOUND_STATUS
+
+        info "Resource with id #{resource_id} not found. Waiting other ID..."
+        next
+      end
+      assert_patch_success
     end
 
     def perform_fhirpath_patch_xml_text
@@ -86,6 +97,20 @@ module InfernoSuiteGenerator
 
     def error_message(response_status)
       "Response status is #{response_status}. Expected #{SUCCESS} or #{SUCCESS_NO_CONTENT}"
+    end
+
+    def fhir_fhirpath_patch_json(resource_type, id, parameters_resource_hash, client: :default, name: nil, tags: [])
+      store_request_and_refresh_token(fhir_client(client), name, tags) do
+        tcp_exception_handler do
+          headers = fhir_client(client).fhir_headers
+          headers["Content-Type"] = CONTENT_TYPE_HEADERS["FHIRPathPatchJSON"]
+          headers["Accept"] = CONTENT_TYPE_HEADERS["FHIRPathPatchJSON"]
+          path = "#{resource_type}/#{id}"
+          body = parameters_resource_hash.to_json
+
+          fhir_client(client).send(:patch, path, body, headers)
+        end
+      end
     end
   end
 end

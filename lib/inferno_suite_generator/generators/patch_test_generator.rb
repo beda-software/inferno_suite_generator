@@ -22,7 +22,8 @@ module InfernoSuiteGenerator
             next unless patch_interaction(group).present?
 
             # [XML JSON FHIRPathXML FHIRPathJSON]
-            %w[JSON].each do |patch_option|
+            patch_types = ["FHIRPathJSON"]
+            patch_types.each do |patch_option|
               new(group, base_output_dir, ig_metadata, patch_option, ig_resources).generate
             end
           end
