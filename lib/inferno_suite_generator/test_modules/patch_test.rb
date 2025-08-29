@@ -108,6 +108,8 @@ module InfernoSuiteGenerator
           path = "#{resource_type}/#{id}"
           body = parameters_resource_hash.to_json
 
+          puts "BODY IS: #{body}"
+
           fhir_client(client).send(:patch, path, body, headers)
         end
       end
