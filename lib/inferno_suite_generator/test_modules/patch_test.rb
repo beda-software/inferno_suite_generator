@@ -52,7 +52,7 @@ module InfernoSuiteGenerator
       is_success_test = false
       normalized_data = []
 
-      available_resource_id_list.each do |resource_id|
+      available_resource_id_list.uniq.each do |resource_id|
         parameters_resource_hash_list&.each_with_index do |parameters_resource_hash, index|
           normalized_data << {
             resource_id: resource_id,
@@ -80,13 +80,14 @@ module InfernoSuiteGenerator
 
         if [status_okay, version_okay, attempt_okay, resource_id_is_okay].all?
           is_success_test = true
+          break
         else
           current_resource_id = resource_id
           current_resource_version = response_resource_version.to_i
         end
       end
 
-      assert is_success_test, "Resource version was not updated or status was not #{SUCCESS} after minimum 2 attempts"
+      assert is_success_test, "Resource version was not updated or status was not #{SUCCESS}."
     end
 
     def perform_fhirpath_patch_xml_text
