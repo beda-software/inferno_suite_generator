@@ -16,19 +16,46 @@ module InfernoSuiteGenerator
 
     EXPECTED_UPDATE_STATUS = 200
     EXPECTED_UPDATE_NEW_STATUS = 201
-    EXPECTED_UPDATE_STATUS_WITH_NO_CONTENT = 204
 
     def perform_update_test
-      resource_to_update = resource_payload_for_input
+      normalized_data = []
       available_resource_id_list.each do |resource_id|
-        resource_to_update.id = resource_id
-        fhir_update(resource_to_update, resource_id)
-        break unless response[:status] == NOT_FOUND_STATUS
-
-        info "Resource with id #{resource_id} not found. Waiting other ID..."
-        next
+        resource_payload_arr_for_input.each_with_index do |resource, index|
+          normalized_data << {
+            resource_id: resource_id,
+            resource_payload: resource,
+            attempt: index + 1
+          }
+        end
       end
-      assert_update_success
+
+      current_resource_id = nil
+      current_resource_version = nil
+      is_success_test = false
+      normalized_data.each do |data|
+        resource_id = data[:resource_id]
+        resource_payload = data[:resource_payload]
+        attempt = data[:attempt]
+
+        fhir_update(resource_payload, resource_id)
+        response_resource_version = resource&.meta&.versionId
+        response_status = response[:status]
+
+        status_okay = response_status == EXPECTED_UPDATE_STATUS
+        version_okay = (!response_resource_version.nil? && !current_resource_version.nil?) && (response_resource_version.to_i > current_resource_version.to_i)
+        attempt_okay = attempt > 1
+        resource_id_is_okay = resource_id == current_resource_id
+
+        if [status_okay, version_okay, attempt_okay, resource_id_is_okay].all?
+          is_success_test = true
+          break
+        else
+          current_resource_id = resource_id
+          current_resource_version = response_resource_version.to_i
+        end
+      end
+
+      assert is_success_test, "Resource version was not updated or status was not #{EXPECTED_UPDATE_STATUS}."
     end
 
     def perform_update_new_test
@@ -42,6 +69,13 @@ module InfernoSuiteGenerator
     end
 
     private
+
+    def resource_payload_arr_for_input
+      payload = resource_body_by_resource_type(resource_type)
+      skip skip_message(resource_type) if payload.blank?
+
+      payload.map { |item| parse_fhir_resource(item.to_json) }
+    end
 
     def assert_update_success
       response_status = response[:status]
