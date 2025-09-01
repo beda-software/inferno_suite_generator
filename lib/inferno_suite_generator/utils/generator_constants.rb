@@ -6,6 +6,7 @@ module InfernoSuiteGenerator
       TEMPLATE_TYPES = {
         CREATE: "create",
         UPDATE: "update",
+        PATCH: "patch",
         READ: "read",
         MULTIPLE_AND_SEARCH: "multiple_and_search",
         SEARCH: "search",
@@ -25,6 +26,7 @@ module InfernoSuiteGenerator
       CLASS_NAME_SUFFIXES = {
         TEMPLATE_TYPES[:CREATE] => "CreateTest",
         TEMPLATE_TYPES[:UPDATE] => "UpdateTest",
+        TEMPLATE_TYPES[:PATCH] => "PatchTest",
         TEMPLATE_TYPES[:READ] => "ReadTest",
         TEMPLATE_TYPES[:MULTIPLE_AND_SEARCH] => "MultipleAndSearchTest",
         TEMPLATE_TYPES[:SEARCH] => "SearchTest",
@@ -39,6 +41,7 @@ module InfernoSuiteGenerator
       TEST_ID_SUFFIXES = {
         TEMPLATE_TYPES[:CREATE] => "create_test",
         TEMPLATE_TYPES[:UPDATE] => "update_test",
+        TEMPLATE_TYPES[:PATCH] => "patch_test",
         TEMPLATE_TYPES[:READ] => "read_test",
         TEMPLATE_TYPES[:MULTIPLE_AND_SEARCH] => "multiple_and_search_test",
         TEMPLATE_TYPES[:SEARCH] => "search_test",
@@ -53,6 +56,7 @@ module InfernoSuiteGenerator
       TEMPLATE_FILES_MAP = {
         TEMPLATE_TYPES[:CREATE] => "create.rb.erb",
         TEMPLATE_TYPES[:UPDATE] => "update.rb.erb",
+        TEMPLATE_TYPES[:PATCH] => "patch.rb.erb",
         TEMPLATE_TYPES[:MULTIPLE_AND_SEARCH] => "multiple_and_search.rb.erb",
         TEMPLATE_TYPES[:SEARCH] => "search.rb.erb",
         TEMPLATE_TYPES[:CHAIN_SEARCH] => "chain_search.rb.erb",

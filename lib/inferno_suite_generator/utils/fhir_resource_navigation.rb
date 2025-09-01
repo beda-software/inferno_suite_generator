@@ -177,7 +177,14 @@ module InfernoSuiteGenerator
           value_definitions
           .select { |value_definition| value_definition[:path].first == path_prefix }
           .each { |value_definition| value_definition[:path].shift }
-        find_a_value_at(element, path_prefix) do |el_found|
+
+        search_path = if element.respond_to?(:coding) && !element.respond_to?(path_prefix.to_sym) && %w[code system display].include?(path_prefix)
+                        "coding.#{path_prefix}"
+                      else
+                        path_prefix
+                      end
+
+        find_a_value_at(element, search_path) do |el_found|
           child_element_value_definitions, current_element_value_definitions =
             value_definitions_for_path.partition { |value_definition| value_definition[:path].present? }
 

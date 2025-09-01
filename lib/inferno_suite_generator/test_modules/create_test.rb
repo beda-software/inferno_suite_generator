@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative "basic_test"
+
 module InfernoSuiteGenerator
   # Module handles sending FHIR resource instances
   # to a server via the create operation and validating the response. It supports:
@@ -9,22 +11,19 @@ module InfernoSuiteGenerator
   # - Validating response status codes and resource types
   # - Verifying server-assigned resource IDs
   module CreateTest
+    include BasicTest
+
     EXPECTED_CREATE_STATUS = 201
 
     def perform_create_test
-      fhir_create(parse_fhir_resource(resource_payload_for_input))
+      fhir_create(resource_payload_for_input)
       assert_create_success
       ensure_id_present(resource_type)
       register_teardown_candidate
+      register_resource_id
     end
 
     private
-
-    def resource_payload_for_input
-      payload = input_data
-      skip skip_message(resource_type) if payload.to_s.strip.empty?
-      payload
-    end
 
     def assert_create_success
       assert_response_status(EXPECTED_CREATE_STATUS)
@@ -35,28 +34,12 @@ module InfernoSuiteGenerator
       assert resource.id.present?, missing_id_message(type)
     end
 
-    def register_teardown_candidate
-      return unless resource
-
-      teardown_candidates << resource
-    end
-
-    def parse_fhir_resource(payload)
-      FHIR.from_contents(payload)
-    rescue StandardError => e
-      skip "Can't create resource from provided data: #{e.message}"
-    end
-
     def skip_message(resource_type)
       "No #{resource_type} resource provided for create test"
     end
 
     def missing_id_message(resource_type)
       "Expected server to return an id for created #{resource_type}."
-    end
-
-    def teardown_candidates
-      scratch[:teardown_candidates] ||= []
     end
   end
 end
