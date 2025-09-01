@@ -50,28 +50,39 @@ module InfernoSuiteGenerator
 
       parameters_resource_hash_list = patchsets[0..9]
       is_success_test = false
+      normalized_data = []
 
       available_resource_id_list.each do |resource_id|
-        current_resource_version = nil
-        parameters_resource_hash_list&.each do |parameters_resource_hash|
-          2.times do |i|
-            info "Attempt #{i} for resource #{resource_id}"
-            fhir_fhirpath_patch_json(resource_type, resource_id, parameters_resource_hash)
-            response_resource_version = resource&.meta&.versionId
-            response_status = response[:status]
+        parameters_resource_hash_list&.each_with_index do |parameters_resource_hash, index|
+          normalized_data << {
+            resource_id: resource_id,
+            parameters_resource_hash: parameters_resource_hash,
+            attempt: index + 1
+          }
+        end
+      end
 
-            response_status_okay = response_status == SUCCESS
-            response_resource_version_okay = response_resource_version != current_resource_version
-            minimum_attempts_done = i.positive?
+      current_resource_id = nil
+      current_resource_version = nil
+      normalized_data.each do |data|
+        resource_id = data[:resource_id]
+        parameters_resource_hash = data[:parameters_resource_hash]
+        attempt = data[:attempt]
 
-            if [response_status_okay, response_resource_version_okay, minimum_attempts_done].all?
-              info "Success after #{attempt} attempts - version changed from #{current_resource_version} to #{response_resource_version}"
-              is_success_test = true
-            else
-              current_resource_version = response_resource_version
-              next
-            end
-          end
+        fhir_fhirpath_patch_json(resource_type, resource_id, parameters_resource_hash)
+        response_resource_version = resource&.meta&.versionId
+        response_status = response[:status]
+
+        status_okay = response_status == SUCCESS
+        version_okay = !response_resource_version.nil? && response_resource_version.to_i > current_resource_version
+        attempt_okay = attempt > 1
+        resource_id_is_okay = resource_id == current_resource_id
+
+        if [status_okay, version_okay, attempt_okay, resource_id_is_okay].all?
+          is_success_test = true
+        else
+          current_resource_id = resource_id
+          current_resource_version = response_resource_version.to_i
         end
       end
 
