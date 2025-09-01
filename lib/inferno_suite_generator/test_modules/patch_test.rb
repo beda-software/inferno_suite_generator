@@ -106,8 +106,8 @@ module InfernoSuiteGenerator
 
       response_status = response[:status]
       status_okay = [SUCCESS, SUCCESS_NO_CONTENT].include?(response_status)
-      puts "RESPONSE RESOURCE IS: #{response[:resource]}"
-      resource_version = response.dig(:resource, "meta", "versionId")
+      puts "RESPONSE RESOURCE IS: #{resource}"
+      resource_version = resource&.meta&.versionId
       version_okay = resource_version == "2"
 
       assert status_okay, error_message_status(response_status)
