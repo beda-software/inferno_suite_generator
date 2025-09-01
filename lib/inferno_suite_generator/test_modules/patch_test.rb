@@ -53,22 +53,24 @@ module InfernoSuiteGenerator
 
       available_resource_id_list.each do |resource_id|
         current_resource_version = nil
-        parameters_resource_hash_list&.each_with_index do |parameters_resource_hash, attempt|
-          info "Attempt #{attempt} for resource #{resource_id}"
-          fhir_fhirpath_patch_json(resource_type, resource_id, parameters_resource_hash)
-          response_resource_version = resource&.meta&.versionId
-          response_status = response[:status]
+        parameters_resource_hash_list&.each do |parameters_resource_hash|
+          2.times do |i|
+            info "Attempt #{i} for resource #{resource_id}"
+            fhir_fhirpath_patch_json(resource_type, resource_id, parameters_resource_hash)
+            response_resource_version = resource&.meta&.versionId
+            response_status = response[:status]
 
-          response_status_okay = response_status == SUCCESS
-          response_resource_version_okay = response_resource_version != current_resource_version
-          minimum_attempts_done = attempt.positive?
+            response_status_okay = response_status == SUCCESS
+            response_resource_version_okay = response_resource_version != current_resource_version
+            minimum_attempts_done = i.positive?
 
-          if [response_status_okay, response_resource_version_okay, minimum_attempts_done].all?
-            info "Success after #{attempt} attempts - version changed from #{current_resource_version} to #{response_resource_version}"
-            is_success_test = true
-          else
-            current_resource_version = response_resource_version
-            next
+            if [response_status_okay, response_resource_version_okay, minimum_attempts_done].all?
+              info "Success after #{attempt} attempts - version changed from #{current_resource_version} to #{response_resource_version}"
+              is_success_test = true
+            else
+              current_resource_version = response_resource_version
+              next
+            end
           end
         end
       end
