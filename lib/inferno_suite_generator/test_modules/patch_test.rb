@@ -61,7 +61,7 @@ module InfernoSuiteGenerator
 
           response_status_okay = response_status == SUCCESS
           response_resource_version_okay = response_resource_version != current_resource_version
-          minimum_attempts_done = attempts.positive?
+          minimum_attempts_done = attempt.positive?
 
           if [response_status_okay, response_resource_version_okay, minimum_attempts_done].all?
             info "Success after #{attempt} attempts - version changed from #{current_resource_version} to #{response_resource_version}"
