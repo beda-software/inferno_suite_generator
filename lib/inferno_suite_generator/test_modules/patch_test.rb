@@ -68,7 +68,7 @@ module InfernoSuiteGenerator
     private
 
     def create_interaction_exists?(metadata)
-      metadata.interaction.any? { |interaction| interaction.code == "create" && interaction.expectation == "SHALL" }
+      metadata.interactions.any? { |interaction| interaction.code == "create" && interaction.expectation == "SHALL" }
     end
 
     def resource_ids_fn(resource_type)
