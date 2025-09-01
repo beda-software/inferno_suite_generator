@@ -45,35 +45,35 @@ module InfernoSuiteGenerator
     end
 
     def perform_fhirpath_patch_json_test
-      is_success_test = false
-      attempts = 1
       patchsets = patch_body_list_by_patch_type_and_resource_type("FHIRPATHPatchJson", resource_type)
       skip skip_message(resource_type) if patchsets.nil? || patchsets.empty?
 
       parameters_resource_hash_list = patchsets[0..9]
+      is_success_test = false
 
       available_resource_id_list.each do |resource_id|
-        info "Current attempts is #{attempts}"
-        info "Trying to patch resource with id #{resource_id}..."
-        current_version = nil
-        info "Current version is #{current_version}"
-        parameters_resource_hash_list&.each do |parameters_resource_hash|
+        current_resource_version = nil
+        parameters_resource_hash_list&.each_with_index do |parameters_resource_hash, attempt|
+          info "Attempt #{attempt} for resource #{resource_id}"
           fhir_fhirpath_patch_json(resource_type, resource_id, parameters_resource_hash)
           response_resource_version = resource&.meta&.versionId
           response_status = response[:status]
 
-          info "Response status is #{response_status} and resource version is #{response_resource_version}"
+          response_status_okay = response_status == SUCCESS
+          response_resource_version_okay = response_resource_version != current_resource_version
+          minimum_attempts_done = attempts.positive?
 
-          if response_status == SUCCESS && response_resource_version != current_version && attempts != 1
+          if [response_status_okay, response_resource_version_okay, minimum_attempts_done].all?
+            info "Success after #{attempt} attempts - version changed from #{current_resource_version} to #{response_resource_version}"
             is_success_test = true
-            break
+          else
+            current_resource_version = response_resource_version
+            next
           end
         end
-        attempts += 1
-        break if is_success_test
       end
 
-      assert is_success_test, "Resource version is not updated or status is not #{SUCCESS}"
+      assert is_success_test, "Resource version was not updated or status was not #{SUCCESS} after minimum 2 attempts"
     end
 
     def perform_fhirpath_patch_xml_text
