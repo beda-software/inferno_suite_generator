@@ -67,6 +67,10 @@ module InfernoSuiteGenerator
 
     private
 
+    def create_interaction_exists?(metadata)
+      metadata.interaction.any? { |interaction| interaction.code == "create" && interaction.expectation == "SHALL" }
+    end
+
     def resource_ids_fn(resource_type)
       "#{camel_to_snake(resource_type)}_ids"
     end
@@ -86,17 +90,48 @@ module InfernoSuiteGenerator
     end
 
     def assert_patch_success
+      # NOTE: If CREATE interaction is present in the IG for the current profile,
+      # then we should check only that a version is 2. We can be sure that a version will be 2, because
+      # we created the resource with version 1 while CREATE interaction testing.
+
+      if create_interaction_exists?(metadata)
+        assert_patch_status_and_version
+      else
+        assert_patch_status
+      end
+    end
+
+    def assert_patch_status_and_version
+      info "The CREATE interaction is present. Checking version of the resource and status of the response..."
+
       response_status = response[:status]
-      assert [SUCCESS, SUCCESS_NO_CONTENT].include?(response_status),
-             error_message(response_status)
+      status_okay = [SUCCESS, SUCCESS_NO_CONTENT].include?(response_status)
+      resource_version = response[:resource]&.meta&.versionId
+      version_okay = resource_version == "2"
+
+      assert status_okay, error_message_status(response_status)
+      assert version_okay, error_message_version(resource_version)
+    end
+
+    def assert_patch_status
+      info "The CREATE interaction is not present. Checking status of the response..."
+
+      response_status = response[:status]
+      status_okay = [SUCCESS, SUCCESS_NO_CONTENT].include?(response_status)
+
+      assert status_okay, error_message_status(response_status)
     end
 
     def skip_message(resource_type)
       "No #{resource_type} data provided for patch test"
     end
 
-    def error_message(response_status)
+    def error_message_status(response_status)
       "Response status is #{response_status}. Expected #{SUCCESS} or #{SUCCESS_NO_CONTENT}"
+    end
+
+    def error_message_version(resource_version)
+      "Resource version is #{resource_version}. Expected 2"
     end
 
     def fhir_fhirpath_patch_json(resource_type, id, parameters_resource_hash, client: :default, name: nil, tags: [])
