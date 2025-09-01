@@ -13,7 +13,7 @@ module InfernoSuiteGenerator
   module BasicTest
     extend Forwardable
 
-    def_delegators "self.class", :demodata
+    def_delegators "self.class", :demodata, :metadata
 
     NOT_FOUND_STATUS = 404
 
