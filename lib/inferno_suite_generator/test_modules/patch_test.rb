@@ -45,19 +45,35 @@ module InfernoSuiteGenerator
     end
 
     def perform_fhirpath_patch_json_test
+      is_success_test = false
+      attempts = 1
       patchsets = patch_body_list_by_patch_type_and_resource_type("FHIRPATHPatchJson", resource_type)
       skip skip_message(resource_type) if patchsets.nil? || patchsets.empty?
 
-      parameters_resource_hash = patchsets.first
+      parameters_resource_hash_list = patchsets[0..9]
 
       available_resource_id_list.each do |resource_id|
-        fhir_fhirpath_patch_json(resource_type, resource_id, parameters_resource_hash)
-        break unless response[:status] == NOT_FOUND_STATUS
+        info "Current attempts is #{attempts}"
+        info "Trying to patch resource with id #{resource_id}..."
+        current_version = nil
+        info "Current version is #{current_version}"
+        parameters_resource_hash_list&.each do |parameters_resource_hash|
+          fhir_fhirpath_patch_json(resource_type, resource_id, parameters_resource_hash)
+          response_resource_version = resource&.meta&.versionId
+          response_status = response[:status]
 
-        info "Resource with id #{resource_id} not found. Waiting other ID..."
-        next
+          info "Response status is #{response_status} and resource version is #{response_resource_version}"
+
+          if response_status == SUCCESS && response_resource_version != current_version && attempts != 1
+            is_success_test = true
+            break
+          end
+        end
+        attempts += 1
+        break if is_success_test
       end
-      assert_patch_success
+
+      assert is_success_test, "Resource version is not updated or status is not #{SUCCESS}"
     end
 
     def perform_fhirpath_patch_xml_text
@@ -141,10 +157,7 @@ module InfernoSuiteGenerator
           headers = fhir_client(client).fhir_headers
           headers["Content-Type"] = CONTENT_TYPE_HEADERS["FHIRPathPatchJSON"]
           headers["Accept"] = CONTENT_TYPE_HEADERS["FHIRPathPatchJSON"]
-          # path = "#{resource_type}/#{id}"
           body = parameters_resource_hash.to_json
-
-          puts "BODY IS: #{body}"
 
           fhir_client(client).partial_update(fhir_class_from_resource_type(resource_type), id, body)
         end
