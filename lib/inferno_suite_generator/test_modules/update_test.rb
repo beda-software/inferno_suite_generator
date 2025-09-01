@@ -16,11 +16,13 @@ module InfernoSuiteGenerator
 
     EXPECTED_UPDATE_STATUS = 200
     EXPECTED_UPDATE_NEW_STATUS = 201
+    EXPECTED_UPDATE_STATUS_WITH_NO_CONTENT = 204
 
     def perform_update_test
       normalized_data = []
-      available_resource_id_list.each do |resource_id|
+      available_resource_id_list.uniq.each do |resource_id|
         resource_payload_arr_for_input.each_with_index do |resource, index|
+          resource.id = resource_id
           normalized_data << {
             resource_id: resource_id,
             resource_payload: resource,
