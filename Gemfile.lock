@@ -3,6 +3,7 @@ PATH
   specs:
     inferno_suite_generator (0.1.0)
       inferno_core (>= 0.6.1)
+      jsonpath (~> 1.1, >= 1.1.5)
 
 GEM
   remote: https://rubygems.org/
