@@ -67,9 +67,10 @@ module InfernoSuiteGenerator
     end
 
     def filterset_on_resource(resource, filter_set)
+      puts "filter_set: #{filter_set}"
       filter_set.map do |or_filter|
         or_filter.map do |and_filter|
-          jsonpath_on_resource(and_filter[:expression], resource) == and_filter[:value]
+          jsonpath_on_resource(and_filter["expression"], resource) == and_filter["value"]
         end.all?
       end.any?
     end
