@@ -74,7 +74,7 @@ module InfernoSuiteGenerator
       end.any?
     end
     def jsonpath_on_resource(jsonpath_string, resource)
-      JSONPath.new(jsonpath_string).first(resource.to_hash)
+      JsonPath.new(jsonpath_string).first(resource.to_hash)
     end
 
     def check_for_dar(resource)
