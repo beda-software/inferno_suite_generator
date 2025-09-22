@@ -182,6 +182,8 @@ GEM
       thor (~> 1.4)
       tty-markdown (~> 0.7.1)
     json (2.13.2)
+    jsonpath (1.1.5)
+      multi_json
     jwt (2.10.2)
       base64
     kramdown (2.5.1)
@@ -397,6 +399,7 @@ DEPENDENCIES
   fasterer (~> 0.11.0)
   inferno_core (~> 1.0.6)
   inferno_suite_generator!
+  jsonpath (~> 1.1, >= 1.1.5)
   minitest (~> 5.25)
   rake (~> 13.3)
   reek (~> 6.1.0)

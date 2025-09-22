@@ -55,6 +55,11 @@ module InfernoSuiteGenerator
         group_metadata.resource
       end
 
+      def filter_set
+        config = Registry.get(:config_keeper)
+        config.filter_set(group_metadata.profile_url, group_metadata.resource)
+      end
+
       def test_id
         case template_type
         when TEMPLATE_TYPES[:READ], TEMPLATE_TYPES[:VALIDATION], TEMPLATE_TYPES[:REFERENCE_RESOLUTION], TEMPLATE_TYPES[:MUST_SUPPORT], TEMPLATE_TYPES[:CREATE]

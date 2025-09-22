@@ -20,6 +20,12 @@ module <%= suite_module_name %>
         scratch[:<%= profile_identifier %>_resources] ||= {}
       end
 
+      <% if filter_set.length > 0 %>
+      def filter_set
+        <%= filter_set %>
+      end
+      <% end %>
+
       run do
         perform_validation_test(scratch_resources[:all] || [],
                                 '<%= profile_url %>',
