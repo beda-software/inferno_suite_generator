@@ -20,7 +20,7 @@ module <%= suite_module_name %>
         scratch[:<%= profile_identifier %>_resources] ||= {}
       end
 
-      <% if filter_set.length > 0 %>
+      <% if filter_set.length.positive? %>
       def filter_set
         <%= filter_set %>
       end

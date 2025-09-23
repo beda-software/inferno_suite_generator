@@ -74,7 +74,7 @@ module InfernoSuiteGenerator
         response_status = response[:status]
 
         status_okay = response_status == SUCCESS
-        version_okay = (!response_resource_version.nil? && !current_resource_version.nil?) && (response_resource_version.to_i > current_resource_version.to_i)
+        version_okay = !response_resource_version.nil? && !current_resource_version.nil? && (response_resource_version.to_i > current_resource_version.to_i)
         attempt_okay = attempt > 1
         resource_id_is_okay = resource_id == current_resource_id
 
@@ -98,7 +98,9 @@ module InfernoSuiteGenerator
     private
 
     def create_interaction_exists?(metadata)
-      metadata.interactions.any? { |interaction| interaction[:code] == "create" && interaction[:expectation] == "SHALL" }
+      metadata.interactions.any? do |interaction|
+        interaction[:code] == "create" && interaction[:expectation] == "SHALL"
+      end
     end
 
     def resource_ids_fn(resource_type)

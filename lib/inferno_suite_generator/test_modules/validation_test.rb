@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require "jsonpath"
 
 require_relative "../utils/assert_helpers"
@@ -74,6 +75,7 @@ module InfernoSuiteGenerator
         end.all?
       end.any?
     end
+
     def jsonpath_on_resource(jsonpath_string, resource)
       JsonPath.new(jsonpath_string).first(resource.to_hash)
     end

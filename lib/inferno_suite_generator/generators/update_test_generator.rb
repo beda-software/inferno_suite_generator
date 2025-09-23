@@ -78,8 +78,6 @@ module InfernoSuiteGenerator
             "test_id_option" => "update_new",
             "executor" => "perform_update_new_test"
           }
-        else
-          nil
         end
       end
     end
