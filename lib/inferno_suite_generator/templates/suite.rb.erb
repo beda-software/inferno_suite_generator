@@ -4,6 +4,8 @@ require 'inferno_suite_generator/utils/helpers'
 require_relative '../../version'
 <% imports.each do |import| %> <%= import %>
 <% end %>
+<% extra_imports.each do |extra_import| %> <%= extra_import %>
+<% end %>
 
 <% group_file_list.each do |file_name| %>require_relative '<%= file_name %>'
 <% end %>
