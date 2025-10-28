@@ -20,11 +20,13 @@ module <%= suite_module_name %>
         scratch[:<%= profile_identifier %>_resources] ||= {}
       end
 
-      <% if filter_set.length.positive? %>
       def filter_set
+        <% if filter_set.length.positive? %>
         <%= filter_set %>
+        <% else %>
+        []
+        <% end %>
       end
-      <% end %>
 
       run do
         perform_validation_test(scratch_resources[:all] || [],

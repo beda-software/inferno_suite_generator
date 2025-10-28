@@ -36,7 +36,7 @@ module InfernoSuiteGenerator
 
     def process_resources(config, profile_version)
       profile_with_version = "#{config.profile_url}|#{profile_version}"
-      filtered_resources = filtered_resources(config, filter_set || nil)
+      filtered_resources = filtered_resources(config, filter_set)
       skip_if filtered_resources.blank?, message_no_resource_found_using_filterset(filter_set)
 
       filtered_resources.each do |resource|
@@ -60,7 +60,7 @@ module InfernoSuiteGenerator
       #   [{ 'expression' => "$.code.coding[?(@.system == 'http://snomed.info/sct')].code", 'value' => '50373000' }]
       # ]
       # This filter_set means that we should get Observations with LOINC code 8302-2 or SNOMED code 50373000.
-      if filter_set.nil?
+      if filter_set.empty?
         config.resources
       else
         config.resources.select { |resource| filterset_on_resource(resource, filter_set) }
