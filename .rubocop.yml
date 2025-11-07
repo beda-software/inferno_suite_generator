@@ -2,7 +2,7 @@ require:
   - rubocop-packaging
   - rubocop-performance
   - rubocop-md
-  - rubocop-erb
+#  - rubocop-erb
   - rubocop-rake
 
 AllCops:
