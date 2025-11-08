@@ -64,19 +64,12 @@ module InfernoSuiteGenerator
       end
 
       def add_patch_body_list
-        result = {}
+        result = initiate_empty_result
 
         bundle_patch_entries.each do |entry|
           resource_type = entry.request.url.split("/").first
-          result[:FHIRPATHPatchJson] ||= {}
-          result[:FHIRPATHPatchJson][resource_type] ||= []
-          result[:JSONPatch] ||= {}
-          result[:JSONPatch][resource_type] ||= []
-
-          result[:FHIRPATHPatchJson][resource_type] << entry.resource.source_hash
-          result[:JSONPatch][resource_type] << ParametersParameterDecorator.new(
-            entry.resource.parameter.first
-          ).patchset_data
+          initiate_empty_arrays_for_resource_types(result, resource_type)
+          update_result(result, resource_type, entry)
         end
 
         demodata.patch_body_list = result
@@ -103,6 +96,25 @@ module InfernoSuiteGenerator
         end
 
         result
+      end
+
+      def initiate_empty_result
+        {
+          FHIRPATHPatchJson: {},
+          JSONPatch: {}
+        }
+      end
+
+      def initiate_empty_arrays_for_resource_types(result, resource_type)
+        result[:FHIRPATHPatchJson][resource_type] ||= []
+        result[:JSONPatch][resource_type] ||= []
+      end
+
+      def update_result(result, resource_type, entry)
+        result[:FHIRPATHPatchJson][resource_type] << entry.resource.source_hash
+        result[:JSONPatch][resource_type] << ParametersParameterDecorator.new(
+          entry.resource.parameter.first
+        ).patchset_data
       end
     end
   end
