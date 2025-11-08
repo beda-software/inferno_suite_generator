@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative "../decorators/parameters_parameter_decorator"
+require_relative "../utils/basic_test_helpers"
 
 module InfernoSuiteGenerator
   # Module provides shared utility methods for FHIR test modules.
@@ -12,6 +13,7 @@ module InfernoSuiteGenerator
   # - Providing access to demo data configurations
   module BasicTest
     extend Forwardable
+    include BasicTestHelpers
 
     def_delegators "self.class", :demodata, :metadata
 
@@ -25,7 +27,7 @@ module InfernoSuiteGenerator
     end
 
     def available_resource_id
-      available_id = demo_resources[resource_type]&.first
+      available_id = existing_demo_resources&.first
       skip "Can't find ID of resource #{resource_type} for UPDATE" if available_id.nil?
 
       available_id
@@ -33,7 +35,7 @@ module InfernoSuiteGenerator
 
     def available_resource_id_list
       teardown_ids = teardown_candidates.select { |resource| resource.resourceType == resource_type }.map(&:id)
-      available_ids = demo_resources[resource_type][0..9]
+      available_ids = existing_demo_resources[0..9]
       all_available_ids = teardown_ids + available_ids
       skip "Can't find ID of resource #{resource_type} for UPDATE" if all_available_ids.empty?
 
@@ -42,21 +44,17 @@ module InfernoSuiteGenerator
 
     def register_teardown_candidate
       return unless resource
+      return if formatted_teardown_candidates.include? "#{resource.resourceType}/#{resource.id}"
 
       info "Registering #{resource.resourceType} with #{resource.id} for teardown"
-      existing_teardown_candidates = teardown_candidates.map { |candidate| "#{candidate.resourceType}/#{candidate.id}" }
-      return if existing_teardown_candidates.include? "#{resource.resourceType}/#{resource.id}"
-
       teardown_candidates << resource
     end
 
     def register_resource_id
       return unless resource
+      return if existing_demo_resources.include? resource.id
 
       info "Registering #{resource.id} of #{resource.resourceType} for resource IDs registry"
-      demo_resources[resource_type] ||= []
-      return if demo_resources[resource_type].include? resource.id
-
       demo_resources[resource_type] << resource.id
     end
 
@@ -67,10 +65,9 @@ module InfernoSuiteGenerator
         resource = entry&.resource
 
         info "Registering #{resource.id} of #{resource.resourceType} for resource IDs registry"
-        demo_resources[resource_type] ||= []
-        return if demo_resources[resource_type].include? resource.id
+        return if existing_demo_resources.include? resource.id
 
-        demo_resources[resource_type] << resource.id
+        existing_demo_resources << resource.id
       end
     end
 
@@ -108,15 +105,10 @@ module InfernoSuiteGenerator
     end
 
     def get_patch_body_list(bundle_patch_entries)
-      result = {}
+      result = default_patch_body_list
 
       bundle_patch_entries.each do |entry|
         resource_type = entry.request.url.split("/").first
-        result[:FHIRPATHPatchJson] ||= {}
-        result[:FHIRPATHPatchJson][resource_type] ||= []
-        result[:JSONPatch] ||= {}
-        result[:JSONPatch][resource_type] ||= []
-
         result[:FHIRPATHPatchJson][resource_type] << entry.resource.source_hash
         result[:JSONPatch][resource_type] << ParametersParameterDecorator.new(
           entry.resource.parameter.first
@@ -138,6 +130,16 @@ module InfernoSuiteGenerator
       FHIR.from_contents(payload)
     rescue StandardError => e
       skip "Can't create resource from provided data: #{e.message}"
+    end
+
+    private
+
+    def formatted_teardown_candidates
+      teardown_candidates.map { |resource| "#{resource.resourceType}/#{resource.id}" }
+    end
+
+    def existing_demo_resources
+      demo_resources[resource_type] ||= []
     end
   end
 end

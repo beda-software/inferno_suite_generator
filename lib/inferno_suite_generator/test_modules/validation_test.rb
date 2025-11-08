@@ -63,11 +63,11 @@ module InfernoSuiteGenerator
       if filter_set.empty?
         config.resources
       else
-        config.resources.select { |resource| filterset_on_resource(resource, filter_set) }
+        config.resources.select { |resource| filterset_on_resource?(resource, filter_set) }
       end
     end
 
-    def filterset_on_resource(resource, filter_set)
+    def filterset_on_resource?(resource, filter_set)
       filter_set.map do |or_filter|
         or_filter.map do |and_filter|
           jsonpath_on_resource(and_filter["expression"], resource) == and_filter["value"]
