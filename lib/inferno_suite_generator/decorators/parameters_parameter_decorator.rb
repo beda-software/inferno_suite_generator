@@ -21,19 +21,14 @@ class ParametersParameterDecorator < FHIR::R4::Parameters::Parameter
   private
 
   def normalize_operation(fhirpath_op)
-    case fhirpath_op&.downcase
-    when "add"
-      "add"
-    when "replace"
-      "replace"
-    when "remove", "delete"
+    operation = fhirpath_op&.downcase
+
+    if %w[add replace test move copy].include?(operation)
+      operation
+    elsif %w[remove delete].include?(operation)
       "remove"
-    when "test"
-      "test"
-    when "move"
-      "move"
-    when "copy"
-      "copy"
+    else
+      raise StandardError, "Unsupported operation #{operation}"
     end
   end
 
