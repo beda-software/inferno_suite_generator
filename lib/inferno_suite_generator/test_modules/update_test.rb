@@ -19,18 +19,6 @@ module InfernoSuiteGenerator
     EXPECTED_UPDATE_STATUS_WITH_NO_CONTENT = 204
 
     def perform_update_test
-      normalized_data = []
-      available_resource_id_list.uniq.each do |resource_id|
-        resource_payload_arr_for_input.each_with_index do |resource, index|
-          resource.id = resource_id
-          normalized_data << {
-            resource_id: resource_id,
-            resource_payload: resource,
-            attempt: index + 1
-          }
-        end
-      end
-
       current_resource_id = nil
       current_resource_version = nil
       is_success_test = false
@@ -44,7 +32,9 @@ module InfernoSuiteGenerator
         response_status = response[:status]
 
         status_okay = response_status == EXPECTED_UPDATE_STATUS
-        version_okay = !response_resource_version.nil? && !current_resource_version.nil? && (response_resource_version.to_i > current_resource_version.to_i)
+        version_okay = !response_resource_version.nil? &&
+                       !current_resource_version.nil? &&
+                       (response_resource_version.to_i > current_resource_version.to_i)
         attempt_okay = attempt > 1
         resource_id_is_okay = resource_id == current_resource_id
 
@@ -71,6 +61,25 @@ module InfernoSuiteGenerator
     end
 
     private
+
+    def normalized_data
+      result = []
+      available_resource_id_list.uniq.each do |resource_id|
+        resource_payload_arr_for_input.each_with_index do |resource, index|
+          resource.id = resource_id
+          result << prepare_normalized_data_item(resource_id, resource, index)
+        end
+      end
+      result
+    end
+
+    def prepare_normalized_data_item(resource_id, resource, index)
+      {
+        resource_id: resource_id,
+        resource_payload: resource,
+        attempt: index + 1
+      }
+    end
 
     def resource_payload_arr_for_input
       payload = resource_body_by_resource_type(resource_type)
