@@ -24,7 +24,6 @@ AllCops:
     - 'lib/inferno_suite_generator/utils/registry.rb'
     - 'lib/inferno_suite_generator/utils/generic.rb'
     - 'lib/inferno_suite_generator/utils/generator_constants.rb'
-    - 'lib/inferno_suite_generator/generators/multiple_or_search_test_generator.rb'
     - 'lib/inferno_suite_generator/generators/read_test_generator.rb'
     - 'lib/inferno_suite_generator/generators/multiple_and_search_test_generator.rb'
     - 'lib/inferno_suite_generator/generators/provenance_revinclude_search_test_generator.rb'

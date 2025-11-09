@@ -4,22 +4,32 @@ require_relative "../utils/naming"
 require_relative "search_test_generator"
 require_relative "../utils/helpers"
 require_relative "../utils/registry"
+require_relative "../utils/multiple_or_search_test_generator_helpers"
 
 module InfernoSuiteGenerator
   class Generator
+    # The MultipleOrSearchTestGenerator class generates test files for search FHIR resources.
+    # It extends SearchTestGenerator and handles the generation of test files specifically
+    # for testing multiple OR search operations against a FHIR server.
     class MultipleOrSearchTestGenerator < SearchTestGenerator
+      include MultipleOrSearchTestGeneratorHelpers
+
       class << self
         def generate(ig_metadata, base_output_dir)
           ig_metadata.groups
                      .select { |group| group.searches.present? }
                      .each do |group|
             group.search_definitions.each_key do |search_key|
-              if group.search_definitions[search_key].key?(:multiple_or) && search_key.to_s != "patient"
+              if multiple_or_test?(group, search_key)
                 new(search_key.to_s, group, group.search_definitions[search_key], base_output_dir,
                     ig_metadata).generate
               end
             end
           end
+        end
+
+        def multiple_or_test?(group, search_key)
+          group.search_definitions[search_key].key?(:multiple_or) && search_key.to_s != "patient"
         end
       end
 
@@ -28,11 +38,8 @@ module InfernoSuiteGenerator
       self.template_type = TEMPLATE_TYPES[:MULTIPLE_OR_SEARCH]
 
       def initialize(search_name, group_metadata, search_metadata, base_output_dir, ig_metadata)
+        super(group_metadata, search_metadata, base_output_dir, ig_metadata)
         self.search_name = search_name
-        self.group_metadata = group_metadata
-        self.search_metadata = search_metadata
-        self.base_output_dir = base_output_dir
-        self.ig_metadata = ig_metadata
       end
 
       def search_identifier
@@ -132,43 +139,6 @@ module InfernoSuiteGenerator
 
       def test_post_search?
         first_search?
-      end
-
-      def search_properties
-        {}.tap do |properties|
-          properties[:first_search] = "true" if first_search?
-          properties[:fixed_value_search] = "true" if fixed_value_search?
-          properties[:resource_type] = "'#{resource_type}'"
-          properties[:search_param_names] = search_param_names
-          properties[:saves_delayed_references] = "true" if saves_delayed_references?
-          properties[:test_medication_inclusion] = "true" if test_medication_inclusion?
-          properties[:test_reference_variants] = "true" if test_reference_variants?
-          if required_multiple_or_search_params.present?
-            properties[:multiple_or_search_params] =
-              required_multiple_or_search_params_string
-          end
-          if optional_multiple_or_search_params.present?
-            properties[:optional_multiple_or_search_params] =
-              optional_multiple_or_search_params_string
-          end
-          if Registry.get(:config_keeper).multiple_or_and_search_by_target_resource?(
-            group_metadata.profile_url, resource_type, search_param_names
-          )
-            properties[:search_by_target_resource_data] =
-              "true"
-          end
-        end
-      end
-
-      def search_test_properties_string
-        search_properties
-          .map { |key, value| "#{" " * 8}#{key}: #{value}" }
-          .join(",\n")
-      end
-
-      def description
-        Helpers.multiple_test_description("OR", conformance_expectation, search_param_name_string, resource_type,
-                                          url_version)
       end
     end
   end

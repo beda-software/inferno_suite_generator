@@ -30,7 +30,7 @@ module InfernoSuiteGenerator
       end
 
       def resources_in_capability_statement
-        ig_resources.capability_statement.rest.first.resource
+        ig_resources.cs_resources
       end
 
       def add_metadata_from_resources

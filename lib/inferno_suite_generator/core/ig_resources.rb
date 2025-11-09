@@ -17,6 +17,14 @@ module InfernoSuiteGenerator
         end
       end
 
+      def cs_resources
+        if capability_statement.present?
+          capability_statement.rest.first.resource
+        else
+          []
+        end
+      end
+
       def ig
         resources_by_type["ImplementationGuide"].first
       end
