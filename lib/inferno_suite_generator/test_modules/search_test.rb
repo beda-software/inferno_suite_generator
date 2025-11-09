@@ -6,6 +6,7 @@ require_relative "../core/search_test_properties"
 require_relative "read_test"
 require_relative "../utils/assert_helpers"
 require_relative "../utils/search_test_helpers"
+require_relative "basic_test"
 
 module InfernoSuiteGenerator
   module SearchTest
@@ -14,8 +15,9 @@ module InfernoSuiteGenerator
     include FHIRResourceNavigation
     include ReadTest
     include AssertHelpers
+    include BasicTest
 
-    def_delegators "self.class", :metadata, :provenance_metadata, :properties
+    def_delegators "self.class", :metadata, :provenance_metadata, :properties, :demodata
     def_delegators "properties",
                    :resource_type,
                    :search_param_names,
@@ -221,8 +223,6 @@ module InfernoSuiteGenerator
     end
 
     def perform_post_search(get_search_resources, params)
-      puts "resource_type: #{resource_type}"
-      puts "params: #{params}"
       fhir_search resource_type, params:, search_method: :post
 
       check_search_response
@@ -651,13 +651,24 @@ module InfernoSuiteGenerator
     end
 
     def fixed_value_search_param_values
-      metadata.search_definitions[fixed_value_search_param_name.to_sym][:values]
+      name = fixed_value_search_param_name.to_sym
+      puts "Looking up fixed search values for parameter: #{name}"
+
+      values = metadata.search_definitions[name][:values]
+      puts "Found #{values.length} fixed search values: #{values.join(', ')}"
+    
+      values
     end
 
     def fixed_value_search_params(value, patient_id)
-      search_param_names.each_with_object({}) do |name, params|
-        params[name] = patient_id_param?(name) ? patient_id : value
+      puts "Creating fixed value search params with value: #{value} and patient_id: #{patient_id}"
+      params = search_param_names.each_with_object({}) do |name, params|
+        param_value = patient_id_param?(name) ? patient_id : value
+        puts "Setting search parameter '#{name}' to value: #{param_value}"
+        params[name] = param_value
       end
+      puts "Generated search params: #{params}"
+      params
     end
 
     def search_params_with_values(search_param_names, patient_id, include_system: false)
@@ -764,6 +775,7 @@ module InfernoSuiteGenerator
 
       until bundle.nil? || page_count == max_pages
         resources += bundle&.entry&.map { |entry| entry&.resource }
+        register_resource_id_from_bundle(bundle)
         next_bundle_link = bundle&.link&.find { |link| link.relation == "next" }&.url
         reply_handler&.call(response)
 

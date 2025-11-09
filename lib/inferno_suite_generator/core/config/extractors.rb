@@ -99,6 +99,14 @@ module InfernoSuiteGenerator
             EMPTY_ARRAY
           )
         end
+
+        def filter_set(profile_url, resource_type)
+          resolve_profile_resource_value(
+            "configs&.profiles&.#{profile_url}&.filter_set",
+            "configs&.resources&.#{resource_type}&.filter_set",
+            EMPTY_ARRAY
+          )
+        end
       end
     end
   end

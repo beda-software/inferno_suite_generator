@@ -4,6 +4,8 @@ require 'inferno_suite_generator/utils/helpers'
 require_relative '../../version'
 <% imports.each do |import| %> <%= import %>
 <% end %>
+<% extra_imports.each do |extra_import| %> <%= extra_import %>
+<% end %>
 
 <% group_file_list.each do |file_name| %>require_relative '<%= file_name %>'
 <% end %>
@@ -67,6 +69,13 @@ module <%= suite_module_name %>
       input :header_value,
             title: 'Header value',
             optional: true
+      <% if patch_interaction_exists? %>
+      input :extra_bundle,
+            title: 'Extra Transaction Bundle',
+            description: 'A FHIR Bundle containing resources to be included as patch requests in the test suite.',
+            type: 'textarea',
+            optional: true
+      <% end %>
 
       fhir_client do
         url :url

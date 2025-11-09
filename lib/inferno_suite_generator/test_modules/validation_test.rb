@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "jsonpath"
+
 require_relative "../utils/assert_helpers"
 
 module InfernoSuiteGenerator
@@ -34,8 +36,8 @@ module InfernoSuiteGenerator
 
     def process_resources(config, profile_version)
       profile_with_version = "#{config.profile_url}|#{profile_version}"
-      filtered_resources = filtered_resources(config)
-      skip_if filtered_resources.blank?, message_no_resource_with_profile(profile_with_version)
+      filtered_resources = filtered_resources(config, filter_set)
+      skip_if filtered_resources.blank?, message_no_resource_found_using_filterset(filter_set)
 
       filtered_resources.each do |resource|
         resource_is_valid?(resource:, profile_url: profile_with_version)
@@ -47,8 +49,34 @@ module InfernoSuiteGenerator
       assert !errors_found, "Resource does not conform to the profile #{profile_with_version}"
     end
 
-    def filtered_resources(config)
-      config.resources.select { |resource| resource.meta&.profile&.include?(config.profile_url) }
+    def filtered_resources(config, filter_set)
+      # Filter resources using JSONPath expressions.
+      # Filter_set is the array of arrays of JSONPath expressions with target values.
+      # The first layer of an array is means OR condition.
+      # The second layer of an array is means AND condition.
+      # NOTE: Example of filter_set
+      # [
+      #   [{ 'expression' => "$.code.coding[?(@.system == 'http://loinc.org')].code", 'value' => '8302-2' }],
+      #   [{ 'expression' => "$.code.coding[?(@.system == 'http://snomed.info/sct')].code", 'value' => '50373000' }]
+      # ]
+      # This filter_set means that we should get Observations with LOINC code 8302-2 or SNOMED code 50373000.
+      if filter_set.empty?
+        config.resources
+      else
+        config.resources.select { |resource| filterset_on_resource?(resource, filter_set) }
+      end
+    end
+
+    def filterset_on_resource?(resource, filter_set)
+      filter_set.map do |or_filter|
+        or_filter.map do |and_filter|
+          jsonpath_on_resource(and_filter["expression"], resource) == and_filter["value"]
+        end.all?
+      end.any?
+    end
+
+    def jsonpath_on_resource(jsonpath_string, resource)
+      JsonPath.new(jsonpath_string).first(resource.to_hash)
     end
 
     def check_for_dar(resource)
@@ -85,6 +113,10 @@ module InfernoSuiteGenerator
 
     def message_no_resource_with_profile(profile_with_version)
       "There is no resources with the profile #{profile_with_version}"
+    end
+
+    def message_no_resource_found_using_filterset(filter_set)
+      "There is no resources found using filter set #{filter_set}"
     end
   end
 end

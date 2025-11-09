@@ -60,8 +60,12 @@ module InfernoSuiteGenerator
       end
 
       def ig_identifier
-        version = ig_metadata.ig_version[1..] # Remove leading 'v'
-        "#{ig_metadata.ig_id}##{version}"
+        if config_keeper.rewrite_igs.present?
+          config_keeper.rewrite_igs
+        else
+          version = ig_metadata.ig_version[1..] # Remove leading 'v'
+          "#{ig_metadata.ig_id}##{version}"
+        end
       end
 
       def ig_name
@@ -116,6 +120,17 @@ module InfernoSuiteGenerator
         config_keeper.outer_groups
       end
 
+      def extra_imports_array
+        config_keeper.extra_imports
+      end
+
+      def extra_imports
+        extra_imports_array.map do |extra_import|
+          require_string = extra_import["import_type"] == "relative" ? "require_relative" : "require"
+          %(#{require_string} '#{extra_import["import_path"]}')
+        end
+      end
+
       def imports
         outer_groups.map do |outer_import|
           require_string = outer_import["import_type"] == "relative" ? "require_relative" : "require"
@@ -137,6 +152,10 @@ module InfernoSuiteGenerator
 
       def outer_groups_after
         prepare_outer_groups("after")
+      end
+
+      def patch_interaction_exists?
+        ig_metadata.patch_interaction_exists?
       end
     end
   end

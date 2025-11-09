@@ -74,6 +74,10 @@ module InfernoSuiteGenerator
           get("suite.outer_groups", EMPTY_ARRAY)
         end
 
+        def extra_imports
+          get("suite.extra_imports", EMPTY_ARRAY)
+        end
+
         def rewrite_profile_url
           get("configs.generic.rewrite_profile_url", EMPTY_HASH)
         end
@@ -84,6 +88,10 @@ module InfernoSuiteGenerator
             "configs&.resources&.#{resource_type}&.extra_searches",
             EMPTY_ARRAY
           )
+        end
+
+        def rewrite_igs
+          get("suite.rewrite_igs")
         end
       end
     end

@@ -7,6 +7,7 @@ ruby "3.3.6"
 gemspec
 
 gem "inferno_core", "~> 1.0.6"
+gem "jsonpath", "~> 1.1", ">= 1.1.5"
 gem "minitest", "~> 5.25"
 gem "rake", "~> 13.3"
 

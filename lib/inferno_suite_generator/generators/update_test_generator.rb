@@ -11,12 +11,15 @@ module InfernoSuiteGenerator
     # for testing UPDATE operations against a FHIR server.
     class UpdateTestGenerator < BasicTestGenerator
       class << self
+        UPDATE_TEST_TYPES = %w[UPDATE NEW_UPDATE].freeze
         def generate(ig_metadata, base_output_dir)
           ig_metadata.groups.each do |group|
             next if Registry.get(:config_keeper).exclude_resource?(group.profile_url, group.resource)
             next unless update_interaction(group).present?
 
-            new(group, base_output_dir, ig_metadata).generate
+            UPDATE_TEST_TYPES.each do |test_type|
+              new(group, base_output_dir, ig_metadata, test_type).generate
+            end
           end
         end
 
@@ -25,7 +28,15 @@ module InfernoSuiteGenerator
         end
       end
 
+      attr_reader :config, :test_type
+
       self.template_type = TEMPLATE_TYPES[:UPDATE]
+
+      def initialize(group_metadata, base_output_dir, ig_metadata, test_type)
+        super(group_metadata, base_output_dir, ig_metadata)
+        @test_type = test_type
+        @config = Registry.get(:config_keeper)
+      end
 
       def update_interaction
         self.class.update_interaction(group_metadata)
@@ -37,6 +48,37 @@ module InfernoSuiteGenerator
 
       def optional?
         conformance_expectation != "SHALL"
+      end
+
+      def humanized_option
+        current_update_test_data["humanized_option"] if current_update_test_data
+      end
+
+      def test_id_option
+        current_update_test_data["test_id_option"] if current_update_test_data
+      end
+
+      def executor
+        current_update_test_data["executor"] if current_update_test_data
+      end
+
+      private
+
+      def current_update_test_data
+        case @test_type
+        when "UPDATE"
+          {
+            "humanized_option" => "Update",
+            "test_id_option" => "update",
+            "executor" => "perform_update_test"
+          }
+        when "NEW_UPDATE"
+          {
+            "humanized_option" => "UpdateNew",
+            "test_id_option" => "update_new",
+            "executor" => "perform_update_new_test"
+          }
+        end
       end
     end
   end

@@ -55,10 +55,17 @@ module InfernoSuiteGenerator
         group_metadata.resource
       end
 
+      def filter_set
+        config = Registry.get(:config_keeper)
+        config.filter_set(group_metadata.profile_url, group_metadata.resource)
+      end
+
       def test_id
         case template_type
-        when TEMPLATE_TYPES[:UPDATE], TEMPLATE_TYPES[:READ], TEMPLATE_TYPES[:VALIDATION], TEMPLATE_TYPES[:REFERENCE_RESOLUTION], TEMPLATE_TYPES[:MUST_SUPPORT], TEMPLATE_TYPES[:CREATE]
+        when TEMPLATE_TYPES[:READ], TEMPLATE_TYPES[:VALIDATION], TEMPLATE_TYPES[:REFERENCE_RESOLUTION], TEMPLATE_TYPES[:MUST_SUPPORT], TEMPLATE_TYPES[:CREATE]
           "#{basic_test_id}_#{TEST_ID_SUFFIXES[template_type]}"
+        when TEMPLATE_TYPES[:PATCH], TEMPLATE_TYPES[:UPDATE]
+          "#{basic_test_id}_#{test_id_option}_#{TEST_ID_SUFFIXES[template_type]}"
         when TEMPLATE_TYPES[:MULTIPLE_AND_SEARCH], TEMPLATE_TYPES[:SEARCH], TEMPLATE_TYPES[:CHAIN_SEARCH],
              TEMPLATE_TYPES[:MULTIPLE_OR_SEARCH], TEMPLATE_TYPES[:PROVENANCE_REVINCLUDE_SEARCH]
           "#{basic_test_id_with_search}_#{TEST_ID_SUFFIXES[template_type]}"
@@ -76,8 +83,10 @@ module InfernoSuiteGenerator
 
       def class_name
         case template_type
-        when TEMPLATE_TYPES[:UPDATE], TEMPLATE_TYPES[:READ], TEMPLATE_TYPES[:VALIDATION], TEMPLATE_TYPES[:REFERENCE_RESOLUTION], TEMPLATE_TYPES[:MUST_SUPPORT], TEMPLATE_TYPES[:CREATE]
+        when TEMPLATE_TYPES[:READ], TEMPLATE_TYPES[:VALIDATION], TEMPLATE_TYPES[:REFERENCE_RESOLUTION], TEMPLATE_TYPES[:MUST_SUPPORT], TEMPLATE_TYPES[:CREATE]
           "#{basic_class_name}#{CLASS_NAME_SUFFIXES[template_type]}"
+        when TEMPLATE_TYPES[:PATCH], TEMPLATE_TYPES[:UPDATE]
+          "#{basic_class_name}#{test_type}#{CLASS_NAME_SUFFIXES[template_type]}"
         when TEMPLATE_TYPES[:SEARCH], TEMPLATE_TYPES[:CHAIN_SEARCH], TEMPLATE_TYPES[:PROVENANCE_REVINCLUDE_SEARCH]
           "#{basic_class_name_with_search}#{CLASS_NAME_SUFFIXES[template_type]}"
         when TEMPLATE_TYPES[:MULTIPLE_AND_SEARCH], TEMPLATE_TYPES[:MULTIPLE_OR_SEARCH]

@@ -66,6 +66,8 @@ module InfernoSuiteGenerator
         def outer_groups: () -> (Array[Hash[String, untyped]] | Array[untyped])
         def extra_searches: (String profile_url, String resource_type) -> (Array[Hash[String, untyped]] | Array[untyped])
         def rewrite_profile_url: () -> Hash[String, untyped]
+        def extra_imports: () -> Array[String]
+        def rewrite_igs: () -> String
       end
 
       module Extractors
@@ -83,6 +85,7 @@ module InfernoSuiteGenerator
         def get_forced_initial_search: (String profile_url, String resource) -> Array[String]
         def first_search_params: (String profile_url, String resource) -> Array[String]
         def custom_extractors: (String profile_url, String resource) -> (Array[Hash[String, untyped]] | Array[untyped])
+        def filter_set: (String profile_url, String resource_type) -> untyped
       end
 
       module Generators

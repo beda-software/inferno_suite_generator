@@ -66,7 +66,7 @@ module InfernoSuiteGenerator
       end
 
       def optional?
-        resource_type == "QuestionnaireResponse"
+        false
       end
 
       def generate
