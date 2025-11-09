@@ -65,9 +65,11 @@ module InfernoSuiteGenerator
     def normalized_data
       result = []
       available_resource_id_list.uniq.each do |resource_id|
-        resource_payload_arr_for_input.each_with_index do |resource, index|
+        idx = 0
+        resource_payload_arr_for_input.each do |resource|
           resource.id = resource_id
-          result << prepare_normalized_data_item(resource_id, resource, index)
+          result << prepare_normalized_data_item(resource_id, resource, idx)
+          idx += 1
         end
       end
       result

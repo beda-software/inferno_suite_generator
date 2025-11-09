@@ -53,12 +53,14 @@ module InfernoSuiteGenerator
       normalized_data = []
 
       available_resource_id_list.uniq.each do |resource_id|
-        parameters_resource_hash_list&.each_with_index do |parameters_resource_hash, index|
+        idx = 0
+        parameters_resource_hash_list&.each do |parameters_resource_hash|
           normalized_data << {
             resource_id: resource_id,
             parameters_resource_hash: parameters_resource_hash,
-            attempt: index + 1
+            attempt: idx + 1
           }
+          idx += 1
         end
       end
 
