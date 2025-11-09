@@ -6,6 +6,7 @@ require_relative "../utils/registry"
 require_relative "../utils/generic"
 require_relative "../decorators/parameters_parameter_decorator"
 require_relative "../decorators/bundle_entry_decorator"
+require_relative "../utils/patch_test_generator_helpers"
 
 module InfernoSuiteGenerator
   class Generator
@@ -14,19 +15,31 @@ module InfernoSuiteGenerator
     # for testing PATCH operations against a FHIR server.
     class PatchTestGenerator < BasicTestGenerator
       include GenericUtils
+      include PatchTestGeneratorHelpers
+
+      # PATCH_TEST_TYPES = %w[XML JSON FHIRPathXML FHIRPathJSON].freeze
+      PATCH_TEST_TYPES = %w[FHIRPathJSON].freeze
 
       class << self
         def generate(ig_metadata, base_output_dir, ig_resources = nil)
           ig_metadata.groups.each do |group|
-            next if Registry.get(:config_keeper).exclude_resource?(group.profile_url, group.resource)
-            next unless patch_interaction(group).present?
-
-            # [XML JSON FHIRPathXML FHIRPathJSON]
-            patch_types = ["FHIRPathJSON"]
-            patch_types.each do |patch_option|
-              new(group, base_output_dir, ig_metadata, patch_option, ig_resources).generate
-            end
+            group_generate(group, base_output_dir, {
+                             ig_metadata: ig_metadata, ig_resources: ig_resources
+                           })
           end
+        end
+
+        def group_generate(group, base_output_dir, ig_data)
+          return if skip_generate?(group)
+
+          PATCH_TEST_TYPES.each do |patch_option|
+            new(group, base_output_dir, ig_data[:ig_metadata], patch_option, ig_data[:ig_resources]).generate
+          end
+        end
+
+        def skip_generate?(group_metadata)
+          [Registry.get(:config_keeper).exclude_resource?(group_metadata.profile_url, group_metadata.resource),
+           !patch_interaction(group_metadata).present?].any?
         end
 
         def patch_interaction(group_metadata)
@@ -60,19 +73,21 @@ module InfernoSuiteGenerator
       end
 
       def humanized_option
-        current_test_data["humanized_option"] if current_test_data
+        return unless current_test_data&.key?("humanized_option")
+
+        current_test_data["humanized_option"]
       end
 
       def test_id_option
-        current_test_data["test_id_option"] if current_test_data
+        current_test_data["test_id_option"] if current_test_data&.key?("test_id_option")
       end
 
       def patchset
-        current_test_data["patchset"] if current_test_data
+        current_test_data["patchset"] if current_test_data&.key?("patchset")
       end
 
       def executor
-        current_test_data["executor"] if current_test_data
+        current_test_data["executor"] if current_test_data&.key?("executor")
       end
 
       def ids_input_data
@@ -104,80 +119,7 @@ module InfernoSuiteGenerator
       end
 
       def needs_ids_input?
-        !group_metadata.interactions.find do |interaction|
-          interaction[:code] == "create" && interaction[:expectation] == "SHALL"
-        end.present?
-      end
-
-      def current_test_data
-        test_type_mapping = {
-          "XML" => xml_test_data(patchset_with_dec),
-          "JSON" => json_test_data(patchset_with_dec),
-          "FHIRPathXML" => fhirpath_xml_data(parameters_resource),
-          "FHIRPathJSON" => fhirpath_json_data(parameters_resource)
-        }
-        raise "Unknown patch option: #{test_type}" unless test_type_mapping.key?(test_type)
-
-        test_type_mapping[test_type]
-      end
-
-      def transaction_bundles
-        bundles = ig_resources&.get_resources_by_type("Bundle")&.select { |bundle| bundle.type == "transaction" }
-        bundles || []
-      end
-
-      def bundle_entries
-        transaction_bundles&.flat_map { |bundle| bundle.entry || [] } || []
-      end
-
-      def patch_entry
-        bundle_entries.find do |entry|
-          BundleEntryDecorator.new(entry).bundle_entry_patch_parameter?(resource_type)
-        end
-      end
-
-      def xml_test_data(patchset)
-        {
-          "humanized_option" => "XMLPatch",
-          "test_id_option" => "xml",
-          "patchset" => patchset,
-          "executor" => "perform_xml_patch_test"
-        }
-      end
-
-      def json_test_data(patchset)
-        {
-          "humanized_option" => "JSONPatch",
-          "test_id_option" => "json",
-          "patchset" => patchset,
-          "executor" => "perform_json_patch_test"
-        }
-      end
-
-      def fhirpath_xml_data(parameters_resource)
-        {
-          "humanized_option" => "FHIRPath Patch in XML format",
-          "test_id_option" => "fhirpath_xml",
-          "patchset" => parameters_resource,
-          "executor" => "perform_fhirpath_patch_xml_text"
-        }
-      end
-
-      def fhirpath_json_data(parameters_resource)
-        {
-          "humanized_option" => "FHIRPath Patch in JSON format",
-          "test_id_option" => "fhirpath_json",
-          "patchset" => parameters_resource,
-          "executor" => "perform_fhirpath_patch_json_test"
-        }
-      end
-
-      def parameters_resource
-        patch_entry&.resource&.to_hash
-      end
-
-      def patchset_with_dec
-        patch_entry ? ParametersParameterDecorator.new(patch_entry.resource.parameter.first).patchset_data : nil
+        group_metadata.needs_ids_input?
       end
     end
   end

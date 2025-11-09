@@ -51,7 +51,6 @@ AllCops:
     - 'lib/inferno_suite_generator.rb'
     - 'lib/inferno_suite_generator/test_modules/update_test.rb'
     - 'lib/inferno_suite_generator/test_modules/patch_test.rb'
-    - 'lib/inferno_suite_generator/generators/patch_test_generator.rb'
     - 'lib/inferno_suite_generator/generators/update_test_generator.rb'
     - 'lib/inferno_suite_generator/test_modules/basic_test.rb'
 

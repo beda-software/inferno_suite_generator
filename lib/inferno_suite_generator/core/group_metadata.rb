@@ -53,6 +53,12 @@ module InfernoSuiteGenerator
         end
       end
 
+      def needs_ids_input?
+        !interactions.find do |interaction|
+          interaction[:code] == "create" && interaction[:expectation] == "SHALL"
+        end.present?
+      end
+
       def delayed?
         return false if resource == "Patient"
 
