@@ -87,11 +87,6 @@ module InfernoSuiteGenerator
         group_metadata.search_definitions[name.to_sym]
       end
 
-      def array_of_strings(array)
-        quoted_strings = array.map { |element| "'#{element}'" }
-        "[#{quoted_strings.join(", ")}]"
-      end
-
       def search_test_properties_string
         search_properties
           .map { |key, value| "#{" " * 8}#{key}: #{value}" }

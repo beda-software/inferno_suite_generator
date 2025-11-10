@@ -114,11 +114,6 @@ module InfernoSuiteGenerator
         array_of_strings(required_comparators.keys)
       end
 
-      def array_of_strings(array)
-        quoted_strings = array.map { |element| "'#{element}'" }
-        "[#{quoted_strings.join(", ")}]"
-      end
-
       def test_reference_variants?
         first_search? && search_param_names.include?("patient")
       end

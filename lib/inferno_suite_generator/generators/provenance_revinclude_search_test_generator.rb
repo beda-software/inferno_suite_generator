@@ -125,11 +125,6 @@ module InfernoSuiteGenerator
         array_of_strings(required_comparators.keys)
       end
 
-      def array_of_strings(array)
-        quoted_strings = array.map { |element| "'#{element}'" }
-        "[#{quoted_strings.join(", ")}]"
-      end
-
       def search_properties
         {}.tap do |properties|
           properties[:fixed_value_search] = "true" if fixed_value_search?

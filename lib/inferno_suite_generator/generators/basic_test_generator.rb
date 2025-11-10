@@ -3,11 +3,13 @@
 require_relative "../utils/naming"
 require_relative "../utils/generator_constants"
 require_relative "../utils/registry"
+require_relative "../utils/generic"
 
 module InfernoSuiteGenerator
   class Generator
     class BasicTestGenerator
       include GeneratorConstants
+      include GenericUtils
 
       attr_reader :group_metadata, :base_output_dir, :ig_metadata
 

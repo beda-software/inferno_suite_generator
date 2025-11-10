@@ -20,6 +20,13 @@ lint-fixes:
 tests:
 	bundle exec rake test
 
+check-fix:
+	$(MAKE) lint-fixes
+	$(MAKE) fasterer
+	$(MAKE) reek
+	$(MAKE) typecheck
+	$(MAKE) tests
+
 check:
 	$(MAKE) lint
 	$(MAKE) fasterer

@@ -5,6 +5,7 @@ require_relative "search_test_generator"
 require_relative "../utils/helpers"
 require_relative "../utils/registry"
 require_relative "../utils/multiple_or_search_test_generator_helpers"
+require_relative "../utils/generic"
 
 module InfernoSuiteGenerator
   class Generator
@@ -13,18 +14,23 @@ module InfernoSuiteGenerator
     # for testing multiple OR search operations against a FHIR server.
     class MultipleOrSearchTestGenerator < SearchTestGenerator
       include MultipleOrSearchTestGeneratorHelpers
+      include GenericUtils
 
       class << self
         def generate(ig_metadata, base_output_dir)
-          ig_metadata.groups
-                     .select { |group| group.searches.present? }
-                     .each do |group|
-            group.search_definitions.each_key do |search_key|
-              if multiple_or_test?(group, search_key)
-                new(search_key.to_s, group, group.search_definitions[search_key], base_output_dir,
-                    ig_metadata).generate
-              end
-            end
+          filtered_groups(ig_metadata).each { |group| generate_test(group, base_output_dir, ig_metadata) }
+        end
+
+        def filtered_groups(ig_metadata)
+          ig_metadata.groups.select { |group| group.searches.present? }
+        end
+
+        def generate_test(group, base_output_dir, ig_metadata)
+          search_definitions = group.search_definitions
+          search_definitions.each_key do |search_key|
+            next unless multiple_or_test?(group, search_key)
+
+            new(search_key.to_s, group, search_definitions[search_key], base_output_dir, ig_metadata).generate
           end
         end
 
@@ -33,7 +39,7 @@ module InfernoSuiteGenerator
         end
       end
 
-      attr_accessor :search_name, :group_metadata, :search_metadata, :base_output_dir, :ig_metadata
+      attr_reader :search_name, :group_metadata, :search_metadata, :base_output_dir, :ig_metadata
 
       self.template_type = TEMPLATE_TYPES[:MULTIPLE_OR_SEARCH]
 
@@ -86,60 +92,9 @@ module InfernoSuiteGenerator
         array_of_strings(search_param_names)
       end
 
-      def path_for_value(path)
-        path == "class" ? "local_class" : path
-      end
+      private
 
-      def optional?
-        %w[SHOULD MAY].include?(conformance_expectation)
-      end
-
-      def search_definition(name)
-        group_metadata.search_definitions[name.to_sym]
-      end
-
-      def saves_delayed_references?
-        first_search? && group_metadata.delayed_references.present?
-      end
-
-      def required_multiple_or_search_params
-        @required_multiple_or_search_params ||=
-          search_definition(search_name)[:multiple_or] == "SHALL"
-      end
-
-      def optional_multiple_or_search_params
-        @optional_multiple_or_search_params ||=
-          search_definition(search_name)[:multiple_or] == "SHOULD"
-      end
-
-      def required_multiple_or_search_params_string
-        required_multiple_or_search_params
-      end
-
-      def optional_multiple_or_search_params_string
-        optional_multiple_or_search_params
-      end
-
-      def required_comparators_string
-        array_of_strings(required_comparators.keys)
-      end
-
-      def array_of_strings(array)
-        quoted_strings = array.map { |element| "'#{element}'" }
-        "[#{quoted_strings.join(", ")}]"
-      end
-
-      def test_reference_variants?
-        first_search? && search_param_names.include?("patient")
-      end
-
-      def test_medication_inclusion?
-        %w[MedicationRequest MedicationDispense].include?(resource_type)
-      end
-
-      def test_post_search?
-        first_search?
-      end
+      attr_writer :search_name, :group_metadata, :search_metadata, :base_output_dir, :ig_metadata
     end
   end
 end
