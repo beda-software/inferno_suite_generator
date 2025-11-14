@@ -6,6 +6,7 @@ require_relative "../utils/helpers"
 require_relative "../utils/registry"
 require_relative "../utils/multiple_or_search_test_generator_helpers"
 require_relative "../utils/generic"
+require_relative "../utils/generator_utils"
 
 module InfernoSuiteGenerator
   class Generator
@@ -15,6 +16,7 @@ module InfernoSuiteGenerator
     class MultipleOrSearchTestGenerator < SearchTestGenerator
       include MultipleOrSearchTestGeneratorHelpers
       include GenericUtils
+      include GeneratorUtils
 
       class << self
         def generate(ig_metadata, base_output_dir)

@@ -3,10 +3,12 @@
 require_relative "../utils/naming"
 require_relative "basic_test_generator"
 require_relative "../utils/registry"
+require_relative "../utils/generator_utils"
 
 module InfernoSuiteGenerator
   class Generator
     class SearchTestGenerator < BasicTestGenerator
+      include GeneratorUtils
       class << self
         def generate(ig_metadata, base_output_dir)
           ig_metadata.groups
@@ -245,12 +247,6 @@ module InfernoSuiteGenerator
           properties[:test_post_search] = "true" if first_search?
           properties[:first_search_for_patient_by_patient_id] = "true" if first_search_for_patient_by_patient_id
         end
-      end
-
-      def search_test_properties_string
-        search_properties
-          .map { |key, value| "#{" " * 8}#{key}: #{value}" }
-          .join(",\n")
       end
 
       def reference_search_description

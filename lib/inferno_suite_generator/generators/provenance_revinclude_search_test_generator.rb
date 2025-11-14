@@ -3,10 +3,12 @@
 require_relative "../utils/naming"
 require_relative "basic_test_generator"
 require_relative "../utils/registry"
+require_relative "../utils/generator_utils"
 
 module InfernoSuiteGenerator
   class Generator
     class ProvenanceRevincludeSearchTestGenerator < BasicTestGenerator
+      include GeneratorUtils
       class << self
         def generate(ig_metadata, base_output_dir)
           ig_metadata.groups
@@ -132,12 +134,6 @@ module InfernoSuiteGenerator
           properties[:search_param_names] = search_param_names_array
           properties[:possible_status_search] = "true" if possible_status_search?
         end
-      end
-
-      def search_test_properties_string
-        search_properties
-          .map { |key, value| "#{" " * 8}#{key}: #{value}" }
-          .join(",\n")
       end
     end
   end

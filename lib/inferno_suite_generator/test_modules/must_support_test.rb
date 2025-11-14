@@ -81,12 +81,16 @@ module InfernoSuiteGenerator
       config.options[:exclude_uscdi_only_test] == true
     end
 
-    def must_support_extensions
+    def prepare_uscdi_ms(metadata_key)
       if exclude_uscdi_only_test?
-        metadata.must_supports[:extensions].reject { |extension| extension[:uscdi_only] }
+        metadata.must_supports[metadata_key].reject { |item| item[:uscdi_only] }
       else
-        metadata.must_supports[:extensions]
+        metadata.must_supports[metadata_key]
       end
+    end
+
+    def must_support_extensions
+      prepare_uscdi_ms(:extensions)
     end
 
     def missing_extensions(resources = [])
@@ -100,11 +104,7 @@ module InfernoSuiteGenerator
     end
 
     def must_support_elements
-      if exclude_uscdi_only_test?
-        metadata.must_supports[:elements].reject { |element| element[:uscdi_only] }
-      else
-        metadata.must_supports[:elements]
-      end
+      prepare_uscdi_ms(:elements)
     end
 
     def missing_elements(resources = [])
@@ -127,11 +127,7 @@ module InfernoSuiteGenerator
     end
 
     def must_support_slices
-      if exclude_uscdi_only_test?
-        metadata.must_supports[:slices].reject { |slice| slice[:uscdi_only] }
-      else
-        metadata.must_supports[:slices]
-      end
+      prepare_uscdi_ms(:slices)
     end
 
     def missing_slices(resources = [])
