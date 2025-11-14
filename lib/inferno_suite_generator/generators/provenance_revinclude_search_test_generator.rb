@@ -39,16 +39,6 @@ module InfernoSuiteGenerator
         search_identifier.camelize
       end
 
-      def search_params
-        @search_params ||=
-          search_metadata[:names].map do |name|
-            {
-              name:,
-              path: search_definition(name)[:path]
-            }
-          end
-      end
-
       def first_search?
         group_metadata.searches.first == search_metadata
       end
@@ -87,14 +77,6 @@ module InfernoSuiteGenerator
         search_definition(name)[:comparators].select { |_comparator, expectation| expectation == "SHALL" }
       end
 
-      def required_comparators
-        @required_comparators ||=
-          search_param_names.each_with_object({}) do |name, comparators|
-            required_comparators = required_comparators_for_param(name)
-            comparators[name] = required_comparators if required_comparators.present?
-          end
-      end
-
       # def patient_id_param?(param)
       #   param[:name] == 'patient' ||
       #     (resource_type == 'Patient' && param[:name] == '_id')
@@ -110,13 +92,6 @@ module InfernoSuiteGenerator
 
       def possible_status_search?
         !search_metadata[:names].include?("status") && group_metadata.search_definitions.key?(:status)
-      end
-
-      def token_search_params
-        @token_search_params ||=
-          search_param_names.select do |name|
-            %w[Identifier CodeableConcept Coding].include? group_metadata.search_definitions[name.to_sym][:type]
-          end
       end
 
       def token_search_params_string
