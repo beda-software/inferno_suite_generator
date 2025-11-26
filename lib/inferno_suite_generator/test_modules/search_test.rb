@@ -217,7 +217,7 @@ module InfernoSuiteGenerator
       end
 
       perform_reference_with_type_search(params, resources_returned.count) if test_reference_variants?
-      perform_search_with_system(params, patient_id) if token_search_params.present?
+      perform_search_with_system(params, patient_id) if token_search_params.present? && !fixed_value_search?
 
       resources_returned
     end
