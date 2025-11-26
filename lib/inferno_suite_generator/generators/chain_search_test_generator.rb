@@ -1,11 +1,13 @@
 # frozen_string_literal: true
 
 require_relative "../utils/naming"
+require_relative "../utils/generator_utils"
 require_relative "search_test_generator"
 
 module InfernoSuiteGenerator
   class Generator
     class ChainSearchTestGenerator < SearchTestGenerator
+      include GeneratorUtils
       class << self
         def generate(ig_metadata, base_output_dir)
           ig_metadata.groups
@@ -85,12 +87,6 @@ module InfernoSuiteGenerator
 
       def search_definition(name)
         group_metadata.search_definitions[name.to_sym]
-      end
-
-      def search_test_properties_string
-        search_properties
-          .map { |key, value| "#{" " * 8}#{key}: #{value}" }
-          .join(",\n")
       end
 
       def title

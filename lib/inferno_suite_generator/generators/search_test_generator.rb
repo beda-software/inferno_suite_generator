@@ -3,10 +3,12 @@
 require_relative "../utils/naming"
 require_relative "basic_test_generator"
 require_relative "../utils/registry"
+require_relative "../utils/generator_utils"
 
 module InfernoSuiteGenerator
   class Generator
     class SearchTestGenerator < BasicTestGenerator
+      include GeneratorUtils
       class << self
         def generate(ig_metadata, base_output_dir)
           ig_metadata.groups
@@ -41,16 +43,6 @@ module InfernoSuiteGenerator
 
       def conformance_expectation
         search_metadata[:expectation]
-      end
-
-      def search_params
-        @search_params ||=
-          search_metadata[:names].map do |name|
-            {
-              name:,
-              path: search_definition(name)[:path]
-            }
-          end
       end
 
       def first_search_for_patient_by_patient_id
@@ -103,14 +95,6 @@ module InfernoSuiteGenerator
         search_definition(name)[:comparators].select { |_comparator, expectation| expectation == "SHALL" }
       end
 
-      def required_comparators
-        @required_comparators ||=
-          search_param_names.each_with_object({}) do |name, comparators|
-            required_comparators = required_comparators_for_param(name)
-            comparators[name] = required_comparators if required_comparators.present?
-          end
-      end
-
       def optional?
         conformance_expectation != "SHALL"
       end
@@ -126,13 +110,6 @@ module InfernoSuiteGenerator
       def possible_status_search?
         search_metadata[:names].none? { |name| name.include? "status" } &&
           group_metadata.search_definitions.keys.any? { |key| key.to_s.include? "status" }
-      end
-
-      def token_search_params
-        @token_search_params ||=
-          search_param_names.select do |name|
-            %w[Identifier CodeableConcept Coding].include? group_metadata.search_definitions[name.to_sym][:type]
-          end
       end
 
       def token_search_params_string
@@ -245,12 +222,6 @@ module InfernoSuiteGenerator
           properties[:test_post_search] = "true" if first_search?
           properties[:first_search_for_patient_by_patient_id] = "true" if first_search_for_patient_by_patient_id
         end
-      end
-
-      def search_test_properties_string
-        search_properties
-          .map { |key, value| "#{" " * 8}#{key}: #{value}" }
-          .join(",\n")
       end
 
       def reference_search_description

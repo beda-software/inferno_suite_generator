@@ -17,6 +17,12 @@ lint:
 lint-fixes:
 	rubocop . -A
 
+flay:
+	flay .
+
+flog:
+	flog .
+
 tests:
 	bundle exec rake test
 

@@ -25,4 +25,6 @@ group :development do
   gem "rubocop-performance", require: false
   gem "rubocop-rake", require: false
   gem "steep", "~> 1.10"
+  gem "flay", "~> 2.13.3"
+  gem "flog", "~> 4.8.0"
 end

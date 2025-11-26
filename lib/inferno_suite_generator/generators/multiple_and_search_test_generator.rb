@@ -152,12 +152,6 @@ module InfernoSuiteGenerator
         end
       end
 
-      def search_test_properties_string
-        search_properties
-          .map { |key, value| "#{" " * 8}#{key}: #{value}" }
-          .join(",\n")
-      end
-
       def description
         Helpers.multiple_test_description("AND", conformance_expectation, search_param_name_string, resource_type,
                                           url_version)
