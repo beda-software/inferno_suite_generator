@@ -68,9 +68,7 @@ module InfernoSuiteGenerator
           }
         end
 
-        combo_search_params.reject do |combo_search_param|
-          combo_search_param[:names].any? { |sp| config.search_params_to_ignore.include? sp }
-        end
+        remove_params_to_ignore(combo_search_params)
       end
 
       def search_param_names
@@ -107,6 +105,40 @@ module InfernoSuiteGenerator
         search_params.reject do |search_param|
           config.search_params_to_ignore.include? search_param.name
         end
+      end
+
+      def remove_params_to_ignore(combo_search_params)
+        # Remove combo search params if they are should be ignored, like _count, _sort, etc.
+        combo_search_params.each do |combo_search_param|
+          if combo_search_param[:names].any? { |sp| config.search_params_to_ignore.include? sp }
+            current_search_params = combo_search_param[:names].filter { |sp| !config.search_params_to_ignore.include? sp }
+            combo_search_param[:names] = current_search_params
+          end
+        end
+
+        # In some cases when we remove param to ignore, as the result we have duplicated combo params
+        remove_combo_search_params_duplicates(combo_search_params)
+      end
+
+      def remove_combo_search_params_duplicates(combo_search_params)
+        result = []
+        combo_search_params.each do |combo_search_param|
+          next if result.any? { |r| r[:names] == combo_search_param[:names] }
+          expectation = use_the_high_expectation_search_param(combo_search_params.select { |sp| sp[:names] == combo_search_param[:names] })
+          combo_search_param[:expectation] = expectation
+          result << combo_search_param
+        end
+        result
+      end
+
+      def use_the_high_expectation_search_param(combo_search_params)
+        expectation_mapping = {
+          "SHALL" => 3,
+          "SHOULD" => 2,
+          "MAY" => 1
+        }
+        expectations = combo_search_params.map { |combo_search_param| combo_search_param[:expectation] }
+        expectations.max_by { |expectation| expectation_mapping[expectation] }
       end
     end
   end
