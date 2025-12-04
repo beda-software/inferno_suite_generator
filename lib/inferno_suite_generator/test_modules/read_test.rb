@@ -35,6 +35,7 @@ module InfernoSuiteGenerator
     def fetch_resource_ids(resource_type)
       method_name = "#{camel_to_snake(resource_type)}_ids"
       return "" unless respond_to?(method_name)
+
       send(method_name)
     end
 
@@ -91,8 +92,8 @@ module InfernoSuiteGenerator
     def read_and_validate_as_first(resource_to_read, patient_id)
       basic_read_and_validate(resource_to_read)
 
-      all_scratch_resources.concat([resource]).uniq!
-      scratch_resources_for_patient(patient_id).concat([resource]).uniq!
+      all_scratch_resources.push(resource).uniq!
+      scratch_resources_for_patient(patient_id).push(resource).uniq!
     end
 
     def resource_id(resource)
@@ -101,7 +102,7 @@ module InfernoSuiteGenerator
 
     def no_resources_skip_message
       "No #{resource_type} resources appear to be available. " \
-      "Please use patients with more information."
+        "Please use patients with more information."
     end
 
     def bad_resource_id_message(expected_id)

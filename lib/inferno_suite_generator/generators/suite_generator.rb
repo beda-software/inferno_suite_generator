@@ -97,7 +97,7 @@ module InfernoSuiteGenerator
         links_replacement = "      links [\n#{links_array}\n      ]"
         template_output.gsub!(/      links \[.*?\]/m, links_replacement)
 
-        File.open(output_file_name, "w") { |f| f.write(template_output) }
+        File.write(output_file_name, template_output)
       end
 
       def groups

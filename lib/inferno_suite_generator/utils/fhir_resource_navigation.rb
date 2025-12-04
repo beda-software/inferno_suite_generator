@@ -62,7 +62,7 @@ module InfernoSuiteGenerator
 
       path_segments = path.split(/(?<!hl7)\./)
 
-      segment = path_segments.shift.delete_suffix("[x]").gsub(/^class$/, "local_class").gsub(/\[x\]:/, ":").to_sym
+      segment = path_segments.shift.delete_suffix("[x]").gsub(/^class$/, "local_class").gsub("[x]:", ":").to_sym
       no_elements_present =
         elements.none? do |element|
           child = get_next_value(element, segment)
@@ -93,6 +93,7 @@ module InfernoSuiteGenerator
         find_slice_via_discriminator(element, property)
       else
         return nil unless element.respond_to?(property)
+
         element.send(property)
       end
     end
@@ -178,7 +179,8 @@ module InfernoSuiteGenerator
           .select { |value_definition| value_definition[:path].first == path_prefix }
           .each { |value_definition| value_definition[:path].shift }
 
-        search_path = if element.respond_to?(:coding) && !element.respond_to?(path_prefix.to_sym) && %w[code system display].include?(path_prefix)
+        search_path = if element.respond_to?(:coding) && !element.respond_to?(path_prefix.to_sym) && %w[code system
+                                                                                                        display].include?(path_prefix)
                         "coding.#{path_prefix}"
                       else
                         path_prefix

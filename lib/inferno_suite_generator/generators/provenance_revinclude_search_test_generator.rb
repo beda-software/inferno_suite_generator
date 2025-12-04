@@ -9,6 +9,7 @@ module InfernoSuiteGenerator
   class Generator
     class ProvenanceRevincludeSearchTestGenerator < BasicTestGenerator
       include GeneratorUtils
+
       class << self
         def generate(ig_metadata, base_output_dir)
           ig_metadata.groups

@@ -51,7 +51,7 @@ module InfernoSuiteGenerator
         @full_paths ||=
           begin
             full_paths = param.expression.split("|").map do |expr|
-              expr.strip.gsub(/.where\(resolve\((.*)/, "").gsub(/url = '/,
+              expr.strip.gsub(/.where\(resolve\((.*)/, "").gsub("url = '",
                                                                 "url='").gsub(/\.ofType\(([^)]+)\)/) do |_match|
                 type_name = ::Regexp.last_match(1)
                 "#{type_name[0].upcase}#{type_name[1..]}"
@@ -234,7 +234,7 @@ module InfernoSuiteGenerator
 
         group_metadata[:must_supports][:slices]
           .select { |slice| [short_path, "#{short_path}.coding"].include?(slice[:path]) }
-          .map do |slice|
+          .filter_map do |slice|
             slice_element = profile_elements.find { |element| slice[:slice_id] == element.id }
             next if profile_element.min.positive? && slice_element.min.zero? && mandatory_slice_only
 
@@ -249,7 +249,7 @@ module InfernoSuiteGenerator
                 .map { |value| value[:value] }
             end
           end
-          .compact.flatten
+          .flatten
       end
 
       def values_from_must_support_elements(short_path)

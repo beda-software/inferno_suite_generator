@@ -7,7 +7,7 @@ module Helpers
   DAR_EXTENSION_URL = "http://hl7.org/fhir/StructureDefinition/data-absent-reason"
 
   def self.test_on_target_resource_data?(special_cases_hash, resource_type, search_param_names)
-    return unless special_cases_hash.key?(resource_type)
+    return false unless special_cases_hash.key?(resource_type)
 
     special_cases_hash[resource_type].include? search_param_names
   end

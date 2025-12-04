@@ -342,13 +342,13 @@ module InfernoSuiteGenerator
         required_comparators(name).each do |comparator|
           paths = search_param_paths(name).first
           date_element = find_a_value_at(scratch_resources_for_patient(patient_id), paths)
-          params_with_comparator = params.merge(name => if name != "birthdate"
-                                                          date_comparator_value(comparator,
-                                                                                date_element)
-                                                        else
+          params_with_comparator = params.merge(name => if name == "birthdate"
                                                           birthdate_comparator_value(
                                                             comparator, date_element
                                                           )
+                                                        else
+                                                          date_comparator_value(comparator,
+                                                                                date_element)
                                                         end)
 
           search_and_check_response(params_with_comparator)
@@ -535,7 +535,7 @@ module InfernoSuiteGenerator
     end
 
     def find_include_resources(params, patient_id, include_param, _keep_search_variant = true)
-      resources_to_check = "#{include_param["target_resource"].downcase}_resources".to_sym
+      resources_to_check = :"#{include_param["target_resource"].downcase}_resources"
       target_resource_type = include_param["target_resource"]
       scratch[resources_to_check] ||= {}
       scratch[resources_to_check][:all] ||= []
@@ -558,7 +558,7 @@ module InfernoSuiteGenerator
     def test_include_param(base_resources, params, patient_id, include_param, keep_search_variant = true)
       return if keep_search_variant && search_variant_test_records[:inclusion]
 
-      resources_to_check = "#{include_param["target_resource"].downcase}_resources".to_sym
+      resources_to_check = :"#{include_param["target_resource"].downcase}_resources"
       target_resource_type = include_param["target_resource"]
 
       scratch[resources_to_check] ||= {}
@@ -655,8 +655,8 @@ module InfernoSuiteGenerator
       puts "Looking up fixed search values for parameter: #{name}"
 
       values = metadata.search_definitions[name][:values]
-      puts "Found #{values.length} fixed search values: #{values.join(', ')}"
-    
+      puts "Found #{values.length} fixed search values: #{values.join(", ")}"
+
       values
     end
 
@@ -863,10 +863,10 @@ module InfernoSuiteGenerator
               #   All others have second + time offset precision
               if /^\d{4}(-\d{2})?$/.match?(element) || # YYYY or YYYY-MM
                  (/^\d{4}-\d{2}-\d{2}$/.match?(element) && resource_type != "Goal") # YYY-MM-DD AND Resource is NOT Goal
-                if !(path == "birthDate" && resource_type == "Patient")
-                  "gt#{(DateTime.xmlschema(element) - 1).xmlschema}"
-                else
+                if path == "birthDate" && resource_type == "Patient"
                   "gt#{(DateTime.xmlschema(element) - 1).strftime("%F")}"
+                else
+                  "gt#{(DateTime.xmlschema(element) - 1).xmlschema}"
                 end
               else
                 element
