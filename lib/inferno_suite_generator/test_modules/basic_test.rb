@@ -88,6 +88,7 @@ module InfernoSuiteGenerator
       end
 
       resource_filtered_by_profile = resources_by_resource_type.select do |resource|
+        info "Resource is: #{resource}"
         next false if resource[:meta].blank?
         next false if resource[:meta][:profile].blank?
 
