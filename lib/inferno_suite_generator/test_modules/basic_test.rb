@@ -80,7 +80,12 @@ module InfernoSuiteGenerator
     end
 
     def resource_body_by_resource_type(resource_type)
-      resource_body_list[resource_type] || []
+      resources_by_resource_type = resource_body_list[resource_type] || []
+      return [] if resources_by_resource_type.empty?
+      resource_filtered_by_profile = resources_by_resource_type.select { |resource| resource.meta.profile.include?(metadata.profile_url) }
+
+      return resources_by_resource_type if resource_filtered_by_profile.empty?
+      resource_filtered_by_profile
     end
 
     def resource_body_list
