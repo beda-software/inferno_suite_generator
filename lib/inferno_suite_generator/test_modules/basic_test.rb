@@ -81,24 +81,22 @@ module InfernoSuiteGenerator
 
     def resource_body_by_resource_type(resource_type)
       resources_by_resource_type = resource_body_list[resource_type] || []
-      warning "No #{resource_type} resources appear to be available."
-      return [] if resources_by_resource_type.empty?
+      if resources_by_resource_type.empty?
+        warning "No #{resource_type} resources appear to be available."
+
+        return []
+      end
 
       resource_filtered_by_profile = resources_by_resource_type.select do |resource|
-        if resource[:meta].blank?
-          warning "Resource #{resource_type} does not have meta element"
-          next false
-        end
-        if resource[:meta][:profile].blank?
-          warning "Resource #{resource_type} does not have profile element"
-          next false
-        end
+        next false if resource[:meta].blank?
+        next false if resource[:meta][:profile].blank?
 
         resource[:meta][:profile].include?(metadata.profile_url)
       end
 
       if resource_filtered_by_profile.empty?
         warning "No #{resource_type} resources appear to be available with profile #{metadata.profile_url}"
+
         return resources_by_resource_type
       end
 
