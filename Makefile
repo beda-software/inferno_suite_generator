@@ -54,6 +54,9 @@ docker-typecheck: docker-build
 docker-lint: docker-build
 	$(DOCKER_RUN) bundle exec rubocop .
 
+docker-lint-fix: docker-build
+	$(DOCKER_RUN) bundle exec rubocop . -A
+
 docker-tests: docker-build
 	$(DOCKER_RUN) bundle exec rake test
 
