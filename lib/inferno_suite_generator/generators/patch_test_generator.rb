@@ -24,7 +24,7 @@ module InfernoSuiteGenerator
         def generate(ig_metadata, base_output_dir, ig_resources = nil)
           ig_metadata.groups.each do |group|
             group_generate(group, base_output_dir, {
-                             ig_metadata: ig_metadata, ig_resources: ig_resources
+                             ig_metadata:, ig_resources:
                            })
           end
         end

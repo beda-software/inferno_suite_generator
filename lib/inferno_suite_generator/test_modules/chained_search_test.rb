@@ -20,12 +20,12 @@ module InfernoSuiteGenerator
     end
 
     def get_resources_identifier(resources, target_identifier)
-      if !target_identifier
-        resources.map(&:identifier).flatten
-      else
+      if target_identifier
         resources.map do |r|
           r.identifier.filter { |idnt| idnt.system == target_identifier[:url] }
         end.flatten
+      else
+        resources.map(&:identifier).flatten
       end
     end
 

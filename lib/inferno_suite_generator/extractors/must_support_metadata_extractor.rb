@@ -43,7 +43,7 @@ module InfernoSuiteGenerator
         must_support_extension_elements.map do |element|
           {
             id: element.id,
-            url: element.type.first.profile.first.split('|').first
+            url: element.type.first.profile.first.split("|").first
           }.tap do |metadata|
             metadata[:uscdi_only] = true if is_uscdi_requirement_element?(element)
           end
@@ -70,12 +70,13 @@ module InfernoSuiteGenerator
         must_support_slice_elements.select do |element|
           discriminator_list = discriminators(sliced_element(element))
           next if discriminator_list.nil?
+
           discriminator_list.first.type == "pattern"
         end
       end
 
       def pattern_slices
-        must_support_pattern_slice_elements.map do |current_element|
+        must_support_pattern_slice_elements.filter_map do |current_element|
           next if current_element.id.include? ":"
 
           {
@@ -132,13 +133,14 @@ module InfernoSuiteGenerator
 
             metadata[:uscdi_only] = true if is_uscdi_requirement_element?(current_element)
           end
-        end.compact
+        end
       end
 
       def must_support_type_slice_elements
         must_support_slice_elements.select do |element|
           discriminator_list = discriminators(sliced_element(element))
           next if discriminator_list.nil?
+
           discriminator_list.first.type == "type"
         end
       end
@@ -175,6 +177,7 @@ module InfernoSuiteGenerator
         must_support_slice_elements.select do |element|
           discriminator_list = discriminators(sliced_element(element))
           next if discriminator_list.nil?
+
           discriminator_list.first.type == "value"
         end
       end
@@ -246,7 +249,7 @@ module InfernoSuiteGenerator
       end
 
       def get_type_must_support_metadata(current_metadata, current_element)
-        current_element.type.map do |type|
+        current_element.type.filter_map do |type|
           next unless type_must_support_extension?(type.extension)
 
           metadata =
@@ -258,7 +261,7 @@ module InfernoSuiteGenerator
           handle_type_must_support_target_profiles(type, metadata) if type.code == "Reference"
 
           metadata
-        end.compact
+        end
       end
 
       def handle_type_must_support_target_profiles(type, metadata)

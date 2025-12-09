@@ -110,10 +110,12 @@ module InfernoSuiteGenerator
       def remove_params_to_ignore(combo_search_params)
         # Remove combo search params if they are should be ignored, like _count, _sort, etc.
         combo_search_params.each do |combo_search_param|
-          if combo_search_param[:names].any? { |sp| config.search_params_to_ignore.include? sp }
-            current_search_params = combo_search_param[:names].filter { |sp| !config.search_params_to_ignore.include? sp }
-            combo_search_param[:names] = current_search_params
+          next unless combo_search_param[:names].any? { |sp| config.search_params_to_ignore.include? sp }
+
+          current_search_params = combo_search_param[:names].filter do |sp|
+            !config.search_params_to_ignore.include? sp
           end
+          combo_search_param[:names] = current_search_params
         end
 
         # In some cases when we remove param to ignore, as the result we have duplicated combo params
@@ -124,7 +126,10 @@ module InfernoSuiteGenerator
         result = []
         combo_search_params.each do |combo_search_param|
           next if result.any? { |r| r[:names] == combo_search_param[:names] }
-          expectation = use_the_high_expectation_search_param(combo_search_params.select { |sp| sp[:names] == combo_search_param[:names] })
+
+          expectation = use_the_high_expectation_search_param(combo_search_params.select do |sp|
+            sp[:names] == combo_search_param[:names]
+          end)
           combo_search_param[:expectation] = expectation
           result << combo_search_param
         end

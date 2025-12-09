@@ -9,6 +9,7 @@ module InfernoSuiteGenerator
   class Generator
     class SearchTestGenerator < BasicTestGenerator
       include GeneratorUtils
+
       class << self
         def generate(ig_metadata, base_output_dir)
           ig_metadata.groups
@@ -59,7 +60,7 @@ module InfernoSuiteGenerator
 
       def first_search_not_patient?
         first_search? && search_metadata[:names] != ["patient"] &&
-        !group_metadata.delayed? && resource_type != "Patient"
+          !group_metadata.delayed? && resource_type != "Patient"
       end
 
       def any_observation_search?

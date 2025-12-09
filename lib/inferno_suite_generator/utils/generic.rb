@@ -5,6 +5,7 @@ module GenericUtils
     quoted_strings = array.map { |element| "'#{element}'" }
     "[#{quoted_strings.join(", ")}]"
   end
+
   def camel_to_snake(str)
     str.gsub(/([a-z0-9])([A-Z])/, '\1_\2').downcase
   end

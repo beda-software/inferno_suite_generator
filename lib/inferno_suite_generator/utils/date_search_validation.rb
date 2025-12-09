@@ -64,8 +64,8 @@ module InfernoSuiteGenerator
           (target_range[:start].nil? && search_range[:start] < target_range[:end]) ||
             (target_range[:end].nil? && search_range[:end] > target_range[:start])
         else
-          (search_range[:start] >= target_range[:start] && search_range[:start] <= target_range[:end]) ||
-            (search_range[:end] >= target_range[:start] && search_range[:end] <= target_range[:end])
+          search_range[:start].between?(target_range[:start], target_range[:end]) ||
+            search_range[:end].between?(target_range[:start], target_range[:end])
         end
       end
     end

@@ -27,8 +27,8 @@ module InfernoSuiteGenerator
 
       pass if (missing_elements + missing_slices + missing_extensions).empty?
       skip_with_msg "Could not find #{missing_must_support_strings.join(", ")} element(s) in the #{resources.length} " \
-           "provided #{resource_type} resource(s). To prevent this issue, please add the missing must support "\
-           "elements to at least one #{resource_type} resource on the server."
+                    "provided #{resource_type} resource(s). To prevent this issue, please add the missing must support " \
+                    "elements to at least one #{resource_type} resource on the server."
     end
 
     def handle_must_support_choices
@@ -114,7 +114,7 @@ module InfernoSuiteGenerator
             path = element_definition[:path] # .delete_suffix('[x]')
             value_found = find_a_value_at(resource, path) do |value|
               value_without_extensions =
-                value.respond_to?(:to_hash) ? value.to_hash.reject { |key, _| key == "extension" } : value
+                value.respond_to?(:to_hash) ? value.to_hash.except("extension") : value
 
               (value_without_extensions.present? || value_without_extensions == false) &&
                 (element_definition[:fixed_value].blank? || value == element_definition[:fixed_value])
@@ -188,7 +188,8 @@ module InfernoSuiteGenerator
             .select { |value_definition| value_definition[:path].first == path_prefix }
             .each { |value_definition| value_definition[:path].shift }
 
-          search_path = if el.respond_to?(:coding) && !el.respond_to?(path_prefix.to_sym) && %w[code system display].include?(path_prefix)
+          search_path = if el.respond_to?(:coding) && !el.respond_to?(path_prefix.to_sym) && %w[code system
+                                                                                                display].include?(path_prefix)
                           "coding.#{path_prefix}"
                         else
                           path_prefix

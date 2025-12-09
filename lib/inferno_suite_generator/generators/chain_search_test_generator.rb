@@ -8,6 +8,7 @@ module InfernoSuiteGenerator
   class Generator
     class ChainSearchTestGenerator < SearchTestGenerator
       include GeneratorUtils
+
       class << self
         def generate(ig_metadata, base_output_dir)
           ig_metadata.groups

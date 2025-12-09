@@ -20,7 +20,8 @@ module InfernoSuiteGenerator
     def token_search_params
       @token_search_params ||=
         search_param_names.select do |name|
-          %w[Identifier CodeableConcept Coding].include? group_metadata.search_definitions[name.to_sym][:type]
+          token_types = %w[Identifier CodeableConcept Coding].freeze
+          token_types.include? group_metadata.search_definitions[name.to_sym][:type]
         end
     end
 
