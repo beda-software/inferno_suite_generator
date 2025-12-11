@@ -28,7 +28,8 @@ module InfernoSuiteGenerator
       end
 
       def conformance_expectation(search_param)
-        search_param.extension.first.valueCode # TODO: fix expectation extension finding
+        # TODO: fix expectation extension finding
+        search_param&.extension&.first&.valueCode || "SHALL"
       end
 
       def no_search_params?

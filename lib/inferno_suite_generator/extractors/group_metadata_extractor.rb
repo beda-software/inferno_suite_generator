@@ -183,11 +183,13 @@ module InfernoSuiteGenerator
       end
 
       def interactions
+        # TODO: fix expectation extension finding
         @interactions ||=
           resource_capabilities.interaction.map do |interaction|
+            expectation = interaction.extension&.first&.valueCode || "SHALL"
             {
               code: interaction.code,
-              expectation: interaction.extension.first.valueCode # TODO: fix expectation extension finding
+              expectation: expectation
             }
           end
       end
