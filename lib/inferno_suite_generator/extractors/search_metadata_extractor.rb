@@ -127,6 +127,7 @@ module InfernoSuiteGenerator
         result = []
         combo_search_params.each do |combo_search_param|
           next if result.any? { |r| r[:names] == combo_search_param[:names] }
+          next if combo_search_param[:names].length == 1
 
           expectation = use_the_high_expectation_search_param(combo_search_params.select do |sp|
             sp[:names] == combo_search_param[:names]
